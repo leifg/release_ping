@@ -1,9 +1,7 @@
 defmodule ReleasePing.Core do
   alias ReleasePing.Core.Commands.AddSoftware
   alias ReleasePing.Core.Software
-  alias ReleasePing.Router
-  alias ReleasePing.Wait
-  alias ReleasePing.Repo
+  alias ReleasePing.{Router, Wait, Repo}
 
   @doc """
   Add Software

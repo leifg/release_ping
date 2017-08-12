@@ -4,7 +4,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   alias ReleasePing.Core.Events.SoftwareAdded
 
   describe "add software" do
-    test "should succeed when valid" do
+    test "succeeds when valid" do
       uuid = UUID.uuid4()
 
       assert_events build(:add_software, uuid: uuid), [

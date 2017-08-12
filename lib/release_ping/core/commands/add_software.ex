@@ -1,7 +1,3 @@
 defmodule ReleasePing.Core.Commands.AddSoftware do
-  defstruct [
-    uuid: "",
-    name: "",
-    website: "",
-  ]
+  defstruct [:uuid, :name, :website]
 end
