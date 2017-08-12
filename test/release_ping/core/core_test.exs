@@ -7,7 +7,7 @@ defmodule ReleasePing.CoreTest do
 
   describe "add software" do
     @tag :integration
-    test "should succeed with valid data" do
+    test "succeeds with valid data" do
       assert {:ok, %Software{} = software}  = Core.add_software(build(:software))
 
       assert software.name == "elixir"
