@@ -14,7 +14,12 @@ defmodule ReleasePing.Mixfile do
 
   def application do
     [
-      extra_applications: [:logger, :eventstore]
+      mod: {ReleasePing.Application, []},
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :eventstore,
+      ]
     ]
   end
 
@@ -25,6 +30,7 @@ defmodule ReleasePing.Mixfile do
     [
       {:commanded, "~> 0.13"},
       {:commanded_eventstore_adapter, "~> 0.1"},
+      {:commanded_ecto_projections, "~> 0.4"},
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
     ]

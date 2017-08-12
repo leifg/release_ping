@@ -1,7 +1,9 @@
 defmodule ReleasePing.Core.Events.SoftwareAdded do
+  @derive [Poison.Encoder]
   defstruct [
-    uuid: "",
-    name: "",
-    website: "",
+    uuid: nil,
+    name: nil,
+    website: nil,
+    lincenses: [],
   ]
 end

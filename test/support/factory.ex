@@ -1,7 +1,6 @@
 defmodule ReleasePing.Factory do
   use ExMachina
 
-  alias ReleasePing.Core.Events.SoftwareAdded
   alias ReleasePing.Core.Commands.AddSoftware
 
   def software_factory do
