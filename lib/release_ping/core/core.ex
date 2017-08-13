@@ -6,10 +6,16 @@ defmodule ReleasePing.Core do
   @doc """
   Add Software
   """
+  @spec add_software(map) :: Software.t | {:error, any}
   def add_software(attrs \\ %{}) do
     uuid = UUID.uuid4()
 
-    %AddSoftware{uuid: uuid, name: attrs[:name], website: attrs[:website]}
+    %AddSoftware{
+      uuid: uuid,
+      name: attrs[:name],
+      website: attrs[:website],
+      licenses: attrs[:licenses]
+    }
       |> Router.dispatch()
       |> case do
         :ok -> Wait.until(fn -> Repo.get(Software, uuid) end)

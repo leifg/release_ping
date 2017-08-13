@@ -1,6 +1,13 @@
 defmodule ReleasePing.Core.Software do
   use Ecto.Schema
 
+  @type t :: %__MODULE__{
+    uuid: String.t,
+    name: String.t,
+    website: String.t,
+    licenses: [String.t]
+  }
+
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
   schema "software" do
