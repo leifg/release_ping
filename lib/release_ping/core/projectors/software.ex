@@ -3,7 +3,6 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   alias ReleasePing.Core.Events.{SoftwareAdded, ReleasePublished}
   alias ReleasePing.Core.Software
-  alias ReleasePing.Repo
 
   project %SoftwareAdded{} = added, %{stream_version: stream_version} do
     Ecto.Multi.insert(multi, :software, %Software{

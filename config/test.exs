@@ -15,3 +15,5 @@ config :release_ping, ReleasePing.Repo,
   database: "release_ping_readstore_test",
   hostname: "localhost",
   pool_size: 1
+
+config :logger, level: :warn
