@@ -4,6 +4,6 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
     uuid: nil,
     name: nil,
     website: nil,
-    lincenses: [],
+    licenses: [],
   ]
 end

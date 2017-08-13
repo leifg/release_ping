@@ -7,10 +7,11 @@ defmodule ReleasePing.Core.Aggregates.Software do
     uuid: String.t,
     name: String.t,
     website: String.t,
-    releases: [String.t]
+    licenses: [String.t],
+    releases: [String.t],
   }
 
-  defstruct [:uuid, :name, :website, :releases]
+  defstruct [:uuid, :name, :website, :releases, :licenses]
 
   @doc """
   Creates software
@@ -20,6 +21,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: add.uuid,
       website: add.website,
       name: add.name,
+      licenses: add.licenses,
     }
   end
 
@@ -30,6 +32,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: added.uuid,
       name: added.name,
       website: added.website,
+      licenses: added.licenses,
       releases: [],
     }
   end

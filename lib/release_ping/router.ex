@@ -5,8 +5,9 @@ defmodule ReleasePing.Router do
 
   use Commanded.Commands.Router
 
-  alias ReleasePing.Core.Aggregates.Software
-  alias ReleasePing.Core.Commands.AddSoftware
+  alias ReleasePing.Core.Aggregates.{Software, Release}
+  alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
 
   dispatch [AddSoftware], to: Software, identity: :uuid
+  dispatch [PublishRelease], to: Release, identity: :uuid
 end
