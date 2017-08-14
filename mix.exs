@@ -4,7 +4,7 @@ defmodule ReleasePing.Mixfile do
   def project do
     [
       app: :release_ping,
-      version: "0.1.0",
+      version: "0.0.0-development",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       start_permanent: Mix.env == :prod,
@@ -19,6 +19,7 @@ defmodule ReleasePing.Mixfile do
         :logger,
         :runtime_tools,
         :eventstore,
+        :ecto,
       ]
     ]
   end
@@ -32,7 +33,8 @@ defmodule ReleasePing.Mixfile do
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},
       {:ex_machina, "~> 2.0", only: :test},
-      {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:distillery, "~> 1.4", runtime: false},
     ]
   end
 end
