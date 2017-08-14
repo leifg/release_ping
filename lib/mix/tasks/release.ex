@@ -27,6 +27,7 @@ defmodule ReleasePing.ReleaseTasks do
   end
 
   def create_writestore do
+    Application.ensure_all_started(:eventstore)
     config = EventStore.Config.parse(Application.get_env(:eventstore, EventStore.Storage))
     case EventStore.Storage.Database.create(config) do
       :ok -> initialize_storage(config)
