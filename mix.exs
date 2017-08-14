@@ -19,6 +19,7 @@ defmodule ReleasePing.Mixfile do
         :logger,
         :runtime_tools,
         :eventstore,
+        :ecto,
       ]
     ]
   end
@@ -32,7 +33,8 @@ defmodule ReleasePing.Mixfile do
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},
       {:ex_machina, "~> 2.0", only: :test},
-      {:credo, "~> 0.8", only: [:dev, :test], runtime: false}
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:distillery, "~> 1.4", runtime: false},
     ]
   end
 end
