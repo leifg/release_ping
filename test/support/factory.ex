@@ -14,7 +14,7 @@ defmodule ReleasePing.Factory do
 
   def release_factory do
     %{
-      release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
+      release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0",
       version: %{
         major: 1,
         minor: 5,
