@@ -14,6 +14,7 @@ defmodule ReleasePing.Core do
       uuid: uuid,
       name: attrs[:name],
       website: attrs[:website],
+      github: attrs[:github],
       licenses: attrs[:licenses]
     }
       |> Router.dispatch()

@@ -5,6 +5,7 @@ defmodule ReleasePing.Core.Software do
     uuid: String.t,
     name: String.t,
     website: String.t,
+    github: String.t,
     licenses: [String.t]
   }
 
@@ -15,6 +16,7 @@ defmodule ReleasePing.Core.Software do
     field :latest_release_uuid, :binary_id
     field :name, :string
     field :website, :string
+    field :github, :string
     field :licenses, {:array, :string}
 
     timestamps()

@@ -12,6 +12,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           uuid: uuid,
           name: "elixir",
           website: "https://elixir-lang.org",
+          github: "elixir-lang/elixir",
           licenses: ["MIT"],
         }
       ]
