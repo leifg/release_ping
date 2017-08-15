@@ -10,6 +10,7 @@ defmodule ReleasePing.Core.Projectors.Software do
       stream_version: stream_version,
       name: added.name,
       website: added.website,
+      github: added.github,
       licenses: added.licenses,
     })
   end

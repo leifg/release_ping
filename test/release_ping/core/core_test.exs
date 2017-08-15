@@ -14,6 +14,7 @@ defmodule ReleasePing.CoreTest do
 
       assert software.name == "elixir"
       assert software.website == "https://elixir-lang.org"
+      assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
     end
   end

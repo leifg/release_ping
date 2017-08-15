@@ -7,6 +7,7 @@ defmodule ReleasePing.Factory do
     %{
       name: "elixir",
       website: "https://elixir-lang.org",
+      github: "elixir-lang/elixir",
       licenses: ["MIT"],
       releases: [],
     }

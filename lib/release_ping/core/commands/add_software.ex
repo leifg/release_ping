@@ -3,6 +3,7 @@ defmodule ReleasePing.Core.Commands.AddSoftware do
     uuid: nil,
     name: nil,
     website: nil,
+    github: nil,
     licenses: [],
   ]
 end
