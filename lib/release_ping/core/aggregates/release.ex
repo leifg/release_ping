@@ -11,6 +11,8 @@ defmodule ReleasePing.Core.Aggregates.Release do
     major: non_neg_integer,
     minor: non_neg_integer,
     patch: non_neg_integer,
+    pre: String.t,
+    build: String.t,
   }
 
   @type t :: %__MODULE__{

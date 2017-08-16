@@ -21,7 +21,7 @@ defmodule ReleasePing.Factory do
         minor: 5,
         patch: 0,
       },
-      published_at: DateTime.from_naive!(~N[2017-07-25 07:27:16.000], "Etc/UTC"),
+      published_at: "2017-07-25T07:27:16.000Z",
       pre_release: false,
     }
   end
