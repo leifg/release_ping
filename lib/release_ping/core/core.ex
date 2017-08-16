@@ -7,7 +7,7 @@ defmodule ReleasePing.Core do
   Add Software
   """
   @spec add_software(map) :: Software.t | {:error, any}
-  def add_software(attrs \\ %{}) do
+  def add_software(attrs) do
     uuid = UUID.uuid4()
 
     %AddSoftware{
@@ -33,10 +33,11 @@ defmodule ReleasePing.Core do
 
     %PublishRelease{
       uuid: uuid,
-      software_uuid: attrs.software_uuid,
-      version: attrs[:version],
+      software_uuid: attrs[:software_uuid],
+      version_string: attrs[:version_string],
       release_notes_url: attrs[:release_notes_url],
       published_at: attrs[:published_at],
+      seen_at: attrs[:seen_at],
       pre_release: attrs[:pre_release],
     }
       |> Router.dispatch()

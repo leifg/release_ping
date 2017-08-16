@@ -28,7 +28,12 @@ defmodule ReleasePing.CoreTest do
       assert {:ok, %Release{} = release} = Core.publish_release(release)
 
       assert release.software_uuid == software.uuid
+      assert release.version_string == "v1.5.0"
+      assert release.major_version == 1
+      assert release.minor_version == 5
+      assert release.patch_version == 0
       assert release.published_at == DateTime.from_naive!(~N[2017-07-25 07:27:16.000000], "Etc/UTC")
+      assert release.seen_at == DateTime.from_naive!(~N[2017-07-25 07:30:00.000000], "Etc/UTC")
       assert release.release_notes_url == "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0"
       assert release.pre_release == false
 
