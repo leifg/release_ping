@@ -8,6 +8,7 @@ defmodule ReleasePing.Application do
       supervisor(ReleasePing.Repo, []),
 
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
+      worker(ReleasePing.Core.Projectors.Release, [], id: :release_projector),
     ]
 
     opts = [strategy: :one_for_one, name: ReleasePing.Supervisor]
