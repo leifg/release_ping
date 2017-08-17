@@ -6,7 +6,8 @@ defmodule ReleasePing.Core.Software do
     name: String.t,
     website: String.t,
     github: String.t,
-    licenses: [String.t]
+    licenses: [String.t],
+    release_retrieval: String.t,
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
@@ -18,6 +19,7 @@ defmodule ReleasePing.Core.Software do
     field :website, :string
     field :github, :string
     field :licenses, {:array, :string}
+    field :release_retrieval, :string
 
     timestamps()
   end

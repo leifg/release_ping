@@ -5,5 +5,6 @@ defmodule ReleasePing.Core.Commands.AddSoftware do
     website: nil,
     github: nil,
     licenses: [],
+    release_retrieval: nil,
   ]
 end
