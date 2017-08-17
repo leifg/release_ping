@@ -15,7 +15,8 @@ defmodule ReleasePing.Core do
       name: attrs[:name],
       website: attrs[:website],
       github: attrs[:github],
-      licenses: attrs[:licenses]
+      licenses: attrs[:licenses],
+      release_retrieval: attrs[:release_retrieval],
     }
       |> Router.dispatch()
       |> case do

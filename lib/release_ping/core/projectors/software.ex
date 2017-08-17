@@ -12,6 +12,7 @@ defmodule ReleasePing.Core.Projectors.Software do
       website: added.website,
       github: added.github,
       licenses: added.licenses,
+      release_retrieval: added.release_retrieval,
     })
   end
 

@@ -3,16 +3,18 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Commands.AddSoftware
   alias ReleasePing.Core.Events.SoftwareAdded
 
+  @type release_retrieval :: :github_poller
+
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
-    releases: [String.t],
+    release_retrieval: release_retrieval,
   }
 
-  defstruct [:uuid, :name, :website, :github, :releases, :licenses]
+  defstruct [:uuid, :name, :website, :github, :licenses, :release_retrieval]
 
   @doc """
   Creates software
@@ -24,6 +26,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       website: add.website,
       github: add.github,
       licenses: add.licenses,
+      release_retrieval: add.release_retrieval,
     }
   end
 
@@ -36,7 +39,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       website: added.website,
       github: added.github,
       licenses: added.licenses,
-      releases: [],
+      release_retrieval: added.release_retrieval,
     }
   end
 end

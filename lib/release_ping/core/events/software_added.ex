@@ -6,5 +6,6 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
     website: nil,
     github: nil,
     licenses: [],
+    release_retrieval: nil,
   ]
 end
