@@ -9,7 +9,6 @@ defmodule ReleasePing.Factory do
       website: "https://elixir-lang.org",
       github: "elixir-lang/elixir",
       licenses: ["MIT"],
-      releases: [],
     }
   end
 

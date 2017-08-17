@@ -9,10 +9,9 @@ defmodule ReleasePing.Core.Aggregates.Software do
     website: String.t,
     github: String.t,
     licenses: [String.t],
-    releases: [String.t],
   }
 
-  defstruct [:uuid, :name, :website, :github, :releases, :licenses]
+  defstruct [:uuid, :name, :website, :github, :licenses]
 
   @doc """
   Creates software
@@ -36,7 +35,6 @@ defmodule ReleasePing.Core.Aggregates.Software do
       website: added.website,
       github: added.github,
       licenses: added.licenses,
-      releases: [],
     }
   end
 end
