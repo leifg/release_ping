@@ -4,10 +4,10 @@ NEW_VERSION=$1
 BUILD_NUM=$2
 STARTING_TIMEOUT=2
 
-NEW_CONTAINER_NAME=releaseping-${BUILD_NUM}
+NEW_CONTAINER_NAME=release-ping-${BUILD_NUM}
 echo "Starting New Container ${NEW_CONTAINER_NAME}"
 
-PREV_RUNNING_CONTAINER_ID=$(hyper ps | grep releaseping | head -n 1 | awk '{print $1}')
+PREV_RUNNING_CONTAINER_ID=$(hyper ps | grep release-ping | head -n 1 | awk '{print $1}')
 
 echo "Create EventStore"
 
