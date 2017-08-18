@@ -12,7 +12,7 @@ PREV_RUNNING_CONTAINER_ID=$(hyper ps | grep releaseping | head -n 1 | awk '{prin
 echo "Create EventStore"
 
 hyper run --rm \
-  --size=s2 \
+  --size=s4 \
   -e REPLACE_OS_VARS=true \
   -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
   -e POSTGRES_HOST=${POSTGRES_HOST} \
@@ -23,7 +23,7 @@ hyper run --rm \
 echo "Run Migrations"
 
 hyper run --rm \
-  --size=s2 \
+  --size=s4 \
   -e REPLACE_OS_VARS=true \
   -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
   -e POSTGRES_HOST=${POSTGRES_HOST} \
@@ -33,7 +33,7 @@ hyper run --rm \
   migrate
 
 hyper run -d \
-  --size=s2 \
+  --size=s4 \
   --name ${NEW_CONTAINER_NAME} \
   -e REPLACE_OS_VARS=true \
   -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
