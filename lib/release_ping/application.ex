@@ -1,5 +1,6 @@
 defmodule ReleasePing.Application do
   use Application
+  require Logger
 
   def start(_type, _args) do
     import Supervisor.Spec
@@ -9,9 +10,13 @@ defmodule ReleasePing.Application do
 
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
       worker(ReleasePing.Core.Projectors.Release, [], id: :release_projector),
+      worker(ReleasePing.Core.Projectors.GithubReleasePoller, [], id: :github_release_poller_projector),
     ]
 
     opts = [strategy: :one_for_one, name: ReleasePing.Supervisor]
+
+    Logger.info("Starting Application")
+
     Supervisor.start_link(children, opts)
   end
 end

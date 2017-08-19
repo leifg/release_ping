@@ -8,7 +8,7 @@ defmodule ReleasePing.Factory do
       name: "elixir",
       website: "https://elixir-lang.org",
       github: "elixir-lang/elixir",
-      release_retrieval: :github_poller,
+      release_retrieval: :github_release_poller,
       licenses: ["MIT"],
     }
   end

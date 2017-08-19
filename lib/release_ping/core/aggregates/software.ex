@@ -3,7 +3,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Commands.AddSoftware
   alias ReleasePing.Core.Events.SoftwareAdded
 
-  @type release_retrieval :: :github_poller
+  @type release_retrieval :: :github_release_poller
 
   @type t :: %__MODULE__{
     uuid: String.t,

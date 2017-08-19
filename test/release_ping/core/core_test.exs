@@ -12,11 +12,29 @@ defmodule ReleasePing.CoreTest do
     test "succeeds with valid data" do
       assert {:ok, %Software{} = software} = Core.add_software(build(:software))
 
+      refute is_nil(software.uuid)
       assert software.name == "elixir"
       assert software.website == "https://elixir-lang.org"
       assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
-      assert software.release_retrieval == "github_poller"
+      assert software.release_retrieval == "github_release_poller"
+    end
+
+    @tag :integration
+    test "updates github pollers" do
+      assert {:ok, %Software{} = software} = Core.add_software(build(:software))
+
+      [poller] = Core.github_release_pollers()
+
+      assert poller.software_uuid == software.uuid
+      assert poller.repository == "elixir-lang/elixir"
+    end
+
+    @tag :integration
+    test "does not update github pollers when release_retrieval is different" do
+      assert {:ok, %Software{}} = Core.add_software(build(:software, release_retrieval: :somehow))
+
+      assert [] == Core.github_release_pollers()
     end
   end
 

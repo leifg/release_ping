@@ -33,6 +33,8 @@ defmodule ReleasePing.Storage do
 """
 TRUNCATE TABLE
   software,
+  release,
+  github_release_pollers,
   projection_versions
 RESTART IDENTITY;
 """
