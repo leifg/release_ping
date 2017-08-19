@@ -16,7 +16,7 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"${PRODUCTION_COOKIE}"
+  set vm_args: "rel/vm.args"
 end
 
 release :release_ping do
