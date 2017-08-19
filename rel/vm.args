@@ -1,5 +1,5 @@
 ## Node name
--name <%= release_name %>@${HOSTNAME}
+-name <%= release_name %>@${HOSTNAME}.hypernetes
 
 ## Node cookie, used for distribution
 -setcookie ${PRODUCTION_COOKIE}
