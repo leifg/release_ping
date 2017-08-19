@@ -1,5 +1,5 @@
 ## Node name
--name <%= release_name %>@${IP_ADDR}
+-name <%= release_name %>@${HOSTNAME}
 
 ## Node cookie, used for distribution
 -setcookie ${PRODUCTION_COOKIE}
