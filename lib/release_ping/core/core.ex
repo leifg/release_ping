@@ -1,6 +1,6 @@
 defmodule ReleasePing.Core do
   alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
-  alias ReleasePing.Core.{Release, Software}
+  alias ReleasePing.Core.{Release, GithubReleasePoller, Software}
   alias ReleasePing.{Router, Wait, Repo}
 
   @doc """
@@ -28,7 +28,7 @@ defmodule ReleasePing.Core do
   @doc """
   Publish a Release
   """
-  @spec publish_release(map) :: :ok | {:error, any}
+  @spec publish_release(map) :: Release.t | {:error, any}
   def publish_release(attrs) do
     uuid = UUID.uuid4()
 
@@ -46,5 +46,13 @@ defmodule ReleasePing.Core do
         :ok -> Wait.until(fn -> Repo.get(Release, uuid) end)
         reply -> reply
       end
+  end
+
+  @doc """
+  Get all existing github pollers
+  """
+  @spec github_release_pollers :: any
+  def github_release_pollers do
+    Repo.all(GithubReleasePoller)
   end
 end
