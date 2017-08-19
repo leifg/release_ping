@@ -5,7 +5,8 @@ RUN apk add --no-cache ncurses-libs openssl postgresql-client
 
 ARG VERSION
 
+ADD deployment/app.sh /usr/local/bin/app
 ADD _build/prod/rel/release_ping/releases/${VERSION}/release_ping.tar.gz /app
 
-ENTRYPOINT ["app/bin/release_ping"]
+ENTRYPOINT ["/usr/local/bin/app"]
 CMD ["foreground"]
