@@ -1,5 +1,6 @@
 defmodule ReleasePing.Application do
   use Application
+  require Logger
 
   def start(_type, _args) do
     import Supervisor.Spec
@@ -12,6 +13,9 @@ defmodule ReleasePing.Application do
     ]
 
     opts = [strategy: :one_for_one, name: ReleasePing.Supervisor]
+
+    Logger.info("Starting Application")
+
     Supervisor.start_link(children, opts)
   end
 end
