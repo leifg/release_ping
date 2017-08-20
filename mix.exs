@@ -35,6 +35,7 @@ defmodule ReleasePing.Mixfile do
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.4", runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
     ]
   end
 end
