@@ -9,17 +9,6 @@ echo "Starting New Container ${NEW_CONTAINER_NAME}"
 
 PREV_RUNNING_CONTAINER_ID=$(hyper ps | grep release-ping | head -n 1 | awk '{print $1}')
 
-echo "Create EventStore"
-
-hyper run --rm \
-  --size=s4 \
-  -e REPLACE_OS_VARS=true \
-  -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
-  -e POSTGRES_HOST=${POSTGRES_HOST} \
-  -e POSTGRES_USER=${POSTGRES_USER} \
-  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-  leifg/release_ping:${NEW_VERSION} \
-  db.create
 echo "Run Migrations"
 
 hyper run --rm \
