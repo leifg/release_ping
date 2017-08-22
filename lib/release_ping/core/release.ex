@@ -15,7 +15,7 @@ defmodule ReleasePing.Core.Release do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
 
-  schema "release" do
+  schema "releases" do
     field :stream_version, :integer
     field :version_string, :string
     field :software_uuid, :binary_id
