@@ -17,7 +17,7 @@ defmodule ReleasePing.CoreTest do
       assert software.website == "https://elixir-lang.org"
       assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
-      assert software.release_retrieval == "github_release_poller"
+      assert software.release_retrieval == :github_release_poller
     end
 
     @tag :integration
@@ -34,7 +34,7 @@ defmodule ReleasePing.CoreTest do
 
     @tag :integration
     test "does not update github pollers when release_retrieval is different" do
-      assert {:ok, %Software{}} = Core.add_software(build(:software, release_retrieval: :somehow))
+      assert {:ok, %Software{}} = Core.add_software(build(:software, release_retrieval: nil))
 
       assert [] == Core.github_release_pollers()
     end

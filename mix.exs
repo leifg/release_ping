@@ -32,6 +32,7 @@ defmodule ReleasePing.Mixfile do
       {:commanded, "~> 0.13"},
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},
+      {:ecto_enum, "~> 1.0"},
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.4", runtime: false},
