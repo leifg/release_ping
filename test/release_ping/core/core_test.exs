@@ -24,6 +24,8 @@ defmodule ReleasePing.CoreTest do
     test "updates github pollers" do
       assert {:ok, %Software{} = software} = Core.add_software(build(:software))
 
+      Wait.until(fn -> (Core.github_release_pollers() |> length) > 0 end)
+
       [poller] = Core.github_release_pollers()
 
       assert poller.software_uuid == software.uuid
