@@ -17,7 +17,7 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
   defp parser("v" <> _rest_of_version) do
     TagVersion
   end
-  defp parser(version_string) do
+  defp parser(_version_string) do
     PlainVersion
   end
 
