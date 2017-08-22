@@ -21,7 +21,6 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
     PlainVersion
   end
 
-
   @spec parse(String.t) :: t
   def parse(version_string) do
     parser(version_string).parse(version_string)

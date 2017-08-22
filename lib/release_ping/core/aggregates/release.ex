@@ -17,7 +17,6 @@ defmodule ReleasePing.Core.Aggregates.Release do
     pre_release: boolean,
   }
 
-
   defstruct [:uuid, :software_uuid, :name, :version_string, :release_notes_url, :published_at, :seen_at, :pre_release]
 
   @doc """
