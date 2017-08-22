@@ -19,7 +19,7 @@ defmodule ReleasePing.Core.Software do
     field :website, :string
     field :github, :string
     field :licenses, {:array, :string}
-    field :release_retrieval, :string
+    field :release_retrieval, ReleasePing.Enums.ReleaseRetrievalEnum
 
     timestamps()
   end
