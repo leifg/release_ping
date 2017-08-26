@@ -1,8 +1,4 @@
 defmodule ReleasePing.Core.Aggregates.Release do
-  @moduledoc """
-  Router to dispatch commands to the right aggregate
-  """
-
   alias ReleasePing.Core.Aggregates.Release
   alias ReleasePing.Core.Commands.PublishRelease
   alias ReleasePing.Core.Events.ReleasePublished
