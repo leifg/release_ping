@@ -35,6 +35,7 @@ TRUNCATE TABLE
   software,
   releases,
   github_release_pollers,
+  github_endpoints,
   projection_versions
 RESTART IDENTITY;
 """
