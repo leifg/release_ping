@@ -18,7 +18,7 @@ else
   ${base_dir}/steps/build_container.sh ${VERSION}
 
   echo "Push to Docker Hub"
-  ${base_dir}/steps/push_to_docker_hub.sh ${VERSION} ${DOCKER_USER} ${DOCKER_PASS}
+  ${base_dir}/steps/push_to_docker_hub.sh ${VERSION}
 
   echo "Push to Hyper"
   ${base_dir}/steps/push_to_hyper.sh ${VERSION} ${CIRCLE_BUILD_NUM}
