@@ -16,11 +16,19 @@ defmodule ReleasePing.AggregateCase do
         assert_events(%@aggregate{}, commands, expected_events)
       end
 
-      defp assert_events(aggregate, commands, expected_events) do
-        {_aggregate, events, error} = execute(commands, aggregate)
+      defp assert_events(aggregate, commands, assertion_fun) when is_function(assertion_fun) do
+        {aggregate, events, error} = execute(commands, aggregate)
 
-        assert is_nil(error)
-        assert List.wrap(events) == expected_events
+        assertion_fun.(aggregate, events, error)
+      end
+
+      defp assert_events(aggregate, commands, expected_events) do
+        assertion_fun = fn(_predicate_aggregate, predicate_events, predicate_error) ->
+          assert is_nil(predicate_error)
+          assert List.wrap(predicate_events) == expected_events
+        end
+
+        assert_events(aggregate, commands, assertion_fun)
       end
 
       defp assert_error(commands, expected_error) do
@@ -28,9 +36,11 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp assert_error(aggregate, commands, expected_error) do
-        {_aggregate, _events, error} = execute(commands, aggregate)
+        assertion_fun = fn(_predicate_aggregate, predicate_events, predicate_error) ->
+          assert predicate_error == expected_error
+        end
 
-        assert error == expected_error
+        assert_events(aggregate, commands, assertion_fun)
       end
 
       # execute one or more commands against an aggregate
