@@ -46,32 +46,48 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
 
     @tag :integration
     test "succeeds with valid data", %{aggregate: aggregate} do
+      github_uuid = aggregate.uuid
+
       command = %PollGithubReleases{
+        github_uuid: github_uuid,
         repo_owner: "elixir-lang",
         repo_name: "elixir",
       }
 
-      assert_events(aggregate, command, [
-        %GithubApiCalled{
-          github_uuid: aggregate.uuid,
-          http_url: aggregate.base_url,
-          http_method: "post",
-          http_status_code: 200,
-          content_length: 9125,
-          github_request_id: "F8C0:5192:2E5BCD7:7316E87:59A28E64",
-          rate_limit_cost: 1,
-          rate_limit_total: 5000,
-          rate_limit_remaining: 4999,
-          rate_limit_reset: "2017-08-27T10:15:57Z",
-        },
-        %NewGithubReleasesFound{
-          github_uuid: aggregate.uuid,
-          repo_owner: "elixir-lang",
-          repo_name: "elixir",
-          last_cursor: "Y3Vyc29yOnYyOpHOAAJGkw==",
-          payload: hardcoded_response(),
-        },
-      ])
+      assertion_fun = fn(aggregate, events, _error) ->
+        [
+          %GithubApiCalled{
+            github_uuid: ^github_uuid,
+            http_method: "post",
+            http_status_code: 200,
+            content_length: 9125,
+            github_request_id: "F8C0:5192:2E5BCD7:7316E87:59A28E64",
+            rate_limit_cost: 1,
+            rate_limit_total: 5000,
+            rate_limit_remaining: 4999,
+            rate_limit_reset: "2017-08-27T10:15:57Z",
+          },
+          %NewGithubReleasesFound{
+            github_uuid: ^github_uuid,
+            repo_owner: "elixir-lang",
+            repo_name: "elixir",
+            last_cursor: "Y3Vyc29yOnYyOpHOAAJGkw==",
+            payload: payload,
+          },
+        ] = events
+
+        assert is_map(payload)
+
+        assert aggregate.rate_limit_total == 5000
+        assert aggregate.rate_limit_remaining == 4999
+        assert aggregate.rate_limit_reset == ~N[2017-08-27 10:15:57]
+
+        assert aggregate.last_cursors == %{{"elixir-lang", "elixir"} => "Y3Vyc29yOnYyOpHOAAJGkw=="}
+        assert aggregate.rate_limit_remaining == 4999
+        assert aggregate.rate_limit_reset == ~N[2017-08-27 10:15:57]
+      end
+
+      assert_events(aggregate, command, assertion_fun)
 
       # assert_events build(:pull_github_releases, uuid: uuid), [
       #   %GithubReleasesPolled{
@@ -84,119 +100,5 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
       #   }
       # ]
     end
-  end
-
-  defp hardcoded_response do
-    %{
-      "data" => %{
-        "rateLimit" => %{
-          "cost" => 1,
-          "limit" => 5000,
-          "nodeCount" => 10,
-          "remaining" => 4999,
-          "resetAt" => "2017-08-27T10:15:57Z"
-        },
-        "repository" => %{
-          "releases" => %{
-            "edges" => [
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHNJt0=",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTk5NDk=",
-                  "isDraft" => false,
-                  "name" => "v0.10.0",
-                  "tag" => %{"name" => "v0.10.0"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHNUA8=",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTIwNDk1",
-                  "isDraft" => false,
-                  "name" => "v0.10.1",
-                  "tag" => %{"name" => "v0.10.1"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHNlGw=",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTM3OTk2",
-                  "isDraft" => false,
-                  "name" => "v0.10.2",
-                  "tag" => %{"name" => "v0.10.2"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHN4PA=",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTU3NTg0",
-                  "isDraft" => false, "name" => "v0.10.3",
-                  "tag" => %{"name" => "v0.10.3"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAFDbg==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTgyNzk4",
-                  "isDraft" => false,
-                  "name" => "v0.11.0",
-                  "tag" => %{"name" => "v0.11.0"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAFVfQ==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTg3NDIx",
-                  "isDraft" => false,
-                  "name" => "v0.11.1",
-                  "tag" => %{"name" => "v0.11.1"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAFs6g==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTkzNDE4",
-                  "isDraft" => false,
-                  "name" => "v0.11.2",
-                  "tag" => %{"name" => "v0.11.2"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAHfcA==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTEyMjczNg==",
-                  "isDraft" => false,
-                  "name" => "v0.12.0",
-                  "tag" => %{"name" => "v0.12.0"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAIYvw==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTEzNzQwNw==",
-                  "isDraft" => false,
-                  "name" => "v0.12.1",
-                  "tag" => %{"name" => "v0.12.1"}
-                }
-              },
-              %{
-                "cursor" => "Y3Vyc29yOnYyOpHOAAJGkw==",
-                "node" => %{
-                  "id" => "MDc6UmVsZWFzZTE0OTEzOQ==",
-                  "isDraft" => false,
-                  "name" => "v0.12.2",
-                  "tag" => %{"name" => "v0.12.2"}
-                }
-              }
-            ],
-            "pageInfo" => %{
-              "endCursor" => "Y3Vyc29yOnYyOpHOAAJGkw==",
-              "hasNextPage" => true,
-              "hasPreviousPage" => false,
-              "startCursor" => "Y3Vyc29yOnYyOpHNJt0="}
-            }
-          }
-        }
-      }
   end
 end

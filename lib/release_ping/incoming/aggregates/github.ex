@@ -12,7 +12,7 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
     last_cursors: map,
     rate_limit_total: non_neg_integer,
     rate_limit_remaining: non_neg_integer,
-    rate_limit_reset: DateTime.t,
+    rate_limit_reset: NaiveDateTime.t,
   }
 
   defstruct [
@@ -60,20 +60,19 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
     [github_called_api_event, new_releases_found_event]
   end
 
-  def apply(%__MODULE__{} = github, %GithubApiCalled{} = api_called) do
-    {:ok, datetime_reset, 0} = DateTime.from_iso8601(api_called.rate_limit_reset)
-    %__MODULE__{github |
-      rate_limit_total: api_called.rate_limit_total,
-      rate_limit_remaining: api_called.rate_limit_total,
-      rate_limit_reset: datetime_reset,
-    }
-  end
-
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
     %__MODULE__{github |
       uuid: configured.uuid,
       token: configured.token,
       base_url: configured.base_url,
+    }
+  end
+
+  def apply(%__MODULE__{} = github, %GithubApiCalled{} = api_called) do
+    %__MODULE__{github |
+      rate_limit_total: api_called.rate_limit_total,
+      rate_limit_remaining: api_called.rate_limit_remaining,
+      rate_limit_reset: NaiveDateTime.from_iso8601!(api_called.rate_limit_reset),
     }
   end
 
