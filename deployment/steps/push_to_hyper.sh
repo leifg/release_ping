@@ -4,6 +4,8 @@ NEW_VERSION=$1
 BUILD_NUM=$2
 STARTING_TIMEOUT=2
 
+hyper login -u ${DOCKER_USER} -e ${DOCKER_EMAIL} -p ${DOCKER_PASS}
+
 NEW_CONTAINER_NAME=release-ping-${BUILD_NUM}
 echo "Starting New Container ${NEW_CONTAINER_NAME}"
 
