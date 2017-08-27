@@ -34,7 +34,13 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
   end
 
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
-    res = external_call_github_releases(aggregate.base_url, aggregate.token, last_cursor(aggregate, poll.repo_owner, poll.repo_name))
+    res = ReleasePing.Github.ApiV4.releases(
+      aggregate.base_url,
+      aggregate.token,
+      poll.repo_owner,
+      poll.repo_name,
+      last_cursor(aggregate, poll.repo_owner, poll.repo_name)
+    )
 
     github_called_api_event = %GithubApiCalled{
       github_uuid: aggregate.uuid,
@@ -88,176 +94,10 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
     }
   end
 
-  defp external_call_github_releases(_url, _token, _last_cursor) do
-    %Tesla.Env{
-      url: "https://api.github.com/graphql",
-      method: :post,
-      status: 200,
-      headers: %{
-        "access-control-allow-origin" => "*",
-        "access-control-expose-headers" => "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval",
-        "cache-control" => "no-cache", "content-length" => "9125",
-        "content-security-policy" => "default-src 'none'",
-        "content-type" => "application/json; charset=utf-8",
-        "date" => "Sun, 27 Aug 2017 09:18:29 GMT",
-        "server" => "GitHub.com",
-        "status" => "200 OK",
-        "strict-transport-security" => "max-age=31536000; includeSubdomains; preload",
-        "x-accepted-oauth-scopes" => "repo",
-        "x-content-type-options" => "nosniff",
-        "x-frame-options" => "deny",
-        "x-github-media-type" => "github.v4; format=json",
-        "x-github-request-id" => "F8C0:5192:2E5BCD7:7316E87:59A28E64",
-        "x-oauth-scopes" => "",
-        "x-ratelimit-limit" => "5000",
-        "x-ratelimit-remaining" => "4999",
-        "x-ratelimit-reset" => "1503828957",
-        "x-runtime-rack" => "0.122454",
-        "x-xss-protection" => "1; mode=block"
-      },
-      body: canned_response(),
-    }
-  end
-
   defp last_cursor(aggregate, repo_owner, repo_name) do
     aggregate.last_cursors |> Map.get({repo_owner, repo_name})
   end
 
   defp canned_response do
-  """
-    {
-      "data": {
-        "rateLimit": {
-          "cost": 1,
-          "limit": 5000,
-          "nodeCount": 10,
-          "remaining": 4999,
-          "resetAt": "2017-08-27T10:15:57Z"
-        },
-        "repository": {
-          "releases": {
-            "edges": [
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTk5NDk=",
-                  "name": "v0.10.0",
-                  "tag": {
-                    "name": "v0.10.0"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHNJt0="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTIwNDk1",
-                  "name": "v0.10.1",
-                  "tag": {
-                    "name": "v0.10.1"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHNUA8="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTM3OTk2",
-                  "name": "v0.10.2",
-                  "tag": {
-                    "name": "v0.10.2"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHNlGw="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTU3NTg0",
-                  "name": "v0.10.3",
-                  "tag": {
-                    "name": "v0.10.3"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHN4PA="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTgyNzk4",
-                  "name": "v0.11.0",
-                  "tag": {
-                    "name": "v0.11.0"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAFDbg=="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTg3NDIx",
-                  "name": "v0.11.1",
-                  "tag": {
-                    "name": "v0.11.1"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAFVfQ=="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTkzNDE4",
-                  "name": "v0.11.2",
-                  "tag": {
-                    "name": "v0.11.2"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAFs6g=="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTEyMjczNg==",
-                  "name": "v0.12.0",
-                  "tag": {
-                    "name": "v0.12.0"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAHfcA=="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTEzNzQwNw==",
-                  "name": "v0.12.1",
-                  "tag": {
-                    "name": "v0.12.1"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAIYvw=="
-              },
-              {
-                "node": {
-                  "isDraft": false,
-                  "id": "MDc6UmVsZWFzZTE0OTEzOQ==",
-                  "name": "v0.12.2",
-                  "tag": {
-                    "name": "v0.12.2"
-                  }
-                },
-                "cursor": "Y3Vyc29yOnYyOpHOAAJGkw=="
-              }
-            ],
-            "pageInfo": {
-              "endCursor": "Y3Vyc29yOnYyOpHOAAJGkw==",
-              "hasNextPage": true,
-              "hasPreviousPage": false,
-              "startCursor": "Y3Vyc29yOnYyOpHNJt0="
-            }
-          }
-        }
-      }
-    }
-  """
   end
 end
