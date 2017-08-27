@@ -47,11 +47,14 @@ jobs:
           name: Get Dependencies
           command: mix deps.get
       - run:
-          name: Semantic Release
-          command: semantic-release -vf -slug leifg/release_ping -noci || true
+          name: Determine Version
+          command: deployment/determine_release.sh
       - run:
           name: Run Deployment
           command: deployment/deploy.sh
+      - run:
+          name: Semantic Release
+          command: semantic-release -vf -slug leifg/release_ping -noci || true
 
 workflows:
   version: 2
