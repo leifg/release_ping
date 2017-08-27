@@ -68,7 +68,7 @@ defmodule ReleasePing.CoreTest do
       release = build(:release, %{software_uuid: software.uuid})
       assert {:ok, %Release{}} = Core.publish_release(release)
 
-      latest_release_uuid = Wait.until(fn -> Repo.get(Software, software.uuid).latest_release_uuid end)
+      {:ok, latest_release_uuid} = Wait.until(fn -> Repo.get(Software, software.uuid).latest_release_uuid end)
 
       refute is_nil(latest_release_uuid)
     end
