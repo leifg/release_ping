@@ -59,7 +59,7 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
       github_uuid: aggregate.uuid,
       repo_owner: poll.repo_owner,
       repo_name: poll.repo_name,
-      last_cursor: "Y3Vyc29yOnYyOpHOAAJGkw==",
+      last_cursor: "Y3Vyc29yOnYyOpHOAG0tAw==",
       payload: Poison.decode!(res.body),
     }
 
