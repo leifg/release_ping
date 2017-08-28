@@ -16,6 +16,7 @@ echo "Run Migrations"
 hyper run --rm \
   --size=s4 \
   -e REPLACE_OS_VARS=true \
+  -e TIMBER_LOGS_KEY=${TIMBER_LOGS_KEY} \
   -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
   -e POSTGRES_HOST=${POSTGRES_HOST} \
   -e POSTGRES_USER=${POSTGRES_USER} \
@@ -27,6 +28,7 @@ hyper run -d \
   --size=s4 \
   --name ${NEW_CONTAINER_NAME} \
   -e REPLACE_OS_VARS=true \
+  -e TIMBER_LOGS_KEY=${TIMBER_LOGS_KEY} \
   -e PRODUCTION_COOKIE=${PRODUCTION_COOKIE} \
   -e POSTGRES_HOST=${POSTGRES_HOST} \
   -e POSTGRES_USER=${POSTGRES_USER} \

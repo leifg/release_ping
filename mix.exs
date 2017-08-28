@@ -35,6 +35,7 @@ defmodule ReleasePing.Mixfile do
       {:ecto_enum, "~> 1.0"},
       {:tesla, "~> 0.7"},
       {:timex, "~> 3.1"},
+      {:timber, "~> 2.5"},
       {:bypass, "~> 0.8", only: :test},
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
