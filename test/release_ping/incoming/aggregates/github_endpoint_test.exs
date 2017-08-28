@@ -1,12 +1,12 @@
-defmodule ReleasePing.Incoming.Aggregates.GithubTest do
-  alias ReleasePing.Incoming.Aggregates.Github
+defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
+  alias ReleasePing.Incoming.Aggregates.GithubEndpoint
   alias ReleasePing.Incoming.Commands.ConfigureGithubEndpoint
   alias ReleasePing.Incoming.Commands.PollGithubReleases
   alias ReleasePing.Incoming.Events.GithubEndpointConfigured
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
   alias ReleasePing.Incoming.Events.GithubApiCalled
 
-  use ReleasePing.AggregateCase, aggregate: Github
+  use ReleasePing.AggregateCase, aggregate: GithubEndpoint
 
   describe "configure github endpoint" do
     test "succeeds when valid" do

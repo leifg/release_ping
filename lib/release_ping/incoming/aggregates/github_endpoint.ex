@@ -1,4 +1,4 @@
-defmodule ReleasePing.Incoming.Aggregates.Github do
+defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   alias ReleasePing.Incoming.Commands.ConfigureGithubEndpoint
   alias ReleasePing.Incoming.Commands.PollGithubReleases
   alias ReleasePing.Incoming.Events.GithubEndpointConfigured
