@@ -63,23 +63,23 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
       }
 
       assertion_fun = fn(aggregate, events, _error) ->
-        [
+        assert [
           %GithubApiCalled{
             github_uuid: ^github_uuid,
             http_method: "post",
             http_status_code: 200,
-            content_length: 9125,
-            github_request_id: "F8C0:5192:2E5BCD7:7316E87:59A28E64",
+            content_length: 2362,
+            github_request_id: "C35A:2071:642FCB9:CAED084:59A3BAFA",
             rate_limit_cost: 1,
             rate_limit_total: 5000,
-            rate_limit_remaining: 4999,
-            rate_limit_reset: "2017-08-27T10:15:57Z",
+            rate_limit_remaining: 4993,
+            rate_limit_reset: "2017-08-28T07:27:53Z",
           },
           %NewGithubReleasesFound{
             github_uuid: ^github_uuid,
             repo_owner: "elixir-lang",
             repo_name: "elixir",
-            last_cursor: "Y3Vyc29yOnYyOpHOAAJGkw==",
+            last_cursor: "Y3Vyc29yOnYyOpHOAG0tAw==",
             payload: payload,
           },
         ] = events
@@ -87,12 +87,10 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         assert is_map(payload)
 
         assert aggregate.rate_limit_total == 5000
-        assert aggregate.rate_limit_remaining == 4999
-        assert aggregate.rate_limit_reset == ~N[2017-08-27 10:15:57]
+        assert aggregate.rate_limit_remaining == 4993
+        assert aggregate.rate_limit_reset == ~N[2017-08-28 07:27:53]
 
-        assert aggregate.last_cursors == %{{"elixir-lang", "elixir"} => "Y3Vyc29yOnYyOpHOAAJGkw=="}
-        assert aggregate.rate_limit_remaining == 4999
-        assert aggregate.rate_limit_reset == ~N[2017-08-27 10:15:57]
+        assert aggregate.last_cursors == %{{"elixir-lang", "elixir"} => "Y3Vyc29yOnYyOpHOAG0tAw=="}
       end
 
       assert_events(aggregate, command, assertion_fun)
@@ -103,10 +101,10 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
         |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
         |> Plug.Conn.put_resp_header("cache-control", "no-cache")
-        |> Plug.Conn.put_resp_header("content-length", "9125")
+        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
         |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
         |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
-        |> Plug.Conn.put_resp_header("date", "Sun, 27 Aug 2017 09:18:29 GMT")
+        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 06:40:58 GMT")
         |> Plug.Conn.put_resp_header("server", "GitHub.com")
         |> Plug.Conn.put_resp_header("status", "200 OK")
         |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
@@ -114,150 +112,105 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
         |> Plug.Conn.put_resp_header("x-frame-options", "deny")
         |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
-        |> Plug.Conn.put_resp_header("x-github-request-id", "F8C0:5192:2E5BCD7:7316E87:59A28E64")
+        |> Plug.Conn.put_resp_header("x-github-request-id", "C35A:2071:642FCB9:CAED084:59A3BAFA")
         |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
         |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4999")
-        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503828957")
-        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.122454")
+        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4993")
+        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
+        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.053413")
         |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
 
     defp new_releases_json do
       """
-        {
-          "data": {
-            "rateLimit": {
-              "cost": 1,
-              "limit": 5000,
-              "nodeCount": 10,
-              "remaining": 4999,
-              "resetAt": "2017-08-27T10:15:57Z"
-            },
-            "repository": {
-              "releases": {
-                "edges": [
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTk5NDk=",
-                      "name": "v0.10.0",
-                      "tag": {
-                        "name": "v0.10.0"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHNJt0="
+      {
+        "data": {
+          "rateLimit": {
+            "cost": 1,
+            "limit": 5000,
+            "nodeCount": 5,
+            "remaining": 4993,
+            "resetAt": "2017-08-28T07:27:53Z"
+          },
+          "repository": {
+            "releases": {
+              "edges": [
+                {
+                  "node": {
+                    "id": "MDc6UmVsZWFzZTY3OTc3MTg=",
+                    "name": "",
+                    "isDraft": false,
+                    "isPrerelease": false,
+                    "publishedAt": "2017-06-22T08:43:55Z",
+                    "tag": {
+                      "name": "v1.4.5"
+                    }
                   },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTIwNDk1",
-                      "name": "v0.10.1",
-                      "tag": {
-                        "name": "v0.10.1"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHNUA8="
+                  "cursor": "Y3Vyc29yOnYyOpHOAGe5lg=="
+                },
+                {
+                  "node": {
+                    "id": "MDc6UmVsZWFzZTY4MjczMDU=",
+                    "name": "",
+                    "isDraft": false,
+                    "isPrerelease": true,
+                    "publishedAt": "2017-06-25T11:21:53Z",
+                    "tag": {
+                      "name": "v1.5.0-rc.0"
+                    }
                   },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTM3OTk2",
-                      "name": "v0.10.2",
-                      "tag": {
-                        "name": "v0.10.2"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHNlGw="
+                  "cursor": "Y3Vyc29yOnYyOpHOAGgtKQ=="
+                },
+                {
+                  "node": {
+                    "id": "MDc6UmVsZWFzZTcwMTMxNjY=",
+                    "name": "",
+                    "isDraft": false,
+                    "isPrerelease": true,
+                    "publishedAt": "2017-07-12T12:54:03Z",
+                    "tag": {
+                      "name": "v1.5.0-rc.1"
+                    }
                   },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTU3NTg0",
-                      "name": "v0.10.3",
-                      "tag": {
-                        "name": "v0.10.3"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHN4PA="
+                  "cursor": "Y3Vyc29yOnYyOpHOAGsDLg=="
+                },
+                {
+                  "node": {
+                    "id": "MDc6UmVsZWFzZTcxMDYzNTg=",
+                    "name": "",
+                    "isDraft": false,
+                    "isPrerelease": true,
+                    "publishedAt": "2017-07-20T09:51:04Z",
+                    "tag": {
+                      "name": "v1.5.0-rc.2"
+                    }
                   },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTgyNzk4",
-                      "name": "v0.11.0",
-                      "tag": {
-                        "name": "v0.11.0"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAFDbg=="
+                  "cursor": "Y3Vyc29yOnYyOpHOAGxvNg=="
+                },
+                {
+                  "node": {
+                    "id": "MDc6UmVsZWFzZTcxNTQ5NDc=",
+                    "name": "",
+                    "isDraft": false,
+                    "isPrerelease": false,
+                    "publishedAt": "2017-07-25T07:27:16Z",
+                    "tag": {
+                      "name": "v1.5.0"
+                    }
                   },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTg3NDIx",
-                      "name": "v0.11.1",
-                      "tag": {
-                        "name": "v0.11.1"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAFVfQ=="
-                  },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTkzNDE4",
-                      "name": "v0.11.2",
-                      "tag": {
-                        "name": "v0.11.2"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAFs6g=="
-                  },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTEyMjczNg==",
-                      "name": "v0.12.0",
-                      "tag": {
-                        "name": "v0.12.0"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAHfcA=="
-                  },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTEzNzQwNw==",
-                      "name": "v0.12.1",
-                      "tag": {
-                        "name": "v0.12.1"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAIYvw=="
-                  },
-                  {
-                    "node": {
-                      "isDraft": false,
-                      "id": "MDc6UmVsZWFzZTE0OTEzOQ==",
-                      "name": "v0.12.2",
-                      "tag": {
-                        "name": "v0.12.2"
-                      }
-                    },
-                    "cursor": "Y3Vyc29yOnYyOpHOAAJGkw=="
-                  }
-                ],
-                "pageInfo": {
-                  "endCursor": "Y3Vyc29yOnYyOpHOAAJGkw==",
-                  "hasNextPage": true,
-                  "hasPreviousPage": false,
-                  "startCursor": "Y3Vyc29yOnYyOpHNJt0="
+                  "cursor": "Y3Vyc29yOnYyOpHOAG0tAw=="
                 }
+              ],
+              "pageInfo": {
+                "endCursor": "Y3Vyc29yOnYyOpHOAG0tAw==",
+                "hasNextPage": true,
+                "hasPreviousPage": true,
+                "startCursor": "Y3Vyc29yOnYyOpHOAGe5lg=="
               }
             }
           }
         }
+      }
       """
     end
   end

@@ -32,9 +32,11 @@ defmodule ReleasePing.Github.ApiV4 do
         releases(first: #{page_size}, after: #{cursor(last_cursor)}) {
           edges {
             node {
-              isDraft
               id
               name
+              isDraft
+              isPrerelease
+              publishedAt
               tag {
                 name
               }
