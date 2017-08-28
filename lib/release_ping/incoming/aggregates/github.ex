@@ -102,15 +102,21 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
     page_info = payload["data"]["repository"]["releases"]["pageInfo"]
     next_cursor = page_info["endCursor"]
 
-    new_releases_found_event = %NewGithubReleasesFound{
-      github_uuid: aggregate.uuid,
-      repo_owner: poll_comand.repo_owner,
-      repo_name: poll_comand.repo_name,
-      last_cursor: next_cursor,
-      payload: payload
-    }
+    new_releases_found_event = if Enum.empty?payload["data"]["repository"]["releases"]["edges"] do
+      []
+    else
+      [
+        %NewGithubReleasesFound{
+          github_uuid: aggregate.uuid,
+          repo_owner: poll_comand.repo_owner,
+          repo_name: poll_comand.repo_name,
+          last_cursor: next_cursor,
+          payload: payload
+        }
+      ]
+    end
 
-    batch = agg ++ [github_called_api_event, new_releases_found_event]
+    batch = agg ++ [github_called_api_event] ++ new_releases_found_event
 
     if page_info["hasNextPage"] do
       fetch_releases(aggregate, poll_comand, next_cursor, batch)
