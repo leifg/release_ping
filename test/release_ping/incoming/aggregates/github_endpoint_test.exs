@@ -38,13 +38,14 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
 
       bypass = Bypass.open
 
-      command = %ConfigureGithubEndpoint{
+      event = %GithubEndpointConfigured{
         uuid: uuid,
         token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
         base_url: "http://localhost:#{bypass.port}",
       }
 
-      {aggregate, _events, _error} = execute(command)
+      aggregate = evolve(event)
+
       {:ok, %{aggregate: aggregate, bypass: bypass}}
     end
 

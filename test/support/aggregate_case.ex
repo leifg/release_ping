@@ -59,6 +59,10 @@ defmodule ReleasePing.AggregateCase do
       end
 
       # apply the given events to the aggregate state
+      defp evolve(events) do
+        evolve(%@aggregate{}, events)
+      end
+
       defp evolve(aggregate, events) do
         events
         |> List.wrap()
