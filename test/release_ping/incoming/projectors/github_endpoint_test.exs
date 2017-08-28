@@ -14,6 +14,9 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpointTest do
         uuid: uuid,
         base_url: "https://api.github.com/",
         token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
+        rate_limit_total: 5000,
+        rate_limit_remaining: 4999,
+        rate_limit_reset: Timex.shift(DateTime.utc_now(), seconds: -1) |> DateTime.to_iso8601(),
       }
 
       GithubEndpoint.handle(event, %{stream_version: 1, event_number: 1})
@@ -21,7 +24,7 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpointTest do
       github_endpoint = Repo.get(ReleasePing.Incoming.GithubEndpoint, uuid)
 
       assert github_endpoint.rate_limit_total == 5000
-      assert github_endpoint.rate_limit_remaining == 5000
+      assert github_endpoint.rate_limit_remaining == 4999
       assert DateTime.compare(github_endpoint.rate_limit_reset, DateTime.utc_now()) == :lt
 
       event = %GithubApiCalled{
