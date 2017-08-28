@@ -8,9 +8,9 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpoint do
     Ecto.Multi.insert(multi, :github_endpoints, %GithubEndpoint{
       uuid: configured.uuid,
       stream_version: stream_version,
-      rate_limit_total: 5000,
-      rate_limit_remaining: 5000,
-      rate_limit_reset: DateTime.utc_now(),
+      rate_limit_total: configured.rate_limit_total,
+      rate_limit_remaining: configured.rate_limit_remaining,
+      rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset),
     })
   end
 

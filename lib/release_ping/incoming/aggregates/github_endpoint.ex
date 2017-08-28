@@ -5,6 +5,8 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   alias ReleasePing.Incoming.Events.GithubApiCalled
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
 
+  alias ReleasePing.Github.ApiV4
+
   @type t :: %__MODULE__{
     uuid: String.t,
     token: String.t,
@@ -26,10 +28,18 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   ]
 
   def execute(%__MODULE__{}, %ConfigureGithubEndpoint{} = configure) do
+    res = ApiV4.rate_limit(configure.base_url, configure.token)
+
+    payload = Poison.decode!(res.body)
+    rate_limit = payload["resources"]["graphql"]
+
     %GithubEndpointConfigured{
       uuid: configure.uuid,
       token: configure.token,
       base_url: configure.base_url,
+      rate_limit_total: rate_limit["limit"],
+      rate_limit_remaining: rate_limit["remaining"],
+      rate_limit_reset: rate_limit["reset"] |> DateTime.from_unix!() |> DateTime.to_iso8601(),
     }
   end
 
@@ -47,6 +57,9 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       uuid: configured.uuid,
       token: configured.token,
       base_url: configured.base_url,
+      rate_limit_total: configured.rate_limit_total,
+      rate_limit_remaining: configured.rate_limit_remaining,
+      rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset),
     }
   end
 
@@ -75,7 +88,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   end
 
   defp fetch_releases(aggregate, poll_comand, last_cursor, agg) do
-    res = ReleasePing.Github.ApiV4.releases(
+    res = ApiV4.releases(
       aggregate.base_url,
       aggregate.token,
       poll_comand.repo_owner,

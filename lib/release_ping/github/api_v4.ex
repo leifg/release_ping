@@ -10,6 +10,10 @@ defmodule ReleasePing.Github.ApiV4 do
     Tesla.post("#{base_url}/graphql", body, headers: headers(api_key))
   end
 
+  def rate_limit(base_url, api_key) do
+    Tesla.get("#{base_url}/rate_limit", headers: headers(api_key))
+  end
+
   def headers(api_key) do
     %{
       "authorization" => "bearer #{api_key}",
