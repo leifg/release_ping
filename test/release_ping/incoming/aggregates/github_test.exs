@@ -49,7 +49,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
     end
 
     @tag :integration
-    test "succeeds with valid data", %{aggregate: aggregate, bypass: bypass} do
+    test "succeeds with new releases", %{aggregate: aggregate, bypass: bypass} do
       Bypass.expect bypass, "POST", "/graphql", fn conn ->
         {:ok, body, conn} = Plug.Conn.read_body(conn)
         page = case Regex.named_captures(@cursor_regex, body) do
@@ -70,7 +70,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         repo_name: "elixir",
       }
 
-      assertion_fun = fn(aggregate, events, _error) ->
+      assertion_fun = fn(inner_aggregate, events, _error) ->
         assert [
           %GithubApiCalled{
             github_uuid: ^github_uuid,
@@ -113,11 +113,46 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         assert is_map(payload_1)
         assert is_map(payload_2)
 
-        assert aggregate.rate_limit_total == 5000
-        assert aggregate.rate_limit_remaining == 4992
-        assert aggregate.rate_limit_reset == ~N[2017-08-28 07:27:53]
+        assert inner_aggregate.rate_limit_total == 5000
+        assert inner_aggregate.rate_limit_remaining == 4992
+        assert inner_aggregate.rate_limit_reset == ~N[2017-08-28 07:27:53]
 
-        assert aggregate.last_cursors == %{{"elixir-lang", "elixir"} => "Y3Vyc29yOnYyOpHOAG6Jng=="}
+        assert inner_aggregate.last_cursors == %{{"elixir-lang", "elixir"} => "Y3Vyc29yOnYyOpHOAG6Jng=="}
+      end
+
+      assert_events(aggregate, command, assertion_fun)
+    end
+
+    test "suceeds without new releases", %{aggregate: aggregate, bypass: bypass} do
+      Bypass.expect bypass, "POST", "/graphql", fn conn ->
+
+        conn
+          |> no_new_releases_connection_with_headers()
+          |> Plug.Conn.resp(200, no_new_releases_json())
+      end
+
+      github_uuid = aggregate.uuid
+
+      command = %PollGithubReleases{
+        github_uuid: github_uuid,
+        repo_owner: "elixir-lang",
+        repo_name: "elixir",
+      }
+
+      assertion_fun = fn(_aggregate, events, _error) ->
+        assert [
+          %GithubApiCalled{
+            github_uuid: ^github_uuid,
+            http_method: "post",
+            http_status_code: 200,
+            content_length: 404,
+            github_request_id: "C16E:2071:6FF1EE4:E38B049:59A485F3",
+            rate_limit_cost: 1,
+            rate_limit_total: 5000,
+            rate_limit_remaining: 4999,
+            rate_limit_reset: "2017-08-28T22:06:59Z",
+          },
+        ] = events
       end
 
       assert_events(aggregate, command, assertion_fun)
@@ -170,6 +205,31 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
         |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4992")
         |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
         |> Plug.Conn.put_resp_header("x-runtime-rack", "0.055600")
+        |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
+    end
+
+    defp no_new_releases_connection_with_headers(conn) do
+      conn
+        |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
+        |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
+        |> Plug.Conn.put_resp_header("cache-control", "no-cache")
+        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
+        |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
+        |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
+        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 21:06:59 GMT")
+        |> Plug.Conn.put_resp_header("server", "GitHub.com")
+        |> Plug.Conn.put_resp_header("status", "200 OK")
+        |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
+        |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
+        |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
+        |> Plug.Conn.put_resp_header("x-frame-options", "deny")
+        |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
+        |> Plug.Conn.put_resp_header("x-github-request-id", "C16E:2071:6FF1EE4:E38B049:59A485F3")
+        |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
+        |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
+        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4999")
+        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503958019")
+        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.048417")
         |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
 
@@ -299,6 +359,33 @@ defmodule ReleasePing.Incoming.Aggregates.GithubTest do
                 "hasNextPage": false,
                 "hasPreviousPage": true,
                 "startCursor": "Y3Vyc29yOnYyOpHOAG6Jng=="
+              }
+            }
+          }
+        }
+      }
+      """
+    end
+
+    defp no_new_releases_json do
+      """
+      {
+        "data": {
+          "rateLimit": {
+            "cost": 1,
+            "limit": 5000,
+            "nodeCount": 5,
+            "remaining": 4999,
+            "resetAt": "2017-08-28T22:06:59Z"
+          },
+          "repository": {
+            "releases": {
+              "edges": [],
+              "pageInfo": {
+                "endCursor": null,
+                "hasNextPage": false,
+                "hasPreviousPage": true,
+                "startCursor": null
               }
             }
           }
