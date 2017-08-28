@@ -34,36 +34,12 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
   end
 
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
-    res = ReleasePing.Github.ApiV4.releases(
-      aggregate.base_url,
-      aggregate.token,
-      poll.repo_owner,
-      poll.repo_name,
-      last_cursor(aggregate, poll.repo_owner, poll.repo_name)
+    fetch_releases(
+      aggregate,
+      poll,
+      last_cursor(aggregate, poll.repo_owner, poll.repo_name),
+      []
     )
-
-    github_called_api_event = %GithubApiCalled{
-      github_uuid: aggregate.uuid,
-      http_url: res.url,
-      http_method: to_string(res.method),
-      http_status_code: res.status,
-      content_length: res.headers["content-length"] |> String.to_integer(),
-      github_request_id: res.headers["x-github-request-id"],
-      rate_limit_cost: 1,
-      rate_limit_total: res.headers["x-ratelimit-limit"] |> String.to_integer(),
-      rate_limit_remaining: res.headers["x-ratelimit-remaining"] |> String.to_integer(),
-      rate_limit_reset: res.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!() |> DateTime.to_iso8601(),
-    }
-
-    new_releases_found_event = %NewGithubReleasesFound{
-      github_uuid: aggregate.uuid,
-      repo_owner: poll.repo_owner,
-      repo_name: poll.repo_name,
-      last_cursor: "Y3Vyc29yOnYyOpHOAG0tAw==",
-      payload: Poison.decode!(res.body),
-    }
-
-    [github_called_api_event, new_releases_found_event]
   end
 
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
@@ -98,6 +74,48 @@ defmodule ReleasePing.Incoming.Aggregates.Github do
     aggregate.last_cursors |> Map.get({repo_owner, repo_name})
   end
 
-  defp canned_response do
+  defp fetch_releases(aggregate, poll_comand, last_cursor, agg) do
+    res = ReleasePing.Github.ApiV4.releases(
+      aggregate.base_url,
+      aggregate.token,
+      poll_comand.repo_owner,
+      poll_comand.repo_name,
+      last_cursor
+    )
+
+    payload = Poison.decode!(res.body)
+    rate_limit = payload["data"]["rateLimit"]
+
+    github_called_api_event = %GithubApiCalled{
+      github_uuid: aggregate.uuid,
+      http_url: res.url,
+      http_method: to_string(res.method),
+      http_status_code: res.status,
+      content_length: res.headers["content-length"] |> String.to_integer(),
+      github_request_id: res.headers["x-github-request-id"],
+      rate_limit_cost: rate_limit["cost"],
+      rate_limit_total: res.headers["x-ratelimit-limit"] |> String.to_integer(),
+      rate_limit_remaining: res.headers["x-ratelimit-remaining"] |> String.to_integer(),
+      rate_limit_reset: res.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!() |> DateTime.to_iso8601(),
+    }
+
+    page_info = payload["data"]["repository"]["releases"]["pageInfo"]
+    next_cursor = page_info["endCursor"]
+
+    new_releases_found_event = %NewGithubReleasesFound{
+      github_uuid: aggregate.uuid,
+      repo_owner: poll_comand.repo_owner,
+      repo_name: poll_comand.repo_name,
+      last_cursor: next_cursor,
+      payload: payload
+    }
+
+    batch = agg ++ [github_called_api_event, new_releases_found_event]
+
+    if page_info["hasNextPage"] do
+      fetch_releases(aggregate, poll_comand, next_cursor, batch)
+    else
+      batch
+    end
   end
 end
