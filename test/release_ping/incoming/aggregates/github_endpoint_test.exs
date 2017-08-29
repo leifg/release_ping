@@ -129,8 +129,8 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
           },
         ] = events
 
-        assert is_map(payload_1)
-        assert is_map(payload_2)
+        assert is_list(payload_1)
+        assert is_list(payload_2)
 
         assert inner_aggregate.rate_limit_total == 5000
         assert inner_aggregate.rate_limit_remaining == 4992

@@ -113,9 +113,10 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     }
 
     page_info = payload["data"]["repository"]["releases"]["pageInfo"]
+    releases = payload["data"]["repository"]["releases"]["edges"]
     next_cursor = page_info["endCursor"]
 
-    new_releases_found_event = if Enum.empty?payload["data"]["repository"]["releases"]["edges"] do
+    new_releases_found_event = if Enum.empty?(releases) do
       []
     else
       [
@@ -124,7 +125,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
           repo_owner: poll_comand.repo_owner,
           repo_name: poll_comand.repo_name,
           last_cursor: next_cursor,
-          payload: payload
+          payload: releases
         }
       ]
     end
