@@ -84,6 +84,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
       github_uuid = aggregate.uuid
 
       command = %PollGithubReleases{
+        uuid: UUID.uuid4(),
         github_uuid: github_uuid,
         repo_owner: "elixir-lang",
         repo_name: "elixir",
@@ -95,6 +96,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
 
         assert [
           %GithubApiCalled{
+            uuid: uuid1,
             github_uuid: ^github_uuid,
             http_method: "post",
             http_status_code: 200,
@@ -106,6 +108,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             rate_limit_reset: "2017-08-28T07:27:53Z",
           },
           %NewGithubReleasesFound{
+            uuid: uuid2,
             github_uuid: ^github_uuid,
             repo_owner: "elixir-lang",
             repo_name: "elixir",
@@ -113,6 +116,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             payload: payload_1,
           },
           %GithubApiCalled{
+            uuid: uuid3,
             github_uuid: ^github_uuid,
             http_method: "post",
             http_status_code: 200,
@@ -124,6 +128,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             rate_limit_reset: "2017-08-28T07:27:53Z",
           },
           %NewGithubReleasesFound{
+            uuid: uuid4,
             github_uuid: ^github_uuid,
             repo_owner: "elixir-lang",
             repo_name: "elixir",
@@ -134,6 +139,11 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
 
         assert is_list(payload_1)
         assert is_list(payload_2)
+
+        refute is_nil(uuid1)
+        refute is_nil(uuid2)
+        refute is_nil(uuid3)
+        refute is_nil(uuid4)
 
         assert inner_aggregate.rate_limit_total == 5000
         assert inner_aggregate.rate_limit_remaining == 4992

@@ -101,6 +101,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     rate_limit = payload["data"]["rateLimit"]
 
     github_called_api_event = %GithubApiCalled{
+      uuid: UUID.uuid4(),
       github_uuid: aggregate.uuid,
       http_url: res.url,
       http_method: to_string(res.method),
@@ -122,6 +123,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     else
       [
         %NewGithubReleasesFound{
+          uuid: UUID.uuid4(),
           github_uuid: aggregate.uuid,
           repo_owner: poll_comand.repo_owner,
           repo_name: poll_comand.repo_name,
