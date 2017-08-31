@@ -27,7 +27,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     rate_limit_reset: nil,
   ]
 
-  def execute(%__MODULE__{}, %ConfigureGithubEndpoint{} = configure) do
+  def execute(%__MODULE__{uuid: nil}, %ConfigureGithubEndpoint{} = configure) do
     res = ApiV4.rate_limit(configure.base_url, configure.token)
 
     payload = Poison.decode!(res.body)
@@ -42,6 +42,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       rate_limit_reset: rate_limit["reset"] |> DateTime.from_unix!() |> DateTime.to_iso8601(),
     }
   end
+  def execute(%__MODULE__{}, %ConfigureGithubEndpoint{}), do: {:error, :github_endpoint_already_exists}
 
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
     fetch_releases(
