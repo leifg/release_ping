@@ -2,6 +2,7 @@ defmodule ReleasePing.Incoming.Events.GithubApiCalled do
   @derive [Poison.Encoder]
 
   @type t :: %__MODULE__{
+    uuid: String.t,
     github_uuid: String.t,
     http_url: String.t,
     http_method: String.t,
@@ -15,6 +16,7 @@ defmodule ReleasePing.Incoming.Events.GithubApiCalled do
   }
 
   defstruct [
+    :uuid,
     :github_uuid,
     :http_url,
     :http_method,
