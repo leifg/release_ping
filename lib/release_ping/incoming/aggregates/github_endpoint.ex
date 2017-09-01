@@ -48,7 +48,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     fetch_releases(
       aggregate,
       poll,
-      last_cursor(aggregate, poll.repo_owner, poll.repo_name),
+      last_cursor_releases(aggregate, poll.repo_owner, poll.repo_name),
       []
     )
   end
@@ -76,7 +76,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     updated_last_cursors = Map.put(
       github.last_cursors,
       {new_releases.repo_owner, new_releases.repo_name},
-      new_releases.last_cursor
+      new_releases.last_cursor_releases
     )
 
     %__MODULE__{github |
@@ -84,17 +84,17 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     }
   end
 
-  defp last_cursor(aggregate, repo_owner, repo_name) do
+  defp last_cursor_releases(aggregate, repo_owner, repo_name) do
     aggregate.last_cursors |> Map.get({repo_owner, repo_name})
   end
 
-  defp fetch_releases(aggregate, poll_comand, last_cursor, agg) do
+  defp fetch_releases(aggregate, poll_comand, last_cursor_releases, agg) do
     res = ApiV4.releases(
       aggregate.base_url,
       aggregate.token,
       poll_comand.repo_owner,
       poll_comand.repo_name,
-      last_cursor
+      last_cursor_releases
     )
 
     payload = Poison.decode!(res.body)
@@ -127,7 +127,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
           github_uuid: aggregate.uuid,
           repo_owner: poll_comand.repo_owner,
           repo_name: poll_comand.repo_name,
-          last_cursor: next_cursor,
+          last_cursor_releases: next_cursor,
           payload: releases
         }
       ]

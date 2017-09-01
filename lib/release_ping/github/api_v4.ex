@@ -1,9 +1,9 @@
 defmodule ReleasePing.Github.ApiV4 do
   @default_page_size 100
 
-  def releases(base_url, api_key, repo_owner, repo_name, last_cursor) do
+  def releases(base_url, api_key, repo_owner, repo_name, last_cursor_releases) do
     body = Poison.encode!(
-      %{query: release_query(repo_owner, repo_name, @default_page_size, last_cursor)},
+      %{query: release_query(repo_owner, repo_name, @default_page_size, last_cursor_releases)},
       iodata: true,
     )
 
@@ -22,7 +22,7 @@ defmodule ReleasePing.Github.ApiV4 do
     }
   end
 
-  defp release_query(repo_owner, repo_name, page_size, last_cursor) do
+  defp release_query(repo_owner, repo_name, page_size, last_cursor_releases) do
     """
     query {
       rateLimit {
@@ -33,7 +33,7 @@ defmodule ReleasePing.Github.ApiV4 do
         resetAt
       }
       repository(owner: "#{repo_owner}", name: "#{repo_name}") {
-        releases(first: #{page_size}, after: #{cursor(last_cursor)}) {
+        releases(first: #{page_size}, after: #{cursor(last_cursor_releases)}) {
           edges {
             node {
               id
