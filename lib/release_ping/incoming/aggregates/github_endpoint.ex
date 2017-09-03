@@ -6,6 +6,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
 
   alias ReleasePing.Github.ApiV4
+  alias ReleasePing.Github.ReleaseRequest
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -45,12 +46,14 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   def execute(%__MODULE__{}, %ConfigureGithubEndpoint{}), do: {:error, :github_endpoint_already_exists}
 
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
-    fetch_releases(
-      aggregate,
-      poll,
-      last_cursor_releases(aggregate, poll.repo_owner, poll.repo_name),
-      []
-    )
+    aggregate
+      |> fetch_releases(
+        poll,
+        last_cursors(aggregate, poll.repo_owner, poll.repo_name),
+        []
+      )
+      |> Enum.reverse()
+      |> build_github_release_events(poll)
   end
 
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
@@ -73,72 +76,111 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   end
 
   def apply(%__MODULE__{} = github, %NewGithubReleasesFound{} = new_releases) do
-    updated_last_cursors = Map.put(
-      github.last_cursors,
-      {new_releases.repo_owner, new_releases.repo_name},
-      new_releases.last_cursor_releases
+    updated_last_cursors = Map.merge(
+      last_cursors(github, new_releases.repo_owner, new_releases.repo_name),
+      %{
+        tags: new_releases.last_cursor_tags,
+        releases: new_releases.last_cursor_releases,
+      },
+      &update_when_present/3
     )
 
     %__MODULE__{github |
-      last_cursors: updated_last_cursors,
+      last_cursors: Map.put(
+        github.last_cursors,
+        {new_releases.repo_owner, new_releases.repo_name},
+        updated_last_cursors
+      )
     }
   end
 
-  defp last_cursor_releases(aggregate, repo_owner, repo_name) do
-    aggregate.last_cursors |> Map.get({repo_owner, repo_name})
+  defp last_cursors(aggregate, repo_owner, repo_name) do
+    aggregate.last_cursors |> Map.get({repo_owner, repo_name}, %{tags: nil, releases: nil})
   end
 
-  defp fetch_releases(aggregate, poll_comand, last_cursor_releases, agg) do
+  defp fetch_releases(aggregate, poll_comand, %{tags: last_cursor_tags, releases: last_cursor_releases}, agg) do
     res = ApiV4.releases(
       aggregate.base_url,
       aggregate.token,
-      poll_comand.repo_owner,
-      poll_comand.repo_name,
-      last_cursor_releases
+      %ReleaseRequest{
+        repo_owner: poll_comand.repo_owner,
+        repo_name: poll_comand.repo_name,
+        last_cursor_tags: last_cursor_tags,
+        last_cursor_releases: last_cursor_releases,
+      }
     )
 
     payload = Poison.decode!(res.body)
-    rate_limit = payload["data"]["rateLimit"]
 
-    github_called_api_event = %GithubApiCalled{
-      uuid: UUID.uuid4(),
-      github_uuid: aggregate.uuid,
-      http_url: res.url,
-      http_method: to_string(res.method),
-      http_status_code: res.status,
-      content_length: res.headers["content-length"] |> String.to_integer(),
-      github_request_id: res.headers["x-github-request-id"],
-      rate_limit_cost: rate_limit["cost"],
-      rate_limit_total: res.headers["x-ratelimit-limit"] |> String.to_integer(),
-      rate_limit_remaining: res.headers["x-ratelimit-remaining"] |> String.to_integer(),
-      rate_limit_reset: res.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!() |> DateTime.to_iso8601(),
-    }
+    releases_page_info = payload["data"]["repository"]["releases"]["pageInfo"]
+    tags_page_info = payload["data"]["repository"]["tags"]["pageInfo"]
+    releases_next_cursor = releases_page_info["endCursor"] || last_cursor_releases
+    tags_next_cursor = tags_page_info["endCursor"] || last_cursor_tags
 
-    page_info = payload["data"]["repository"]["releases"]["pageInfo"]
-    releases = payload["data"]["repository"]["releases"]["edges"]
-    next_cursor = page_info["endCursor"]
+    batch = [%Tesla.Env{res | body: payload} | agg]
 
-    new_releases_found_event = if Enum.empty?(releases) do
-      []
-    else
-      [
-        %NewGithubReleasesFound{
-          uuid: UUID.uuid4(),
-          github_uuid: aggregate.uuid,
-          repo_owner: poll_comand.repo_owner,
-          repo_name: poll_comand.repo_name,
-          last_cursor_releases: next_cursor,
-          payload: releases
-        }
-      ]
-    end
-
-    batch = agg ++ [github_called_api_event] ++ new_releases_found_event
-
-    if page_info["hasNextPage"] do
-      fetch_releases(aggregate, poll_comand, next_cursor, batch)
+    if releases_page_info["hasNextPage"] || tags_page_info["hasNextPage"] do
+      fetch_releases(aggregate, poll_comand, %{tags: tags_next_cursor, releases: releases_next_cursor}, batch)
     else
       batch
     end
   end
+
+  defp build_github_release_events(api_returns, poll_command) do
+    github_api_called_events = Enum.map(api_returns, fn (ar) ->
+      %GithubApiCalled{
+        uuid: UUID.uuid4(),
+        github_uuid: poll_command.github_uuid,
+        http_url: ar.url,
+        http_method: to_string(ar.method),
+        http_status_code: ar.status,
+        content_length: ar.headers["content-length"] |> String.to_integer(),
+        github_request_id: ar.headers["x-github-request-id"],
+        rate_limit_cost: ar.body["data"]["rateLimit"]["cost"],
+        rate_limit_total: ar.headers["x-ratelimit-limit"] |> String.to_integer(),
+        rate_limit_remaining: ar.headers["x-ratelimit-remaining"] |> String.to_integer(),
+        rate_limit_reset: ar.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!() |> DateTime.to_iso8601(),
+      }
+    end)
+
+    initial_event = %NewGithubReleasesFound{
+      uuid: UUID.uuid4(),
+      github_uuid: poll_command.github_uuid,
+      repo_owner: poll_command.repo_owner,
+      repo_name: poll_command.repo_name,
+      last_cursor_releases: nil,
+      last_cursor_tags: nil,
+      payload: []
+    }
+
+    github_release_found_event = if api_returns_empty?(api_returns) do
+      []
+    else
+      api_returns |> Enum.reduce(initial_event, fn(ar, acc) ->
+        acc
+          |> Map.merge(%{
+            last_cursor_releases: ar.body["data"]["repository"]["releases"]["pageInfo"]["endCursor"],
+            last_cursor_tags: ar.body["data"]["repository"]["tags"]["pageInfo"]["endCursor"]},
+            &update_when_present/3
+          )
+          |> Map.merge(%{
+            payload: ar.body,
+          },
+          fn(_key, old_val, new_val) -> old_val ++ [new_val] end)
+        end)
+        |> List.wrap()
+    end
+
+    github_api_called_events ++ github_release_found_event
+  end
+
+  defp api_returns_empty?([%{body: body}]) do
+    Enum.empty?(
+      body["data"]["repository"]["releases"]["edges"] ++ body["data"]["repository"]["tags"]["edges"]
+    )
+  end
+  defp api_returns_empty?(_), do: false
+
+  defp update_when_present(_key, old_val, nil), do: old_val
+  defp update_when_present(_key, _old_val, new_val), do: new_val
 end
