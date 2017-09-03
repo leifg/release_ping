@@ -66,6 +66,8 @@ defmodule ReleasePing.Github.ApiV4 do
               name
               description
               publishedAt
+              isDraft
+              isPrerelease
               tag {
                 id
                 name
