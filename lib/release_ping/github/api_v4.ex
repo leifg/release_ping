@@ -1,15 +1,15 @@
 defmodule ReleasePing.Github.ApiV4 do
-  @default_page_size 100
-
-  def releases(base_url, api_key, repo_owner, repo_name, last_cursor) do
+  @spec releases(ReleaseRequest.t, String.t, String.t) :: Tesla.Env.t
+  def releases(base_url, api_key, release_request) do
     body = Poison.encode!(
-      %{query: release_query(repo_owner, repo_name, @default_page_size, last_cursor)},
+      %{query: releases_query(release_request)},
       iodata: true,
     )
 
     Tesla.post("#{base_url}/graphql", body, headers: headers(api_key))
   end
 
+  @spec rate_limit(String.t, String.t) :: Tesla.Env.t
   def rate_limit(base_url, api_key) do
     Tesla.get("#{base_url}/rate_limit", headers: headers(api_key))
   end
@@ -22,7 +22,7 @@ defmodule ReleasePing.Github.ApiV4 do
     }
   end
 
-  defp release_query(repo_owner, repo_name, page_size, last_cursor) do
+  defp releases_query(release_request) do
     """
     query {
       rateLimit {
@@ -32,28 +32,51 @@ defmodule ReleasePing.Github.ApiV4 do
         remaining
         resetAt
       }
-      repository(owner: "#{repo_owner}", name: "#{repo_name}") {
-        releases(first: #{page_size}, after: #{cursor(last_cursor)}) {
+      repository(owner: "#{release_request.repo_owner}", name: "#{release_request.repo_name}") {
+        tags: refs(refPrefix: "refs/tags/", first: #{release_request.page_size}, after: #{cursor(release_request.last_cursor_tags)}, direction: ASC) {
           edges {
+            cursor
             node {
               id
               name
-              isDraft
-              isPrerelease
-              publishedAt
+              target {
+                ... on Tag {
+                  id
+                  message
+                  tagger {
+                    name
+                    date
+                  }
+                }
+              }
+            }
+          }
+          pageInfo {
+           endCursor
+           hasNextPage
+           hasPreviousPage
+           startCursor
+          }
+        }
+        releases(first: #{release_request.page_size}, after: #{cursor(release_request.last_cursor_releases)}) {
+          edges {
+            cursor
+            node {
+              id
+              name
               description
+              publishedAt
               tag {
                 id
                 name
               }
             }
-            cursor
           }
           pageInfo {
-            endCursor
-            hasNextPage
-            hasPreviousPage
-            startCursor
+           endCursor
+           hasNextPage
+           hasPreviousPage
+           startCursor
           }
         }
       }
