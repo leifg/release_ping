@@ -25,6 +25,14 @@ defmodule ReleasePing.Core do
       end
   end
 
+  @spec software_by_github(String.t, String.t) :: Software.t | nil
+  def software_by_github(repo_owner, repo_name) do
+    case repo_owner |> Software.by_github_query(repo_name) |> Repo.one do
+      nil -> {:error, :not_found}
+      software -> {:ok, software}
+    end
+  end
+
   @doc """
   Publish a Release
   """

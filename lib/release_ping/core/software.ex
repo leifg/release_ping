@@ -1,5 +1,6 @@
 defmodule ReleasePing.Core.Software do
   use Ecto.Schema
+  import Ecto.Query, only: [from: 2]
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -22,5 +23,11 @@ defmodule ReleasePing.Core.Software do
     field :release_retrieval, ReleasePing.Enums.ReleaseRetrievalEnum
 
     timestamps()
+  end
+
+  def by_github_query(repo_owner, repo_name) do
+    from s in ReleasePing.Core.Software,
+      where: s.github == ^("#{repo_owner}/#{repo_name}"),
+      select: s
   end
 end

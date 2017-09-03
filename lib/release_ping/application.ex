@@ -8,6 +8,8 @@ defmodule ReleasePing.Application do
     children = [
       supervisor(ReleasePing.Repo, []),
 
+      worker(ReleasePing.Worflows.PublishReleases, [[start_from: :origin]], id: :publish_releases_workflow),
+
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
       worker(ReleasePing.Core.Projectors.Release, [], id: :release_projector),
       worker(ReleasePing.Core.Projectors.GithubReleasePoller, [], id: :github_release_poller_projector),

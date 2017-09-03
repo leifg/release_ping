@@ -2,6 +2,28 @@ defmodule ReleasePing.Fixtures do
   use ExMachina
 
   defmodule GithubResponses do
+    def last_cursor_releases do
+      1
+        |> new_releases_json()
+        |> Poison.decode!()
+        |> Access.get("data")
+        |> Access.get("repository")
+        |> Access.get("releases")
+        |> Access.get("pageInfo")
+        |> Access.get("endCursor")
+    end
+
+    def last_cursor_tags do
+      2
+        |> new_releases_json()
+        |> Poison.decode!()
+        |> Access.get("data")
+        |> Access.get("repository")
+        |> Access.get("tags")
+        |> Access.get("pageInfo")
+        |> Access.get("endCursor")
+    end
+
     def rate_limit_json do
       """
       {
