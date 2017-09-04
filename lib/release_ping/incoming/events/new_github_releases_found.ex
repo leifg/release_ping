@@ -8,6 +8,7 @@ defmodule ReleasePing.Incoming.Events.NewGithubReleasesFound do
     repo_name: String.t,
     last_cursor_releases: String.t,
     last_cursor_tags: String.t,
+    seen_at: String.t,
     payload: [map],
   }
 
@@ -18,6 +19,7 @@ defmodule ReleasePing.Incoming.Events.NewGithubReleasesFound do
     :repo_name,
     :last_cursor_releases,
     :last_cursor_tags,
+    :seen_at,
     :payload,
   ]
 end

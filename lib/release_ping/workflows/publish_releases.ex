@@ -13,11 +13,11 @@ defmodule ReleasePing.Worflows.PublishReleases do
 
   def interested?(%NewGithubReleasesFound{github_uuid: github_uuid}), do: {:start, github_uuid}
 
-  def handle(%__MODULE__{}, %NewGithubReleasesFound{payload: payload, repo_owner: repo_owner, repo_name: repo_name}) do
-    {:ok, sofware} = Core.software_by_github(repo_owner, repo_name)
+  def handle(%__MODULE__{}, %NewGithubReleasesFound{} = found_event) do
+    {:ok, sofware} = Core.software_by_github(found_event.repo_owner, found_event.repo_name)
 
-    payload
-    |> GithubReleases.merge_tags_and_releases(repo_owner, repo_name)
+    found_event.payload
+    |> GithubReleases.merge_tags_and_releases(found_event.repo_owner, found_event.repo_name)
     |> Enum.map(fn(r) ->
       %PublishRelease{
         uuid: UUID.uuid4(),
@@ -25,7 +25,7 @@ defmodule ReleasePing.Worflows.PublishReleases do
         version_string: r.version_string,
         release_notes_url: r.release_notes_url,
         published_at: r.published_at,
-        seen_at: "2017-09-02T16:19:42Z",
+        seen_at: found_event.seen_at,
         pre_release: r.pre_release,
       }
     end)

@@ -8,7 +8,6 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
 
   use ExUnit.Case
   @pm_state %PublishReleases{}
-  @seen_at "2017-09-02T16:19:42Z"
 
   @software_args %{
     name: "erlang",
@@ -18,11 +17,14 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
     licenses: ["Apache License 2.0"],
   }
 
+  @seen_at "2017-09-04T06:45:58.689811Z"
+
   @event %NewGithubReleasesFound{
     uuid: "7601a9bd-bbaa-4999-a7fc-77aaae9130a0",
     github_uuid: "c2ab5347-1b80-4657-8bd4-6c4a55504a04",
     repo_owner: "erlang",
     repo_name: "otp",
+    seen_at: @seen_at,
     last_cursor_releases: GithubResponses.last_cursor_releases(),
     last_cursor_tags: GithubResponses.last_cursor_tags(),
     payload: [

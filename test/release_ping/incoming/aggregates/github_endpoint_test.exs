@@ -126,11 +126,19 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             github_uuid: ^github_uuid,
             repo_owner: "erlang",
             repo_name: "otp",
+            seen_at: seen_at,
             last_cursor_releases: "Y3Vyc29yOnYyOpHOAGd7TQ==",
             last_cursor_tags: "MTAx",
             payload: [payload1, payload2],
           },
         ] = events
+
+        time_difference = NaiveDateTime.diff(
+          NaiveDateTime.utc_now(),
+          NaiveDateTime.from_iso8601!(seen_at),
+        :milli_seconds)
+
+        assert time_difference < 1000
 
         assert is_map(payload1)
         assert is_map(payload2)
