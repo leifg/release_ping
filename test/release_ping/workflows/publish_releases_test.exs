@@ -27,7 +27,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
     seen_at: @seen_at,
     last_cursor_releases: GithubResponses.last_cursor_releases(),
     last_cursor_tags: GithubResponses.last_cursor_tags(),
-    payload: [
+    payloads: [
       1 |> GithubResponses.new_releases_json() |> Poison.decode!,
       2 |> GithubResponses.new_releases_json() |> Poison.decode!,
     ],

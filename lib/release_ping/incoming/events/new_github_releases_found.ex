@@ -9,7 +9,7 @@ defmodule ReleasePing.Incoming.Events.NewGithubReleasesFound do
     last_cursor_releases: String.t,
     last_cursor_tags: String.t,
     seen_at: String.t,
-    payload: [map],
+    payloads: [map],
   }
 
   defstruct [
@@ -20,6 +20,6 @@ defmodule ReleasePing.Incoming.Events.NewGithubReleasesFound do
     :last_cursor_releases,
     :last_cursor_tags,
     :seen_at,
-    :payload,
+    :payloads,
   ]
 end
