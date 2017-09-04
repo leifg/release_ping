@@ -148,6 +148,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       github_uuid: poll_command.github_uuid,
       repo_owner: poll_command.repo_owner,
       repo_name: poll_command.repo_name,
+      seen_at: DateTime.utc_now() |> DateTime.to_iso8601(),
       last_cursor_releases: nil,
       last_cursor_tags: nil,
       payload: []
