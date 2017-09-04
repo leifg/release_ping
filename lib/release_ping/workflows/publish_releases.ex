@@ -16,7 +16,7 @@ defmodule ReleasePing.Worflows.PublishReleases do
   def handle(%__MODULE__{}, %NewGithubReleasesFound{} = found_event) do
     {:ok, sofware} = Core.software_by_github(found_event.repo_owner, found_event.repo_name)
 
-    found_event.payload
+    found_event.payloads
     |> GithubReleases.merge_tags_and_releases(found_event.repo_owner, found_event.repo_name)
     |> Enum.map(fn(r) ->
       %PublishRelease{

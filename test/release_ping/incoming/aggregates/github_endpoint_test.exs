@@ -129,7 +129,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             seen_at: seen_at,
             last_cursor_releases: "Y3Vyc29yOnYyOpHOAGd7TQ==",
             last_cursor_tags: "MTAx",
-            payload: [payload1, payload2],
+            payloads: [payload1, payload2],
           },
         ] = events
 

@@ -151,7 +151,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       seen_at: DateTime.utc_now() |> DateTime.to_iso8601(),
       last_cursor_releases: nil,
       last_cursor_tags: nil,
-      payload: []
+      payloads: []
     }
 
     github_release_found_event = if api_returns_empty?(api_returns) do
@@ -165,9 +165,9 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
             &update_when_present/3
           )
           |> Map.merge(%{
-            payload: ar.body,
+            payloads: [ar.body],
           },
-          fn(_key, old_val, new_val) -> old_val ++ [new_val] end)
+          fn(_key, old_val, new_val) -> old_val ++ new_val end)
         end)
         |> List.wrap()
     end
