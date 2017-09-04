@@ -8,7 +8,7 @@ defmodule ReleasePing.Incoming.Events.NewGithubReleasesFound do
     repo_name: String.t,
     last_cursor_releases: String.t,
     last_cursor_tags: String.t,
-    payload: map,
+    payload: [map],
   }
 
   defstruct [

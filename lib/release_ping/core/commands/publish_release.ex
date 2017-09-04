@@ -4,8 +4,8 @@ defmodule ReleasePing.Core.Commands.PublishRelease do
     software_uuid: String.t,
     version_string: String.t,
     release_notes_url: String.t,
-    published_at: DateTime.t,
-    seen_at: DateTime.t,
+    published_at: String.t, # ISO 8601 Datetime
+    seen_at: String.t, # ISO 8601 Datetime
     pre_release: boolean,
   }
 

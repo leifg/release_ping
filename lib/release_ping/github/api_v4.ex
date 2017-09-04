@@ -1,5 +1,5 @@
 defmodule ReleasePing.Github.ApiV4 do
-  @spec releases(ReleaseRequest.t, String.t, String.t) :: Tesla.Env.t
+  @spec releases(String.t, String.t, ReleaseRequest.t) :: Tesla.Env.t
   def releases(base_url, api_key, release_request) do
     body = Poison.encode!(
       %{query: releases_query(release_request)},
@@ -66,6 +66,8 @@ defmodule ReleasePing.Github.ApiV4 do
               name
               description
               publishedAt
+              isDraft
+              isPrerelease
               tag {
                 id
                 name

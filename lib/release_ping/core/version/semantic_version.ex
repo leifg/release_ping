@@ -1,5 +1,5 @@
 defmodule ReleasePing.Core.Version.SemanticVersion do
-  alias ReleasePing.Core.Version.{PlainVersion, TagVersion}
+  alias ReleasePing.Core.Version.{OtpVersion, PlainVersion}
 
   defstruct [:major, :minor, :patch]
 
@@ -13,16 +13,20 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
 
   @callback parse(String.t) :: t
 
-  @spec parser(String.t) :: module
-  defp parser("v" <> _rest_of_version) do
-    TagVersion
-  end
-  defp parser(_version_string) do
-    PlainVersion
+  @spec parse(String.t) :: t
+  def parse("v" <> rest_of_version) do
+    PlainVersion.parse(rest_of_version)
   end
 
-  @spec parse(String.t) :: t
-  def parse(version_string) do
-    parser(version_string).parse(version_string)
+  def parse("OTP-" <> rest_of_version) do
+    OtpVersion.parse(rest_of_version)
+  end
+
+  def parse("OTP_" <> rest_of_version) do
+    OtpVersion.parse(rest_of_version)
+  end
+
+  def parse(version) do
+    PlainVersion.parse(version)
   end
 end
