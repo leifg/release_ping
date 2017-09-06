@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
+    type: Software.type,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -15,6 +16,7 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   defstruct [
     uuid: nil,
     name: nil,
+    type: nil,
     website: nil,
     github: nil,
     licenses: [],

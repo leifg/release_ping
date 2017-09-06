@@ -9,6 +9,7 @@ defmodule ReleasePing.Core.Projectors.Software do
       uuid: added.uuid,
       stream_version: stream_version,
       name: added.name,
+      type: added.type,
       website: added.website,
       github: added.github,
       licenses: added.licenses,
@@ -20,6 +21,7 @@ defmodule ReleasePing.Core.Projectors.Software do
     update_software(multi, software_uuid, metadata, [latest_release_uuid: uuid])
   end
 
+  # TODO cleanup
   defp software_query(software_uuid) do
     from(a in Software, where: a.uuid == ^software_uuid)
   end

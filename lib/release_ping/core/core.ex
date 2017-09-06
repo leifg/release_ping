@@ -13,6 +13,7 @@ defmodule ReleasePing.Core do
     %AddSoftware{
       uuid: uuid,
       name: attrs[:name],
+      type: attrs[:type],
       website: attrs[:website],
       github: attrs[:github],
       licenses: attrs[:licenses],
