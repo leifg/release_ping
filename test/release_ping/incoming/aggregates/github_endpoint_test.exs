@@ -1,10 +1,7 @@
 defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
   alias ReleasePing.Incoming.Aggregates.GithubEndpoint
-  alias ReleasePing.Incoming.Commands.ConfigureGithubEndpoint
-  alias ReleasePing.Incoming.Commands.PollGithubReleases
-  alias ReleasePing.Incoming.Events.GithubEndpointConfigured
-  alias ReleasePing.Incoming.Events.NewGithubReleasesFound
-  alias ReleasePing.Incoming.Events.GithubApiCalled
+  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
+  alias ReleasePing.Incoming.Events.{GithubApiCalled, GithubEndpointConfigured, GithubTokenChanged, NewGithubReleasesFound}
 
   alias ReleasePing.Fixtures.GithubResponses
 
@@ -188,6 +185,49 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             rate_limit_reset: "2017-08-28T22:06:59Z",
           },
         ] = events
+      end
+
+      assert_events(aggregate, command, assertion_fun)
+    end
+  end
+
+  describe "change github token" do
+    setup do
+      uuid = UUID.uuid4()
+
+      event = %GithubEndpointConfigured{
+        uuid: uuid,
+        token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
+        base_url: "http://localhost:1234",
+        rate_limit_total: 5000,
+        rate_limit_remaining: 5000,
+        rate_limit_reset: "2017-08-28T22:44:04Z",
+      }
+
+      aggregate = evolve(event)
+
+      {:ok, %{aggregate: aggregate}}
+    end
+
+    test "github token can be successfully changed", %{aggregate: aggregate} do
+      github_uuid = aggregate.uuid
+
+      new_token = "883ae62c54b4cfb8421aad1bf7c0e1013aa887d4"
+
+      command = %ChangeGithubToken{
+        uuid: UUID.uuid4(),
+        github_uuid: github_uuid,
+        token: new_token,
+      }
+
+      assertion_fun = fn(aggregate, event, _error) ->
+        assert aggregate.token == new_token
+        assert %GithubTokenChanged{
+          uuid: uuid,
+          github_uuid: ^github_uuid,
+          token: ^new_token,
+        } = event
+        assert uuid != nil
       end
 
       assert_events(aggregate, command, assertion_fun)
