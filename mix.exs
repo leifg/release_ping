@@ -17,6 +17,7 @@ defmodule ReleasePing.Mixfile do
       mod: {ReleasePing.Application, []},
       extra_applications: [
         :logger,
+        :inets,
         :runtime_tools,
         :eventstore,
         :ecto,
