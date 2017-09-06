@@ -4,6 +4,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Events.SoftwareAdded
 
   @type release_retrieval :: :github_release_poller
+  @type type :: :application | :language | :library
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -23,6 +24,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     %SoftwareAdded{
       uuid: add.uuid,
       name: add.name,
+      type: add.type,
       website: add.website,
       github: add.github,
       licenses: add.licenses,

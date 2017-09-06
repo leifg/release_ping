@@ -5,6 +5,7 @@ defmodule ReleasePing.Core.Software do
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
+    type: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -17,6 +18,7 @@ defmodule ReleasePing.Core.Software do
     field :stream_version, :integer
     field :latest_release_uuid, :binary_id
     field :name, :string
+    field :type, ReleasePing.Enums.SoftwareTypeEnum
     field :website, :string
     field :github, :string
     field :licenses, {:array, :string}
