@@ -1,12 +1,8 @@
 defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
-  alias ReleasePing.Incoming.Commands.ConfigureGithubEndpoint
-  alias ReleasePing.Incoming.Commands.PollGithubReleases
-  alias ReleasePing.Incoming.Events.GithubEndpointConfigured
-  alias ReleasePing.Incoming.Events.GithubApiCalled
-  alias ReleasePing.Incoming.Events.NewGithubReleasesFound
+  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
+  alias ReleasePing.Incoming.Events.{GithubApiCalled, GithubEndpointConfigured, GithubTokenChanged, NewGithubReleasesFound}
 
-  alias ReleasePing.Github.ApiV4
-  alias ReleasePing.Github.ReleaseRequest
+  alias ReleasePing.Github.{ApiV4, ReleaseRequest}
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -56,6 +52,14 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       |> build_github_release_events(poll)
   end
 
+  def execute(%__MODULE__{} = aggregate, %ChangeGithubToken{uuid: uuid, token: token}) do
+    %GithubTokenChanged{
+      uuid: uuid,
+      github_uuid: aggregate.uuid,
+      token: token,
+    }
+  end
+
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
     %__MODULE__{github |
       uuid: configured.uuid,
@@ -92,6 +96,10 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
         updated_last_cursors
       )
     }
+  end
+
+  def apply(%__MODULE__{} = github, %GithubTokenChanged{token: token}) do
+    %__MODULE__{github | token: token}
   end
 
   defp last_cursors(aggregate, repo_owner, repo_name) do

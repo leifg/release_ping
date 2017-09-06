@@ -9,11 +9,11 @@ defmodule ReleasePing.Router do
   alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
 
   alias ReleasePing.Incoming.Aggregates.{GithubEndpoint}
-  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, PollGithubReleases}
+  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
 
   dispatch [AddSoftware], to: Software, identity: :uuid
   dispatch [PublishRelease], to: Release, identity: :uuid
 
   dispatch [ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid
-  dispatch [PollGithubReleases], to: GithubEndpoint, identity: :github_uuid
+  dispatch [PollGithubReleases, ChangeGithubToken], to: GithubEndpoint, identity: :github_uuid
 end

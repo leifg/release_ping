@@ -16,7 +16,7 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpointTest do
         token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
         rate_limit_total: 5000,
         rate_limit_remaining: 4999,
-        rate_limit_reset: Timex.shift(DateTime.utc_now(), seconds: -1) |> DateTime.to_iso8601(),
+        rate_limit_reset: DateTime.utc_now() |> Timex.shift(seconds: -1) |> DateTime.to_iso8601(),
       }
 
       GithubEndpoint.handle(event, %{stream_version: 1, event_number: 1})
