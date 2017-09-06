@@ -2,4 +2,4 @@
 -name <%= release_name %>@${IP_ADDR}
 
 ## Node cookie, used for distribution
--setcookie ${PRODUCTION_COOKIE}
+-setcookie ${NODE_COOKIE}
