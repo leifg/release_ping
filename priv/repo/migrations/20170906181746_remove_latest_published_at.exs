@@ -1,4 +1,4 @@
-defmodule ReleasePing.Repo.Migrations.AddGithubIndexSoftware do
+defmodule ReleasePing.Repo.Migrations.RemoveLatestPublishedAt do
   use Ecto.Migration
 
   def change do

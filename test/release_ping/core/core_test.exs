@@ -63,17 +63,5 @@ defmodule ReleasePing.CoreTest do
       assert release.release_notes_url == "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0"
       assert release.pre_release == false
     end
-
-    @tag :integration
-    test "sets latest release to according software" do
-      assert {:ok, %Software{} = software} = Core.add_software(build(:software))
-
-      release = build(:release, %{software_uuid: software.uuid})
-      assert {:ok, %Release{}} = Core.publish_release(release)
-
-      {:ok, latest_release_uuid} = Wait.until(fn -> Repo.get(Software, software.uuid).latest_release_uuid end)
-
-      refute is_nil(latest_release_uuid)
-    end
   end
 end

@@ -16,7 +16,6 @@ defmodule ReleasePing.Core.Software do
 
   schema "software" do
     field :stream_version, :integer
-    field :latest_release_uuid, :binary_id
     field :name, :string
     field :type, ReleasePing.Enums.SoftwareTypeEnum
     field :website, :string
