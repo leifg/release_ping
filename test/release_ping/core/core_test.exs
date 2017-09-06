@@ -14,6 +14,7 @@ defmodule ReleasePing.CoreTest do
 
       refute is_nil(software.uuid)
       assert software.name == "elixir"
+      assert software.type == :language
       assert software.website == "https://elixir-lang.org"
       assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
@@ -62,7 +63,7 @@ defmodule ReleasePing.CoreTest do
       assert release.release_notes_url == "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0"
       assert release.pre_release == false
 
-      Repo.get(Release, software.uuid)
+      # TODO (#101) add tests for published at in github_release_pollers
     end
 
     @tag :integration

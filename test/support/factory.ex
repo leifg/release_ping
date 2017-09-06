@@ -6,6 +6,7 @@ defmodule ReleasePing.Factory do
   def software_factory do
     %{
       name: "elixir",
+      type: :language,
       website: "https://elixir-lang.org",
       github: "elixir-lang/elixir",
       release_retrieval: :github_release_poller,
