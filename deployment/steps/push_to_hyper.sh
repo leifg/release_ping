@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 NEW_VERSION=$1
 BUILD_NUM=$2
 STARTING_TIMEOUT=2
