@@ -1,5 +1,8 @@
 defmodule ReleasePing.Incoming.GithubEndpoint do
+  alias ReleasePing.Incoming.GithubEndpoint
+
   use Ecto.Schema
+  import Ecto.Query, only: [from: 2]
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -20,4 +23,7 @@ defmodule ReleasePing.Incoming.GithubEndpoint do
     timestamps()
   end
 
+  def least_used do
+    ReleasePing.Repo.one(from x in GithubEndpoint, limit: 1)
+  end
 end

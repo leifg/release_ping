@@ -1,5 +1,10 @@
 use Mix.Config
 
+config :release_ping, ReleasePing.Scheduler,
+  jobs: [
+    {"@daily", {ReleasePing.Scheduler, :poll_releases, []}}
+  ]
+
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "${POSTGRES_USER}",

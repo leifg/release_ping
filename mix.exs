@@ -34,6 +34,7 @@ defmodule ReleasePing.Mixfile do
       {:commanded_ecto_projections, "~> 0.4"},
       {:ecto_enum, "~> 1.0"},
       {:tesla, "~> 0.7"},
+      {:quantum, ">= 2.1.0-beta.1"},
       {:timex, "~> 3.1"},
       {:timber, "~> 2.5"},
       {:bypass, "~> 0.8", only: :test},
