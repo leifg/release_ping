@@ -13,6 +13,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           name: "elixir",
           website: "https://elixir-lang.org",
           github: "elixir-lang/elixir",
+          type: :language,
           licenses: ["MIT"],
           release_retrieval: :github_release_poller,
         }

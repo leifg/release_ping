@@ -14,6 +14,7 @@ defmodule ReleasePing.CoreTest do
 
       refute is_nil(software.uuid)
       assert software.name == "elixir"
+      assert software.type == :language
       assert software.website == "https://elixir-lang.org"
       assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
