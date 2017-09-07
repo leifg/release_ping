@@ -41,6 +41,9 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   end
   def execute(%__MODULE__{}, %ConfigureGithubEndpoint{}), do: {:error, :github_endpoint_already_exists}
 
+  def execute(%__MODULE__{}, %PollGithubReleases{software_uuid: nil}) do
+    {:error, :software_uuid_missing}
+  end
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
     aggregate
       |> fetch_releases(
@@ -154,6 +157,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     initial_event = %NewGithubReleasesFound{
       uuid: UUID.uuid4(),
       github_uuid: poll_command.github_uuid,
+      software_uuid: poll_command.software_uuid,
       repo_owner: poll_command.repo_owner,
       repo_name: poll_command.repo_name,
       seen_at: DateTime.utc_now() |> DateTime.to_iso8601(),

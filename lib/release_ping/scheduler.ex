@@ -16,6 +16,7 @@ defmodule ReleasePing.Scheduler do
       ReleasePing.Router.dispatch(%PollGithubReleases{
         uuid: UUID.uuid4(),
         github_uuid: endpoint.uuid,
+        software_uuid: grp.software_uuid,
         repo_owner: repo_owner,
         repo_name: repo_name,
       })
