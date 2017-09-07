@@ -2,26 +2,17 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
   alias ReleasePing.Worflows.PublishReleases
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
   alias ReleasePing.Fixtures.GithubResponses
-  alias ReleasePing.Core
-  alias ReleasePing.Core.Software
   alias ReleasePing.Core.Commands.PublishRelease
 
   use ExUnit.Case
   @pm_state %PublishReleases{}
-
-  @software_args %{
-    name: "erlang",
-    website: "http://www.erlang.org/",
-    github: "erlang/otp",
-    release_retrieval: :github_release_poller,
-    licenses: ["Apache License 2.0"],
-  }
 
   @seen_at "2017-09-04T06:45:58.689811Z"
 
   @event %NewGithubReleasesFound{
     uuid: "7601a9bd-bbaa-4999-a7fc-77aaae9130a0",
     github_uuid: "c2ab5347-1b80-4657-8bd4-6c4a55504a04",
+    software_uuid: "28012098-6998-4f63-9296-69d71869cd8c",
     repo_owner: "erlang",
     repo_name: "otp",
     seen_at: @seen_at,
@@ -35,8 +26,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
 
   describe "handle/2" do
     test "returns correct publish commands for new github releases" do
-      {:ok, %Software{} = software} = Core.add_software(@software_args)
-      software_uuid = software.uuid
+      software_uuid = @event.software_uuid
 
       assert [
         %PublishRelease{

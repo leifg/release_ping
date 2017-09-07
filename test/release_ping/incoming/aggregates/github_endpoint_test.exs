@@ -49,7 +49,6 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
 
     setup do
       uuid = UUID.uuid4()
-
       bypass = Bypass.open
 
       event = %GithubEndpointConfigured{
@@ -81,10 +80,12 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
       end
 
       github_uuid = aggregate.uuid
+      software_uuid = "e12fabf2-827a-4a09-a817-c27dafc89717"
 
       command = %PollGithubReleases{
         uuid: UUID.uuid4(),
         github_uuid: github_uuid,
+        software_uuid: software_uuid,
         repo_owner: "erlang",
         repo_name: "otp",
       }
@@ -121,6 +122,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
           %NewGithubReleasesFound{
             uuid: uuid3,
             github_uuid: ^github_uuid,
+            software_uuid: ^software_uuid,
             repo_owner: "erlang",
             repo_name: "otp",
             seen_at: seen_at,
@@ -164,9 +166,11 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
       end
 
       github_uuid = aggregate.uuid
+      software_uuid = "e12fabf2-827a-4a09-a817-c27dafc89717"
 
       command = %PollGithubReleases{
         github_uuid: github_uuid,
+        software_uuid: software_uuid,
         repo_owner: "erlang",
         repo_name: "otp",
       }
@@ -185,6 +189,23 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
             rate_limit_reset: "2017-08-28T22:06:59Z",
           },
         ] = events
+      end
+
+      assert_events(aggregate, command, assertion_fun)
+    end
+
+    test "rejects poll release commands without software uuid", %{aggregate: aggregate} do
+      github_uuid = aggregate.uuid
+
+      command = %PollGithubReleases{
+        github_uuid: github_uuid,
+        software_uuid: nil,
+        repo_owner: "erlang",
+        repo_name: "otp",
+      }
+
+      assertion_fun = fn(_aggregate, _events, error) ->
+        assert error == {:error, :software_uuid_missing}
       end
 
       assert_events(aggregate, command, assertion_fun)
