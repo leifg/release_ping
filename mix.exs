@@ -38,6 +38,7 @@ defmodule ReleasePing.Mixfile do
       {:quantum, ">= 2.1.0-beta.1"},
       {:timex, "~> 3.1"},
       {:timber, "~> 2.5"},
+      {:vex, "~> 0.6"},
       {:bypass, "~> 0.8", only: :test},
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},

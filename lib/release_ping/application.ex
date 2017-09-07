@@ -10,6 +10,8 @@ defmodule ReleasePing.Application do
 
       worker(ReleasePing.Scheduler, []),
 
+      worker(ReleasePing.Validation.Unique, []),
+
       worker(ReleasePing.Worflows.PublishReleases, [[start_from: :origin]], id: :publish_releases_workflow),
 
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
