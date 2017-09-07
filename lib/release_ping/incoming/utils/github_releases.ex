@@ -86,6 +86,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     end)
   end
 
+  defp normalize_date(nil), do: nil
   defp normalize_date(date_input) do
     {:ok, dt, _offset} = DateTime.from_iso8601(date_input)
     DateTime.to_iso8601(dt)
