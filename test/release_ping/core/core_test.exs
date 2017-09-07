@@ -25,6 +25,11 @@ defmodule ReleasePing.CoreTest do
       assert software.release_retrieval == :github_release_poller
     end
 
+    test "fails for existing software" do
+      assert {:ok, _software} = Core.add_software(build(:software))
+      assert {:error, :validation_failure, [github: _]} = Core.add_software(build(:software))
+    end
+
     @tag :integration
     test "updates github pollers" do
       assert {:ok, %Software{} = software} = Core.add_software(build(:software))
