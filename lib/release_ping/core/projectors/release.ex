@@ -12,8 +12,8 @@ defmodule ReleasePing.Core.Projectors.Release do
       stream_version: stream_version,
       software_uuid: published.software_uuid,
       version_string: published.version_string,
-      published_at: NaiveDateTime.from_iso8601!(published.published_at),
-      seen_at: NaiveDateTime.from_iso8601!(published.seen_at),
+      published_at: format_date(published.published_at),
+      seen_at: format_date(published.seen_at),
       major_version: version.major,
       minor_version: version.minor,
       patch_version: version.patch,
@@ -21,4 +21,7 @@ defmodule ReleasePing.Core.Projectors.Release do
       release_notes_url: published.release_notes_url,
     })
   end
+
+  defp format_date(nil), do: nil
+  defp format_date(date_time), do: NaiveDateTime.from_iso8601!(date_time)
 end
