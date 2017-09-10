@@ -75,7 +75,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjMxNDBmNDVhOGM5ZDE2OWQ4YzNmMWMwNWQxZjc4YTM1NTMzNzk0MGM=",
                       "message": "=== OTP-19.3.6.2 ===\\n\\nChanged Applications:\\n- erts-8.3.5.2\\n\\nUnchanged Applications:\\n- asn1-4.0.4\\n- common_test-1.14\\n- compiler-7.0.4\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosProperty-1.2.1\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- crypto-3.7.4\\n- debugger-4.2.1\\n- dialyzer-3.1.1\\n- diameter-1.12.2\\n- edoc-0.8.1\\n- eldap-1.2.2\\n- erl_docgen-0.6.1\\n- erl_interface-3.9.3\\n- et-1.6\\n- eunit-2.3.2\\n- gs-1.6.2\\n- hipe-3.15.4\\n- ic-4.4.2\\n- inets-6.3.9\\n- jinterface-1.7.1\\n- kernel-5.2\\n- megaco-3.18.1\\n- mnesia-4.14.3\\n- observer-2.3.1\\n- odbc-2.12\\n- orber-3.8.2\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- parsetools-2.1.4\\n- percept-0.9\\n- public_key-1.4\\n- reltool-0.7.3\\n- runtime_tools-1.11.1\\n- sasl-3.0.3\\n- snmp-5.2.5\\n- ssh-4.4.2\\n- ssl-8.1.3\\n- stdlib-3.3\\n- syntax_tools-2.1.1\\n- tools-2.9.1\\n- typer-0.9.12\\n- wx-1.8\\n- xmerl-1.3.14\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-07-25T09:47:11+02:00"
                       }
@@ -90,7 +90,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjQ5YTlmNmFmNWQ5Njc3OTJjZjI1YTc1ZTA4ZWM5M2U2ZTE2MjM4MDM=",
                       "message": "=== OTP-20.0 ===\\n\\nChanged Applications:\\n- asn1-5.0\\n- common_test-1.15\\n- compiler-7.1\\n- cosProperty-1.2.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- dialyzer-3.2\\n- diameter-1.12.3\\n- edoc-0.9\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- erts-9.0\\n- eunit-2.3.3\\n- hipe-3.16\\n- inets-6.3.9\\n- jinterface-1.8\\n- kernel-5.3\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- orber-3.8.3\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- runtime_tools-1.12\\n- sasl-3.0.4\\n- ssh-4.5\\n- ssl-8.2\\n- stdlib-3.4\\n- syntax_tools-2.1.2\\n- tools-2.10\\n- wx-1.8.1\\n- xmerl-1.3.14\\n\\nUnchanged Applications:\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- eldap-1.2.2\\n- et-1.6\\n- ic-4.4.2\\n- odbc-2.12\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- reltool-0.7.3\\n- snmp-5.2.5\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Raimo Niskanen",
                         "date": "2017-05-05T13:13:43+02:00"
                       }
@@ -105,7 +105,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjE4NjJjZDE4MWJhNWE1MDBmNmRlYjI1NGZkMDg2NDkyMjNkYTAzZWI=",
                       "message": "Release Candidate 2\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Hans Nilsson",
                         "date": "2017-05-31T16:15:39+02:00"
                       }
@@ -120,7 +120,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjI3MjM0NDdmYThmZGEzNjliOWUzN2M5ZDI4ZjBlNmEzNWIwZWJlOWM=",
                       "message": "=== OTP-20.0 ===\\n\\nChanged Applications:\\n- asn1-5.0\\n- common_test-1.15\\n- compiler-7.1\\n- cosProperty-1.2.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- dialyzer-3.2\\n- diameter-2.0\\n- edoc-0.9\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- erts-9.0\\n- eunit-2.3.3\\n- hipe-3.16\\n- inets-6.4\\n- jinterface-1.8\\n- kernel-5.3\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- orber-3.8.3\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- reltool-0.7.4\\n- runtime_tools-1.12\\n- sasl-3.0.4\\n- snmp-5.2.6\\n- ssh-4.5\\n- ssl-8.2\\n- stdlib-3.4\\n- syntax_tools-2.1.2\\n- tools-2.10\\n- wx-1.8.1\\n- xmerl-1.3.15\\n\\nUnchanged Applications:\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- eldap-1.2.2\\n- et-1.6\\n- ic-4.4.2\\n- odbc-2.12\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-06-21T10:53:21+02:00"
                       }
@@ -135,7 +135,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OmFiNTgzYTc3MGZmNTFkZjE2NmY1NTFhZjczYWU5MmFhNTg3ZjM0MjA=",
                       "message": "=== OTP-20.0.1 ===\\n\\nChanged Applications:\\n- common_test-1.15.1\\n- erts-9.0.1\\n- runtime_tools-1.12.1\\n- stdlib-3.4.1\\n- tools-2.10.1\\n\\nUnchanged Applications:\\n- asn1-5.0\\n- compiler-7.1\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosProperty-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- dialyzer-3.2\\n- diameter-2.0\\n- edoc-0.9\\n- eldap-1.2.2\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- et-1.6\\n- eunit-2.3.3\\n- hipe-3.16\\n- ic-4.4.2\\n- inets-6.4\\n- jinterface-1.8\\n- kernel-5.3\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- odbc-2.12\\n- orber-3.8.3\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- reltool-0.7.4\\n- sasl-3.0.4\\n- snmp-5.2.6\\n- ssh-4.5\\n- ssl-8.2\\n- syntax_tools-2.1.2\\n- wx-1.8.1\\n- xmerl-1.3.15\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-06-30T15:21:23+02:00"
                       }
@@ -233,7 +233,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OmVmMTgyYzI2MGY2M2JlMGU5Mjg1N2Q1N2RhNDRmMGQxMzIyNDQyNmE=",
                       "message": "=== OTP-20.0.2 ===\\n\\nChanged Applications:\\n- asn1-5.0.1\\n- erts-9.0.2\\n- kernel-5.3.1\\n\\nUnchanged Applications:\\n- common_test-1.15.1\\n- compiler-7.1\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosProperty-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- dialyzer-3.2\\n- diameter-2.0\\n- edoc-0.9\\n- eldap-1.2.2\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- et-1.6\\n- eunit-2.3.3\\n- hipe-3.16\\n- ic-4.4.2\\n- inets-6.4\\n- jinterface-1.8\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- odbc-2.12\\n- orber-3.8.3\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- reltool-0.7.4\\n- runtime_tools-1.12.1\\n- sasl-3.0.4\\n- snmp-5.2.6\\n- ssh-4.5\\n- ssl-8.2\\n- stdlib-3.4.1\\n- syntax_tools-2.1.2\\n- tools-2.10.1\\n- wx-1.8.1\\n- xmerl-1.3.15\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-07-26T11:46:41+02:00"
                       }
@@ -248,7 +248,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjQxZTNmMDQ2ZjJkZDU1NWNlZTUyZmMzZjJhNWI3ODI4YmM0MzU4ZGQ=",
                       "message": "=== OTP-20.0.3 ===\\n\\nChanged Applications:\\n- asn1-5.0.2\\n- compiler-7.1.1\\n- erts-9.0.3\\n- ssh-4.5.1\\n\\nUnchanged Applications:\\n- common_test-1.15.1\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosProperty-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- dialyzer-3.2\\n- diameter-2.0\\n- edoc-0.9\\n- eldap-1.2.2\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- et-1.6\\n- eunit-2.3.3\\n- hipe-3.16\\n- ic-4.4.2\\n- inets-6.4\\n- jinterface-1.8\\n- kernel-5.3.1\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- odbc-2.12\\n- orber-3.8.3\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- reltool-0.7.4\\n- runtime_tools-1.12.1\\n- sasl-3.0.4\\n- snmp-5.2.6\\n- ssl-8.2\\n- stdlib-3.4.1\\n- syntax_tools-2.1.2\\n- tools-2.10.1\\n- wx-1.8.1\\n- xmerl-1.3.15\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-08-23T10:39:52+02:00"
                       }
@@ -263,7 +263,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjY0OWFiYTFlOTQ5ZmYxYTQ2ZmY5NzM0ZDdmOWEzNTBhNTljMjNjNWY=",
                       "message": "=== OTP-20.0.4 ===\\n\\nChanged Applications:\\n- dialyzer-3.2.1\\n- erts-9.0.4\\n\\nUnchanged Applications:\\n- asn1-5.0.2\\n- common_test-1.15.1\\n- compiler-7.1.1\\n- cosEvent-2.2.1\\n- cosEventDomain-1.2.1\\n- cosFileTransfer-1.2.1\\n- cosNotification-1.2.2\\n- cosProperty-1.2.2\\n- cosTime-1.2.2\\n- cosTransactions-1.3.2\\n- crypto-4.0\\n- debugger-4.2.2\\n- diameter-2.0\\n- edoc-0.9\\n- eldap-1.2.2\\n- erl_docgen-0.7\\n- erl_interface-3.10\\n- et-1.6\\n- eunit-2.3.3\\n- hipe-3.16\\n- ic-4.4.2\\n- inets-6.4\\n- jinterface-1.8\\n- kernel-5.3.1\\n- megaco-3.18.2\\n- mnesia-4.15\\n- observer-2.4\\n- odbc-2.12\\n- orber-3.8.3\\n- os_mon-2.4.2\\n- otp_mibs-1.1.1\\n- parsetools-2.1.5\\n- public_key-1.4.1\\n- reltool-0.7.4\\n- runtime_tools-1.12.1\\n- sasl-3.0.4\\n- snmp-5.2.6\\n- ssh-4.5.1\\n- ssl-8.2\\n- stdlib-3.4.1\\n- syntax_tools-2.1.2\\n- tools-2.10.1\\n- wx-1.8.1\\n- xmerl-1.3.15\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2017-08-25T09:36:12+02:00"
                       }
@@ -278,7 +278,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjBlMzQ4ZWNlMDFmM2Q2NzU0NjQ0YWEyYjc4ZjA2NzEwNWQ5MGVjZjM=",
                       "message": "The R13B03 release.\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2009-11-20T15:54:40+01:00"
                       }
@@ -293,7 +293,7 @@ defmodule ReleasePing.Fixtures do
                     "target": {
                       "id": "MDM6VGFnMzc0OTI3OjNlYmI4N2NjOWNiOWNmNDA1ZmIxMGIzMzkyM2U5ZDFhMGU5MWY0YzE=",
                       "message": "The R13B04 release\\n",
-                      "tagger": {
+                      "author": {
                         "name": "Erlang/OTP",
                         "date": "2010-02-19T19:11:35+01:00"
                       }

@@ -59,7 +59,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
         tag_node["id"],
         %{
           version_string: tag_name,
-          published_at: normalize_date(tag_target["tagger"]["date"]),
+          published_at: normalize_date(tag_target["author"]["date"]),
           release_notes_url: "https://github.com/#{repo_owner}/#{repo_name}/releases/tag/#{tag_name}",
           release_notes_content: tag_target["message"],
           pre_release: pre_release_from_version(tag_name),
