@@ -43,7 +43,15 @@ defmodule ReleasePing.Github.ApiV4 do
                 ... on Tag {
                   id
                   message
-                  tagger {
+                  author:tagger {
+                    name
+                    date
+                  }
+                }
+                ... on Commit {
+                  id
+                  message
+                  author:committer {
                     name
                     date
                   }
