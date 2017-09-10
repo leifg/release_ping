@@ -23,6 +23,9 @@ jobs:
         environment:
           MIX_ENV: test
       - image: postgres
+        environment:
+          POSTGRES_USER: release_ping
+          POSTGRES_PASSWORD: release_ping
     steps:
       - attach_workspace:
           at: /
