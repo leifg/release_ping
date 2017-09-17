@@ -7,6 +7,7 @@ defmodule ReleasePing.Mixfile do
       version: "0.0.0-development",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
       deps: deps()
     ]
@@ -30,6 +31,10 @@ defmodule ReleasePing.Mixfile do
 
   defp deps do
     [
+      {:phoenix, "~> 1.3.0"},
+      {:phoenix_pubsub, "~> 1.0"},
+      {:gettext, "~> 0.11"},
+      {:cowboy, "~> 1.0"},
       {:commanded, "~> 0.13"},
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},

@@ -16,4 +16,11 @@ config :release_ping, ReleasePing.Repo,
   hostname: "localhost",
   pool_size: 1
 
+# We don't run a server during test. If one is required,
+# you can enable the server option below.
+config :release_ping, ReleasePingWeb.Endpoint,
+  http: [port: 4001],
+  server: false
+
+# Print only warnings and errors during test
 config :logger, level: :warn
