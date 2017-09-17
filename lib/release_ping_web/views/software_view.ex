@@ -11,6 +11,11 @@ defmodule ReleasePingWeb.SoftwareView do
   end
 
   def render("software.json", %{software: software}) do
-    %{id: software.uuid}
+    %{
+      id: software.id,
+      name: software.name,
+      website: software.website,
+      licenses: software.licenses,
+    }
   end
 end
