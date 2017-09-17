@@ -34,6 +34,10 @@ defmodule ReleasePing.Core do
     end
   end
 
+  def all_software() do
+    Repo.all(Software)
+  end
+
   @doc """
   Publish a Release
   """

@@ -7,5 +7,7 @@ defmodule ReleasePingWeb.Router do
 
   scope "/api", ReleasePingWeb do
     pipe_through :api
+
+    get "/software", SoftwareController, :index
   end
 end
