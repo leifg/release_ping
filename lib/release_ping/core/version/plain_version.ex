@@ -11,4 +11,6 @@ defmodule ReleasePing.Core.Version.PlainVersion do
       patch: version.patch,
     }
   end
+
+  def name(plain_version), do: plain_version
 end
