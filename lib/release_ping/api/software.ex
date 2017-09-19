@@ -14,8 +14,8 @@ defmodule ReleasePing.Api.Software do
     @primary_key false
 
     embedded_schema do
-      field :spdx_id
-      field :name
+      field :spdx_id, :string
+      field :name, :string
     end
   end
 
@@ -28,17 +28,21 @@ defmodule ReleasePing.Api.Software do
       major: integer,
       minor: integer,
       patch: integer,
+      release_notes_url: String.t,
       published_at: DateTime.t,
     }
+
+    @type compare_result :: :lt | :gt | :eq
 
     @primary_key {:id, :binary_id, autogenerate: false}
 
     embedded_schema do
-      field :name
-      field :major
-      field :minor
-      field :patch
-      field :published_at
+      field :name, :string
+      field :major, :integer
+      field :minor, :integer
+      field :patch, :integer
+      field :release_notes_url, :string
+      field :published_at, :utc_datetime
     end
   end
 
@@ -57,8 +61,8 @@ defmodule ReleasePing.Api.Software do
     field :stream_version, :integer
     field :name, :string
     field :website, :string
-    embeds_one :latest_version_stable, Version
-    embeds_one :latest_version_unstable, Version
+    embeds_one :latest_version_stable, Version, on_replace: :delete
+    embeds_one :latest_version_unstable, Version, on_replace: :delete
     embeds_many :licenses, License
 
     timestamps()

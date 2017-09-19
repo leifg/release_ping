@@ -12,6 +12,7 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
   @type update_type :: :major | :minor | :patch
 
   @callback parse(String.t) :: t
+  @callback name(String.t) :: String.t
 
   @spec parse(String.t) :: t
   def parse("v" <> rest_of_version) do
@@ -28,5 +29,22 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
 
   def parse(version) do
     PlainVersion.parse(version)
+  end
+
+  @spec name(String.t) :: String.t
+  def name("v" <> rest_of_version) do
+    PlainVersion.name(rest_of_version)
+  end
+
+  def name("OTP-" <> rest_of_version) do
+    OtpVersion.name(rest_of_version)
+  end
+
+  def name("OTP_" <> rest_of_version) do
+    OtpVersion.name(rest_of_version)
+  end
+
+  def name(version) do
+    PlainVersion.name(version)
   end
 end

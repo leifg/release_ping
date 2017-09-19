@@ -1,8 +1,10 @@
 defmodule ReleasePing.Api.Projectors.Software do
   use Commanded.Projections.Ecto, name: "Api.Projectors.Software"
 
-  alias ReleasePing.Core.Events.{SoftwareAdded}
-  alias ReleasePing.Api.Software
+  alias ReleasePing.Repo
+  alias ReleasePing.Core.Events.{SoftwareAdded, ReleasePublished}
+  alias ReleasePing.Core.Version.SemanticVersion
+  alias ReleasePing.Api.{Software, VersionUtils}
   alias ReleasePing.Api.Software.{License, Version}
 
   require Logger
@@ -21,6 +23,48 @@ defmodule ReleasePing.Api.Projectors.Software do
       website: added.website,
       licenses: Enum.map(added.licenses, &map_license/1),
     })
+  end
+
+  project %ReleasePublished{} = published, _metadata do
+    update_software(multi, published)
+  end
+
+  defp update_software(multi, published) do
+    existing_software = Repo.get(Software, published.software_uuid)
+    existing_stable = existing_software.latest_version_stable
+    existing_unstable = existing_software.latest_version_unstable
+
+    sem_ver = SemanticVersion.parse(published.version_string)
+
+    new_version = %Version{
+      id: published.uuid,
+      name: SemanticVersion.name(published.version_string),
+      major: sem_ver.major,
+      minor: sem_ver.minor,
+      patch: sem_ver.patch,
+      release_notes_url: published.release_notes_url,
+      published_at: published.published_at,
+    }
+
+    stable_version_to_set = cond do
+      published.pre_release -> existing_stable
+      existing_stable == nil -> new_version
+      VersionUtils.compare(new_version, existing_stable) == :gt -> new_version
+      true -> existing_stable
+    end
+
+    unstable_version_to_set = cond do
+      existing_unstable == nil -> new_version
+      VersionUtils.compare(new_version, existing_unstable) == :gt -> new_version
+      true -> existing_unstable
+    end
+
+    changeset = existing_software
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:latest_version_stable, stable_version_to_set)
+      |> Ecto.Changeset.put_embed(:latest_version_unstable, unstable_version_to_set)
+
+    Ecto.Multi.update(multi, :api_software, changeset)
   end
 
   defp map_license(spdx_id) do
