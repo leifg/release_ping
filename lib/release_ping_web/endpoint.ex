@@ -17,6 +17,8 @@ defmodule ReleasePingWeb.Endpoint do
     plug Phoenix.CodeReloader
   end
 
+  plug CORSPlug
+
   plug Plug.RequestId
   plug Plug.Logger
 

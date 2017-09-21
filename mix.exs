@@ -35,6 +35,7 @@ defmodule ReleasePing.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
+      {:cors_plug, "~> 1.4"},
       {:commanded, "~> 0.13"},
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},
