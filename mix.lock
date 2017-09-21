@@ -6,6 +6,7 @@
   "commanded_ecto_projections": {:hex, :commanded_ecto_projections, "0.4.0", "9cb46c25c62c711cca80fc7804cc62435fed8e61e3f37503ac6bd5a759dbfb8a", [:mix], [{:commanded, ">= 0.12.0", [hex: :commanded, repo: "hexpm", optional: false]}, {:ecto, "~> 2.1", [hex: :ecto, repo: "hexpm", optional: false]}], "hexpm"},
   "commanded_eventstore_adapter": {:hex, :commanded_eventstore_adapter, "0.1.0", "f409c0e8fbe2b6c25198a26406720dc500bf7c7888d72d18753905afbe1b1de9", [:mix], [{:commanded, "~> 0.10", [hex: :commanded, repo: "hexpm", optional: false]}, {:eventstore, "~> 0.9", [hex: :eventstore, repo: "hexpm", optional: false]}], "hexpm"},
   "connection": {:hex, :connection, "1.0.4", "a1cae72211f0eef17705aaededacac3eb30e6625b04a6117c1b2db6ace7d5976", [:mix], [], "hexpm"},
+  "cors_plug": {:hex, :cors_plug, "1.4.0", "c1c4fb68adf2fd1b4caccee978663edd58f62881627ab65b52ff56146945687f", [], [{:plug, "> 0.14.0", [hex: :plug, repo: "hexpm", optional: false]}], "hexpm"},
   "cowboy": {:hex, :cowboy, "1.1.2", "61ac29ea970389a88eca5a65601460162d370a70018afe6f949a29dca91f3bb0", [], [{:cowlib, "~> 1.0.2", [hex: :cowlib, repo: "hexpm", optional: false]}, {:ranch, "~> 1.3.2", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm"},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [], [], "hexpm"},
   "credo": {:hex, :credo, "0.8.6", "335f723772d35da499b5ebfdaf6b426bfb73590b6fcbc8908d476b75f8cbca3f", [:mix], [{:bunt, "~> 0.2.0", [hex: :bunt, repo: "hexpm", optional: false]}], "hexpm"},
