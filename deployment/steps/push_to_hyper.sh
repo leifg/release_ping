@@ -29,6 +29,7 @@ hyper run --rm \
 hyper run -d \
   --size=s4 \
   --name ${NEW_CONTAINER_NAME} \
+  --restart=unless-stopped \
   -e REPLACE_OS_VARS=true \
   -e TIMBER_LOGS_KEY=${TIMBER_LOGS_KEY} \
   -e NODE_COOKIE=${NODE_COOKIE} \
