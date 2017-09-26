@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: leifg/release_ping-base
+      - image: leifg/release_ping-backend
         environment:
           MIX_ENV: test
     steps:
@@ -19,7 +19,7 @@ jobs:
             - root/project
   test:
     docker:
-      - image: leifg/release_ping-base
+      - image: leifg/release_ping-backend
         environment:
           MIX_ENV: test
       - image: postgres
@@ -40,7 +40,7 @@ jobs:
           command: mix test
   deploy:
     docker:
-      - image: leifg/release_ping-base
+      - image: leifg/release_ping-backend
         environment:
           MIX_ENV: prod
     steps:
