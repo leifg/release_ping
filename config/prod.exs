@@ -23,8 +23,7 @@ config :release_ping, ReleasePing.Repo,
 
 config :release_ping, ReleasePingWeb.Endpoint,
   load_from_system_env: true,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "api.releaseping.com", port: "${PORT}"]
 
 # Do not print debug messages in production
 config :logger, level: :info
