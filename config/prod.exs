@@ -22,8 +22,10 @@ config :release_ping, ReleasePing.Repo,
   pool_size: 10
 
 config :release_ping, ReleasePingWeb.Endpoint,
-  load_from_system_env: true,
-  url: [host: "api.releaseping.com", port: "${PORT}"]
+  url: [host: "localhost", port: "${PORT}"],
+  server: true,
+  root: ".",
+  version: Application.spec(:release_ping, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info
