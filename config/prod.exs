@@ -22,6 +22,7 @@ config :release_ping, ReleasePing.Repo,
   pool_size: 10
 
 config :release_ping, ReleasePingWeb.Endpoint,
+  http: [port: "${PORT}"],
   url: [host: "localhost", port: "${PORT}"],
   server: true,
   root: ".",
