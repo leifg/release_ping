@@ -5,7 +5,7 @@ defmodule ReleasePingWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ReleasePingWeb do
+  scope "/", ReleasePingWeb do
     pipe_through :api
 
     get "/software", SoftwareController, :index
