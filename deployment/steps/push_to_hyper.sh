@@ -21,4 +21,4 @@ hyper -R ${HYPER_REGION} run --rm \
 
 echo "Replace running container"
 
-hyper -R ${HYPER_REGION} service rolling-update --image leifg/release_ping:${NEW_VERSION} release-ping-http
+hyper -R ${HYPER_REGION} service rolling-update --image leifg/release_ping:${NEW_VERSION} release-ping-service
