@@ -19,7 +19,6 @@ defmodule ReleasePingWeb.SoftwareControllerTest do
       conn = get conn, software_path(conn, :index)
       assert [software] = json_response(conn, 200)
 
-
       assert software["id"] == core_software.uuid
       assert software["name"] == "elixir"
       assert software["website"] == "https://elixir-lang.org"
