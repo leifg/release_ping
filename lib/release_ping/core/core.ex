@@ -1,5 +1,5 @@
 defmodule ReleasePing.Core do
-  alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
+  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, PublishRelease}
   alias ReleasePing.Core.{Release, GithubReleasePoller, Software}
   alias ReleasePing.{Router, Wait, Repo}
 
@@ -32,6 +32,14 @@ defmodule ReleasePing.Core do
       nil -> {:error, :not_found}
       software -> {:ok, software}
     end
+  end
+
+  def change_licenses(%{software_uuid: software_uuid, spdx_ids: license_ids}) do
+    Router.dispatch(%ChangeLicenses{
+      uuid: UUID.uuid4(),
+      software_uuid: software_uuid,
+      licenses: license_ids,
+    })
   end
 
   def all_software() do
