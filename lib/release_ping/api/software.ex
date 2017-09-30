@@ -63,7 +63,7 @@ defmodule ReleasePing.Api.Software do
     field :website, :string
     embeds_one :latest_version_stable, Version, on_replace: :delete
     embeds_one :latest_version_unstable, Version, on_replace: :delete
-    embeds_many :licenses, License
+    embeds_many :licenses, License, on_replace: :delete
 
     timestamps()
   end

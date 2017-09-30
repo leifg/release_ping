@@ -1,7 +1,7 @@
 defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
-  alias ReleasePing.Core.Commands.AddSoftware
-  alias ReleasePing.Core.Events.SoftwareAdded
+  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses}
+  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged}
 
   @type release_retrieval :: :github_release_poller
   @type type :: :application | :language | :library
@@ -32,6 +32,21 @@ defmodule ReleasePing.Core.Aggregates.Software do
     }
   end
 
+  @doc """
+  Changes Licenses
+  """
+  def execute(%Software{} = software, %ChangeLicenses{} = change) do
+    if software.licenses == change.licenses do
+      nil
+    else
+      %LicensesChanged{
+        uuid: change.uuid,
+        software_uuid: software.uuid,
+        licenses: change.licenses,
+      }
+    end
+  end
+
   # state mutators
 
   def apply(%Software{} = software, %SoftwareAdded{} = added) do
@@ -42,6 +57,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
       github: added.github,
       licenses: added.licenses,
       release_retrieval: added.release_retrieval,
+    }
+  end
+
+  def apply(%Software{} = software, %LicensesChanged{} = change) do
+    %Software{software |
+      licenses: change.licenses,
     }
   end
 end

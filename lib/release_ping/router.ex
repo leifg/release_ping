@@ -6,7 +6,7 @@ defmodule ReleasePing.Router do
   use Commanded.Commands.Router
 
   alias ReleasePing.Core.Aggregates.{Software, Release}
-  alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
+  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, PublishRelease}
 
   alias ReleasePing.Incoming.Aggregates.{GithubEndpoint}
   alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
@@ -14,6 +14,7 @@ defmodule ReleasePing.Router do
   middleware ReleasePing.Validation.Middleware.Uniqueness
 
   dispatch [AddSoftware], to: Software, identity: :uuid
+  dispatch [ChangeLicenses], to: Software, identity: :software_uuid
   dispatch [PublishRelease], to: Release, identity: :uuid
 
   dispatch [ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid

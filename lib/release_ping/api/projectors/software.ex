@@ -2,7 +2,7 @@ defmodule ReleasePing.Api.Projectors.Software do
   use Commanded.Projections.Ecto, name: "Api.Projectors.Software"
 
   alias ReleasePing.Repo
-  alias ReleasePing.Core.Events.{SoftwareAdded, ReleasePublished}
+  alias ReleasePing.Core.Events.{LicensesChanged, SoftwareAdded, ReleasePublished}
   alias ReleasePing.Core.Version.SemanticVersion
   alias ReleasePing.Api.{Software, VersionUtils}
   alias ReleasePing.Api.Software.{License, Version}
@@ -29,7 +29,11 @@ defmodule ReleasePing.Api.Projectors.Software do
     update_software(multi, published)
   end
 
-  defp update_software(multi, published) do
+  project %LicensesChanged{} = changed, _metadata do
+    update_software(multi, changed)
+  end
+
+  defp update_software(multi, %ReleasePublished{} = published) do
     existing_software = Repo.get(Software, published.software_uuid)
     existing_stable = existing_software.latest_version_stable
     existing_unstable = existing_software.latest_version_unstable
@@ -63,6 +67,15 @@ defmodule ReleasePing.Api.Projectors.Software do
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:latest_version_stable, stable_version_to_set)
       |> Ecto.Changeset.put_embed(:latest_version_unstable, unstable_version_to_set)
+
+    Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp update_software(multi, %LicensesChanged{} = changed) do
+    existing_software = Repo.get(Software, changed.software_uuid)
+    changeset = existing_software
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:licenses, Enum.map(changed.licenses, &map_license/1))
 
     Ecto.Multi.update(multi, :api_software, changeset)
   end
