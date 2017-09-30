@@ -6,7 +6,9 @@ config :eventstore, EventStore.Storage,
   password: "release_ping",
   database: "eventstore_test",
   hostname: "localhost",
-  pool_size: 1
+  pool: DBConnection.Poolboy,
+  pool_size: 1,
+  pool_overflow: 0
 
 config :release_ping, ReleasePing.Repo,
   adapter: Ecto.Adapters.Postgres,

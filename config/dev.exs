@@ -7,6 +7,7 @@ config :eventstore, EventStore.Storage,
   password: "release_ping",
   database: "eventstore_dev",
   hostname: "localhost",
+  pool: DBConnection.Poolboy,
   pool_size: 10
 
 config :release_ping, ReleasePing.Repo,

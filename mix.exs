@@ -39,7 +39,7 @@ defmodule ReleasePing.Mixfile do
       {:commanded, "~> 0.13"},
       {:commanded_eventstore_adapter, "~> 0.1"},
       {:commanded_ecto_projections, "~> 0.4"},
-      {:ecto_enum, "~> 1.0"},
+      {:ecto_enum, github: "theangryangel/ecto_enum", branch: "feat/ecto-2.1"},
       {:tesla, "~> 0.7"},
       {:quantum, ">= 2.1.0-beta.1"},
       {:timex, "~> 3.1"},

@@ -1,6 +1,4 @@
 defmodule ReleasePing.Core.Events.LicensesChanged do
-  alias ReleasePing.Core.Aggregates.Software
-
   @derive [Poison.Encoder]
 
   @type t :: %__MODULE__{
