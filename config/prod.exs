@@ -11,6 +11,7 @@ config :eventstore, EventStore.Storage,
   password: "${POSTGRES_PASSWORD}",
   database: "eventstore",
   hostname: "${POSTGRES_HOST}",
+  pool: DBConnection.Poolboy,
   pool_size: 10
 
 config :release_ping, ReleasePing.Repo,
