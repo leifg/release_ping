@@ -20,7 +20,6 @@ defmodule ReleasePingWeb.Endpoint do
   plug CORSPlug
 
   plug Plug.RequestId
-  plug Plug.Logger
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -37,6 +36,11 @@ defmodule ReleasePingWeb.Endpoint do
     store: :cookie,
     key: "_release_ping_key",
     signing_salt: "hwbjry7Z"
+
+  # Add Timber plugs for capturing HTTP context and events
+  plug Timber.Integrations.SessionContextPlug
+  plug Timber.Integrations.HTTPContextPlug
+  plug Timber.Integrations.EventPlug
 
   plug ReleasePingWeb.Router
 
