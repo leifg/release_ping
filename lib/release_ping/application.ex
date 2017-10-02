@@ -13,6 +13,8 @@ defmodule ReleasePing.Application do
       supervisor(ReleasePing.Repo, []),
       supervisor(ReleasePingWeb.Endpoint, []),
 
+      worker(ReleasePing.Scheduler, []),
+
       worker(ReleasePing.Validation.Unique, []),
 
       worker(ReleasePing.Worflows.PublishReleases, [[start_from: :origin]], id: :publish_releases_workflow),
@@ -20,6 +22,8 @@ defmodule ReleasePing.Application do
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
       worker(ReleasePing.Core.Projectors.Release, [], id: :release_projector),
       worker(ReleasePing.Core.Projectors.GithubReleasePoller, [], id: :github_release_poller_projector),
+
+      worker(ReleasePing.Incoming.Projectors.GithubEndpoint, [], id: :github_endpoint_projector),
 
       worker(ReleasePing.Api.Projectors.Software, [], id: :api_software_projector),
     ]
