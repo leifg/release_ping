@@ -1,5 +1,9 @@
 use Mix.Config
 
+# Update the instrumenters so that we can structure Phoenix logs
+config :release_ping, ReleasePingWeb.Endpoint,
+  instrumenters: [Timber.Integrations.PhoenixInstrumenter]
+
 # Structure Ecto logs
 config :release_ping, ReleasePing.Repo,
   loggers: [{Timber.Integrations.EctoLogger, :log, []}]
@@ -32,7 +36,7 @@ if Enum.member?(environments_to_exclude, Mix.env()) do
     format: :logfmt,
     print_timestamps: true,
     print_log_level: true,
-    print_metadata: false # turn this on to view the additiional metadata
+    print_metadata: false
 end
 
 # Need help?

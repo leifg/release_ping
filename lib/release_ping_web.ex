@@ -19,7 +19,7 @@ defmodule ReleasePingWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: ReleasePingWeb
+      use Phoenix.Controller, log: false, namespace: ReleasePingWeb
       import Plug.Conn
       import ReleasePingWeb.Router.Helpers
       import ReleasePingWeb.Gettext
@@ -50,7 +50,7 @@ defmodule ReleasePingWeb do
 
   def channel do
     quote do
-      use Phoenix.Channel
+      use Phoenix.Channel, log_join: false, log_handle_in: false
       import ReleasePingWeb.Gettext
     end
   end
