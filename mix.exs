@@ -41,7 +41,7 @@ defmodule ReleasePing.Mixfile do
       {:commanded_ecto_projections, "~> 0.4"},
       {:ecto_enum, github: "theangryangel/ecto_enum", branch: "feat/ecto-2.1"},
       {:tesla, "~> 0.7"},
-      {:quantum, ">= 2.1.0-beta.1"},
+      {:quantum, "~> 2.1"},
       {:timex, "~> 3.1"},
       {:timber, "~> 2.5"},
       {:vex, "~> 0.6"},
