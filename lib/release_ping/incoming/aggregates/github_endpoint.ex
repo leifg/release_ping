@@ -1,6 +1,17 @@
 defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
-  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
-  alias ReleasePing.Incoming.Events.{GithubApiCalled, GithubEndpointConfigured, GithubTokenChanged, NewGithubReleasesFound}
+  alias ReleasePing.Incoming.Commands.{
+    AdjustCursor,
+    ConfigureGithubEndpoint,
+    ChangeGithubToken,
+    PollGithubReleases
+  }
+  alias ReleasePing.Incoming.Events.{
+    CursorAdjusted,
+    GithubApiCalled,
+    GithubEndpointConfigured,
+    GithubTokenChanged,
+    NewGithubReleasesFound
+  }
 
   alias ReleasePing.Github.{ApiV4, ReleaseRequest}
 
@@ -63,6 +74,17 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     }
   end
 
+  def execute(%__MODULE__{} = aggregate, %AdjustCursor{} = adjust) do
+    %CursorAdjusted{
+      uuid: adjust.uuid,
+      github_uuid: aggregate.uuid,
+      repo_owner: adjust.repo_owner,
+      repo_name: adjust.repo_name,
+      type: adjust.type,
+      cursor: adjust.cursor
+  }
+  end
+
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
     %__MODULE__{github |
       uuid: configured.uuid,
@@ -103,6 +125,17 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
 
   def apply(%__MODULE__{} = github, %GithubTokenChanged{token: token}) do
     %__MODULE__{github | token: token}
+  end
+
+  def apply(%__MODULE__{} = github, %CursorAdjusted{} = adjusted) do
+    existing_last_cursors = Map.get(github.last_cursors, {adjusted.repo_owner, adjusted.repo_name})
+    %__MODULE__{github |
+      last_cursors: Map.put(
+        github.last_cursors,
+        {adjusted.repo_owner, adjusted.repo_name},
+        Map.put(existing_last_cursors, adjusted.type, adjusted.cursor)
+      )
+    }
   end
 
   defp last_cursors(aggregate, repo_owner, repo_name) do
