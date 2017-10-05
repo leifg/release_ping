@@ -1,7 +1,18 @@
 defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
   alias ReleasePing.Incoming.Aggregates.GithubEndpoint
-  alias ReleasePing.Incoming.Commands.{ConfigureGithubEndpoint, ChangeGithubToken, PollGithubReleases}
-  alias ReleasePing.Incoming.Events.{GithubApiCalled, GithubEndpointConfigured, GithubTokenChanged, NewGithubReleasesFound}
+  alias ReleasePing.Incoming.Commands.{
+    AdjustCursor,
+    ConfigureGithubEndpoint,
+    ChangeGithubToken,
+    PollGithubReleases
+  }
+  alias ReleasePing.Incoming.Events.{
+    CursorAdjusted,
+    GithubApiCalled,
+    GithubEndpointConfigured,
+    GithubTokenChanged,
+    NewGithubReleasesFound
+  }
 
   alias ReleasePing.Fixtures.GithubResponses
 
@@ -213,22 +224,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
   end
 
   describe "change github token" do
-    setup do
-      uuid = UUID.uuid4()
-
-      event = %GithubEndpointConfigured{
-        uuid: uuid,
-        token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
-        base_url: "http://localhost:1234",
-        rate_limit_total: 5000,
-        rate_limit_remaining: 5000,
-        rate_limit_reset: "2017-08-28T22:44:04Z",
-      }
-
-      aggregate = evolve(event)
-
-      {:ok, %{aggregate: aggregate}}
-    end
+    setup [:configure_github_endpoint]
 
     test "github token can be successfully changed", %{aggregate: aggregate} do
       github_uuid = aggregate.uuid
@@ -241,8 +237,8 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
         token: new_token,
       }
 
-      assertion_fun = fn(aggregate, event, _error) ->
-        assert aggregate.token == new_token
+      assertion_fun = fn(inner_aggregate, event, _error) ->
+        assert inner_aggregate.token == new_token
         assert %GithubTokenChanged{
           uuid: uuid,
           github_uuid: ^github_uuid,
@@ -253,5 +249,70 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
 
       assert_events(aggregate, command, assertion_fun)
     end
+  end
+
+  describe "adjust cursor" do
+    setup [:configure_github_endpoint, :add_new_releases]
+
+    test "cursor can be adjusted", %{aggregate: aggregate} do
+      github_uuid = aggregate.uuid
+      new_cursor = "MTAw"
+
+      command = %AdjustCursor{
+        uuid: UUID.uuid4(),
+        github_uuid: github_uuid,
+        repo_owner: "erlang",
+        repo_name: "otp",
+        type: :tags,
+        cursor: new_cursor,
+      }
+
+      assertion_fun = fn(inner_aggregate, event, _error) ->
+        assert %CursorAdjusted{
+          uuid: uuid,
+          github_uuid: ^github_uuid,
+          repo_owner: "erlang",
+          repo_name: "otp",
+          cursor: ^new_cursor,
+          type: :tags,
+        } = event
+        assert uuid != nil
+        assert inner_aggregate.last_cursors != aggregate.last_cursors
+        assert inner_aggregate.last_cursors[{"erlang", "otp"}][:tags] == new_cursor
+      end
+
+      assert_events(aggregate, command, assertion_fun)
+    end
+  end
+
+  defp configure_github_endpoint(_context) do
+    event = %GithubEndpointConfigured{
+      uuid: UUID.uuid4(),
+      token: "45ec1b65e3ae4ebca6e613ca6266287540679174",
+      base_url: "http://localhost:1234",
+      rate_limit_total: 5000,
+      rate_limit_remaining: 5000,
+      rate_limit_reset: "2017-08-28T22:44:04Z",
+    }
+
+    aggregate = evolve(event)
+
+    {:ok, %{aggregate: aggregate}}
+  end
+
+  defp add_new_releases(%{aggregate: aggregate}) do
+    event = %NewGithubReleasesFound{
+      uuid: UUID.uuid4(),
+      github_uuid: aggregate.uuid,
+      software_uuid: "e12fabf2-827a-4a09-a817-c27dafc89717",
+      repo_owner: "erlang",
+      repo_name: "otp",
+      seen_at: "2017-09-04T06:45:58.689811Z",
+      last_cursor_releases: "Y3Vyc29yOnYyOpHOAGd7TQ==",
+      last_cursor_tags: "MTAx",
+      payloads: [],
+    }
+
+    {:ok, %{aggregate: evolve(event)}}
   end
 end

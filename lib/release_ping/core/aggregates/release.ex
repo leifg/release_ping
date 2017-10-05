@@ -19,15 +19,19 @@ defmodule ReleasePing.Core.Aggregates.Release do
   Creates software
   """
   def execute(%Release{uuid: nil}, %PublishRelease{} = publish) do
-    %ReleasePublished{
-      uuid: publish.uuid,
-      software_uuid: publish.software_uuid,
-      version_string: publish.version_string,
-      release_notes_url: publish.release_notes_url,
-      published_at: publish.published_at,
-      seen_at: publish.seen_at,
-      pre_release: publish.pre_release,
-    }
+    if release_exists?(publish) do
+      nil
+    else
+      %ReleasePublished{
+        uuid: publish.uuid,
+        software_uuid: publish.software_uuid,
+        version_string: publish.version_string,
+        release_notes_url: publish.release_notes_url,
+        published_at: publish.published_at,
+        seen_at: publish.seen_at,
+        pre_release: publish.pre_release,
+      }
+    end
   end
 
   # state mutators
@@ -42,5 +46,17 @@ defmodule ReleasePing.Core.Aggregates.Release do
       seen_at: published.seen_at,
       pre_release: published.pre_release,
     }
+  end
+
+  defp release_exists?(%{software_uuid: software_uuid, version_string: version_string}) do
+    import Ecto.Query, only: [from: 2]
+
+    software_uuid_binary = UUID.string_to_binary!(software_uuid)
+
+    query = from r in "releases",
+              where: r.software_uuid == ^software_uuid_binary and r.version_string == ^version_string,
+              select: r.uuid
+
+    ReleasePing.Repo.one(query) != nil
   end
 end
