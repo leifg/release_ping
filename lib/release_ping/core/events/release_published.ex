@@ -8,6 +8,7 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     release_notes_url: String.t,
     published_at: String.t, # ISO 8601 Datetime
     seen_at: String.t, # ISO 8601 Datetime
+    github_cursor: String.t,
     pre_release: boolean,
   }
 
@@ -18,6 +19,7 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     release_notes_url: nil,
     published_at: nil,
     seen_at: nil,
+    github_cursor: nil,
     pre_release: false,
   ]
 end

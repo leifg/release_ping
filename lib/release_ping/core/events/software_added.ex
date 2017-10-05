@@ -1,16 +1,14 @@
 defmodule ReleasePing.Core.Events.SoftwareAdded do
-  alias ReleasePing.Core.Aggregates.Software
-
   @derive [Poison.Encoder]
 
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
-    type: Software.type,
+    type: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
-    release_retrieval: Software.release_retrieval,
+    release_retrieval: String.t,
   }
 
   defstruct [

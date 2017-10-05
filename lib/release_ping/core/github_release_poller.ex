@@ -5,6 +5,8 @@ defmodule ReleasePing.Core.GithubReleasePoller do
     uuid: String.t,
     software_uuid: String.t,
     repository: String.t,
+    last_cursor_releases: String.t,
+    last_cursor_tags: String.t,
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
@@ -13,6 +15,8 @@ defmodule ReleasePing.Core.GithubReleasePoller do
     field :stream_version, :integer
     field :software_uuid, :binary_id
     field :repository, :string
+    field :last_cursor_releases, :string
+    field :last_cursor_tags, :string
 
     timestamps()
   end

@@ -78,6 +78,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     %CursorAdjusted{
       uuid: adjust.uuid,
       github_uuid: aggregate.uuid,
+      software_uuid: adjust.software_uuid,
       repo_owner: adjust.repo_owner,
       repo_name: adjust.repo_name,
       type: adjust.type,

@@ -20,6 +20,7 @@ defmodule ReleasePing.Worflows.PublishReleases do
         software_uuid: found_event.software_uuid,
         version_string: r.version_string,
         release_notes_url: r.release_notes_url,
+        github_cursor: r.github_cursor,
         published_at: r.published_at,
         seen_at: found_event.seen_at,
         pre_release: r.pre_release,

@@ -261,6 +261,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
       command = %AdjustCursor{
         uuid: UUID.uuid4(),
         github_uuid: github_uuid,
+        software_uuid: "e12fabf2-827a-4a09-a817-c27dafc89717",
         repo_owner: "erlang",
         repo_name: "otp",
         type: :tags,
@@ -271,6 +272,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpointTest do
         assert %CursorAdjusted{
           uuid: uuid,
           github_uuid: ^github_uuid,
+          software_uuid: "e12fabf2-827a-4a09-a817-c27dafc89717",
           repo_owner: "erlang",
           repo_name: "otp",
           cursor: ^new_cursor,

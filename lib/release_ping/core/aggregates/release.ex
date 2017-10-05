@@ -27,6 +27,7 @@ defmodule ReleasePing.Core.Aggregates.Release do
         software_uuid: publish.software_uuid,
         version_string: publish.version_string,
         release_notes_url: publish.release_notes_url,
+        github_cursor: publish.github_cursor,
         published_at: publish.published_at,
         seen_at: publish.seen_at,
         pre_release: publish.pre_release,
