@@ -4,8 +4,6 @@ defmodule ReleasePing.Core.Projectors.GithubReleasePoller do
   alias ReleasePing.Core.Events.{ReleasePublished, SoftwareAdded}
   alias ReleasePing.Core.GithubReleasePoller
 
-  alias ReleasePing.Incoming.Events.CursorAdjusted
-
   project %SoftwareAdded{release_retrieval: "github_release_poller"} = added, %{stream_version: stream_version} do
     Ecto.Multi.insert(multi, :software, %GithubReleasePoller{
       uuid: UUID.uuid4(),
@@ -19,12 +17,6 @@ defmodule ReleasePing.Core.Projectors.GithubReleasePoller do
     existing = ReleasePing.Repo.get_by(ReleasePing.Core.GithubReleasePoller, software_uuid: published.software_uuid)
 
     update_cursor(multi, existing, published.github_cursor)
-  end
-
-  project %CursorAdjusted{} = adjusted, %{} do
-    existing = ReleasePing.Repo.get_by(ReleasePing.Core.GithubReleasePoller, software_uuid: adjusted.software_uuid)
-
-    update_cursor(multi, existing, {adjusted.type, adjusted.cursor})
   end
 
   defp update_cursor(multi, _existing, nil), do: multi

@@ -1,7 +1,6 @@
 defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
   alias ReleasePing.Core.Projectors.GithubReleasePoller
   alias ReleasePing.Core.Events.{ReleasePublished, SoftwareAdded}
-  alias ReleasePing.Incoming.Events.CursorAdjusted
   alias ReleasePing.Repo
 
   use ReleasePing.DataCase
@@ -49,29 +48,6 @@ defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
 
       assert github_release_poller.last_cursor_releases == "Y3Vyc29yOnYyOpHOAHhy8Q=="
       assert github_release_poller.last_cursor_tags == "MTAy"
-    end
-  end
-
-  describe "GithubReleasePoller Read Model CursorAdjusted" do
-    setup [:add_software]
-
-    test "correctly updates entry in the read model", %{github_release_poller: github_release_poller} do
-
-      event = %CursorAdjusted{
-        uuid: UUID.uuid4(),
-        github_uuid: "372d7204-5c78-4b32-9b3c-f89f77207e2e",
-        software_uuid: github_release_poller.software_uuid,
-        repo_owner: "erlang",
-        repo_name: "otp",
-        type: "tags",
-        cursor: "OTk=",
-      }
-
-      GithubReleasePoller.handle(event, %{stream_version: 1, event_number: 2})
-
-      github_release_poller = Repo.get_by(ReleasePing.Core.GithubReleasePoller, software_uuid: github_release_poller.software_uuid)
-
-      assert github_release_poller.last_cursor_tags == "OTk="
     end
   end
 
