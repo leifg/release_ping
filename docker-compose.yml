@@ -1,9 +1,19 @@
 version: '2'
 services:
-  db:
-    image: postgres:10-rc1-alpine
+  rp-eventstore:
+    image: postgres:10-alpine
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: release_ping
       POSTGRES_PASSWORD: release_ping
+  restore-writestore:
+    image: leifg/postgres-s3-backup
+    command: restore --postgres-host rp-eventstore --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db eventstore --aws-s3-bucket release-ping-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      - rp-eventstore
+  restore-readstore:
+    image: leifg/postgres-s3-backup
+    command: restore --postgres-host rp-eventstore --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db release_ping_readstore --aws-s3-bucket release-ping-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      - rp-eventstore
