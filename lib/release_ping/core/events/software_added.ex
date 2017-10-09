@@ -5,6 +5,7 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
     uuid: String.t,
     name: String.t,
     type: String.t,
+    version_scheme: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -14,6 +15,7 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   defstruct [
     uuid: nil,
     name: nil,
+    version_scheme: nil,
     type: nil,
     website: nil,
     github: nil,
