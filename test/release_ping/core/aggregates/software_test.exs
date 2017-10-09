@@ -1,7 +1,6 @@
 defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   use ReleasePing.AggregateCase, aggregate: ReleasePing.Core.Aggregates.Software
 
-
   alias ReleasePing.Core.Commands.{ChangeLicenses, ChangeVersionScheme}
   alias ReleasePing.Core.Events.{LicensesChanged, SoftwareAdded, VersionSchemeChanged}
 

@@ -1,7 +1,7 @@
 defmodule ReleasePing.Factory do
   use ExMachina
 
-  alias ReleasePing.Core.Commands.AddSoftware
+  alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
 
   def software_factory do
     %{
@@ -37,5 +37,10 @@ defmodule ReleasePing.Factory do
 
   def add_software_factory do
     struct(AddSoftware, build(:software))
+  end
+
+
+  def publish_release_factory do
+    struct(PublishRelease, build(:release))
   end
 end
