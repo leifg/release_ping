@@ -4,7 +4,7 @@ defmodule ReleasePing.Core.Events.VersionSchemeChanged do
   @type t :: %__MODULE__{
     uuid: String.t,
     software_uuid: String.t,
-    version_scheme: String.t,
+    version_scheme: Regex.t,
   }
 
   defstruct [

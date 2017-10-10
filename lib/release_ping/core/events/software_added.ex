@@ -1,15 +1,17 @@
 defmodule ReleasePing.Core.Events.SoftwareAdded do
   alias ReleasePing.Core.Events.SoftwareAdded
 
+  @type release_retrieval :: :github_
+
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
-    type: String.t,
-    version_scheme: String.t,
+    type: ReleasePing.Enums.software_type,
+    version_scheme: Regex.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
-    release_retrieval: String.t,
+    release_retrieval: ReleasePing.Enums.release_retrieval,
   }
 
   defstruct [

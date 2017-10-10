@@ -2,7 +2,7 @@ defmodule ReleasePing.Core.Commands.ChangeVersionScheme do
   @type t :: %__MODULE__{
     uuid: String.t,
     software_uuid: String.t,
-    version_scheme: String.t,
+    version_scheme: Regex.t,
   }
 
   defstruct [
