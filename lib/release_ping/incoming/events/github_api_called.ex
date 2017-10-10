@@ -1,6 +1,4 @@
 defmodule ReleasePing.Incoming.Events.GithubApiCalled do
-  @derive [Poison.Encoder]
-
   @type t :: %__MODULE__{
     uuid: String.t,
     github_uuid: String.t,

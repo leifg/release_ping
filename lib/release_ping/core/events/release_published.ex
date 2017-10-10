@@ -1,6 +1,4 @@
 defmodule ReleasePing.Core.Events.ReleasePublished do
-  @derive [Poison.Encoder]
-
   @type t :: %__MODULE__{
     uuid: String.t,
     software_uuid: String.t,

@@ -34,7 +34,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   Creates software
   """
   def execute(%Software{uuid: nil}, %AddSoftware{} = add) do
-    case serialize_vesion_scheme(add.version_scheme) do
+    case validate_version_scheme(add.version_scheme) do
       {:error, {reason, position}} -> {:error, {:regex_error, "'#{reason}' at position #{position}"}}
       {:ok, _} -> %SoftwareAdded{
         uuid: add.uuid,
@@ -91,7 +91,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     if software.version_scheme == change.version_scheme do
       nil
     else
-      case serialize_vesion_scheme(change.version_scheme) do
+      case validate_version_scheme(change.version_scheme) do
         {:error, {reason, position}} -> {:error, {:regex_error, "'#{reason}' at position #{position}"}}
         {:ok, _} -> %VersionSchemeChanged{
           uuid: change.uuid,
@@ -109,7 +109,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: added.uuid,
       name: added.name,
       type: added.type,
-      version_scheme: deserialize_version_scheme(added.version_scheme),
+      version_scheme: added.version_scheme,
       website: added.website,
       github: added.github,
       licenses: added.licenses,
@@ -125,7 +125,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   def apply(%Software{} = software, %VersionSchemeChanged{} = change) do
     %Software{software |
-      version_scheme: deserialize_version_scheme(change.version_scheme),
+      version_scheme: change.version_scheme,
     }
   end
 
@@ -135,9 +135,6 @@ defmodule ReleasePing.Core.Aggregates.Software do
     }
   end
 
-  defp serialize_vesion_scheme(nil), do: {:ok, nil}
-  defp serialize_vesion_scheme(version_scheme), do: Regex.compile version_scheme
-
-  defp deserialize_version_scheme(nil), do: nil
-  defp deserialize_version_scheme(version_scheme), do: Regex.compile!(version_scheme)
+  defp validate_version_scheme(nil), do: {:ok, nil}
+  defp validate_version_scheme(version_scheme), do: Regex.compile version_scheme
 end

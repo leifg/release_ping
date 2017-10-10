@@ -1,4 +1,5 @@
 defmodule ReleasePing.AggregateCase do
+  alias Commanded.EventStore.TypeProvider
   @moduledoc """
   This module defines the test case to be used by aggregate tests.
   """
@@ -7,6 +8,7 @@ defmodule ReleasePing.AggregateCase do
 
   using [aggregate: aggregate] do
     quote bind_quoted: [aggregate: aggregate] do
+      use Commanded.EventStore.Serializer
       @aggregate aggregate
 
       import ReleasePing.Factory
@@ -52,7 +54,7 @@ defmodule ReleasePing.AggregateCase do
           (command, {aggregate, _events, nil}) ->
             case @aggregate.execute(aggregate, command) do
               {:error, reason} = error -> {aggregate, nil, error}
-              events -> {evolve(aggregate, events), events, nil}
+              events -> {evolve(aggregate, events), serialize_deserialize(events), nil}
             end
           (command, {aggregate, _events, _error} = reply) -> reply
         end)
@@ -66,7 +68,16 @@ defmodule ReleasePing.AggregateCase do
       defp evolve(aggregate, events) do
         events
         |> List.wrap()
+        |> serialize_deserialize()
         |> Enum.reduce(aggregate, &@aggregate.apply(&2, &1))
+      end
+
+      defp serialize_deserialize(nil), do: nil
+      defp serialize_deserialize(events) when is_list(events) do
+        Enum.map(events, &serialize_deserialize/1)
+      end
+      defp serialize_deserialize(event) do
+        event |> @serializer.serialize() |> @serializer.deserialize(type: TypeProvider.to_string(event))
       end
     end
   end
