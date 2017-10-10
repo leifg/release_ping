@@ -1,7 +1,7 @@
 defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
-  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme}
-  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, VersionSchemeChanged}
+  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme, PublishRelease}
+  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, ReleasePublished, VersionSchemeChanged}
 
   @type release_retrieval :: :github_release_poller
   @type type :: :application | :language | :library
@@ -15,9 +15,20 @@ defmodule ReleasePing.Core.Aggregates.Software do
     github: String.t,
     licenses: [String.t],
     release_retrieval: release_retrieval,
+    existing_releases: MapSet.t(String.t),
   }
 
-  defstruct [:uuid, :name, :type, :version_scheme, :website, :github, :licenses, :release_retrieval]
+  defstruct [
+    uuid: nil,
+    name: nil,
+    type: nil,
+    version_scheme: nil,
+    website: nil,
+    github: nil,
+    licenses: nil,
+    release_retrieval: nil,
+    existing_releases: MapSet.new(),
+  ]
 
   @doc """
   Creates software
@@ -34,6 +45,26 @@ defmodule ReleasePing.Core.Aggregates.Software do
         github: add.github,
         licenses: add.licenses,
         release_retrieval: add.release_retrieval,
+      }
+    end
+  end
+
+  @doc """
+  Publishes Release
+  """
+  def execute(%Software{existing_releases: existing_releases}, %PublishRelease{} = publish) do
+    if MapSet.member?(existing_releases, publish.version_string) do
+      nil
+    else
+      %ReleasePublished{
+        uuid: publish.uuid,
+        software_uuid: publish.software_uuid,
+        version_string: publish.version_string,
+        release_notes_url: publish.release_notes_url,
+        github_cursor: publish.github_cursor,
+        published_at: publish.published_at,
+        seen_at: publish.seen_at,
+        pre_release: publish.pre_release,
       }
     end
   end
@@ -95,6 +126,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def apply(%Software{} = software, %VersionSchemeChanged{} = change) do
     %Software{software |
       version_scheme: deserialize_version_scheme(change.version_scheme),
+    }
+  end
+
+  def apply(%Software{} = software, %ReleasePublished{version_string: version_string}) do
+    %Software{software |
+      existing_releases: MapSet.put(software.existing_releases, version_string)
     }
   end
 
