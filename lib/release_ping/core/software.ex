@@ -9,7 +9,7 @@ defmodule ReleasePing.Core.Software do
     website: String.t,
     github: String.t,
     licenses: [String.t],
-    release_retrieval: String.t,
+    release_retrieval: ReleasePing.Enums.release_retrieval,
   }
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
