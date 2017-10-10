@@ -3,6 +3,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
 
   alias ReleasePing.Core.Commands.{ChangeLicenses, ChangeVersionScheme}
   alias ReleasePing.Core.Events.{LicensesChanged, ReleasePublished, SoftwareAdded, VersionSchemeChanged}
+  alias ReleasePing.Core.Version.SemanticVersion
 
   describe "add software" do
     test "succeeds when valid" do
@@ -110,12 +111,17 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     test "succeeds when valid", %{software: software} do
       uuid = UUID.uuid4()
 
-      assert_events build(:publish_release, uuid: uuid, software_uuid: software.uuid), [
+      assert_events software, build(:publish_release, uuid: uuid, software_uuid: software.uuid), [
         %ReleasePublished{
           uuid: uuid,
           software_uuid: software.uuid,
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0",
           version_string: "v1.5.0",
+          version_info: %SemanticVersion{
+            major: 1,
+            minor: 5,
+            patch: 0,
+          },
           published_at: "2017-07-25T07:27:16.000Z",
           seen_at: "2017-07-25T07:30:00.000Z",
           pre_release: false,
@@ -124,7 +130,8 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     end
 
     test "does not return new event when release already exists", %{software: software} do
-      {software, _events, _error} = execute(build(:publish_release, uuid: UUID.uuid4(), software_uuid: software.uuid))
+      command = build(:publish_release, uuid: UUID.uuid4(), software_uuid: software.uuid)
+      {software, _events, _error} = execute(command, software)
 
       assert_events software, build(:publish_release, uuid: UUID.uuid4(), software_uuid: software.uuid), []
     end

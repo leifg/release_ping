@@ -14,6 +14,7 @@ defmodule ReleasePing.Core do
       uuid: uuid,
       name: attrs[:name],
       type: attrs[:type],
+      version_scheme: attrs[:version_scheme],
       website: attrs[:website],
       github: attrs[:github],
       licenses: attrs[:licenses],

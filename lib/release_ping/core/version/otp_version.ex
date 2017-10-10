@@ -2,6 +2,7 @@ defmodule ReleasePing.Core.Version.OtpVersion do
   alias ReleasePing.Core.Version.SemanticVersion
   @behaviour SemanticVersion
 
+  def parse(version, _regex), do: parse(version)
   def parse(version) do
     pure_version = version |> plain_version() |> String.replace(~r/-\w+$/, "")
     {major_version, minor_version, patch_version} = case String.split(pure_version, ".") do

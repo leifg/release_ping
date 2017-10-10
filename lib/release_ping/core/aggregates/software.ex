@@ -2,6 +2,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
   alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme, PublishRelease}
   alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, ReleasePublished, VersionSchemeChanged}
+  alias ReleasePing.Core.Version.SemanticVersion
 
   @type release_retrieval :: :github_release_poller
   @type type :: :application | :language | :library
@@ -52,7 +53,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   @doc """
   Publishes Release
   """
-  def execute(%Software{existing_releases: existing_releases}, %PublishRelease{} = publish) do
+  def execute(%Software{existing_releases: existing_releases, version_scheme: version_scheme}, %PublishRelease{} = publish) do
     if MapSet.member?(existing_releases, publish.version_string) do
       nil
     else
@@ -60,6 +61,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
         uuid: publish.uuid,
         software_uuid: publish.software_uuid,
         version_string: publish.version_string,
+        version_info: SemanticVersion.parse(publish.version_string, version_scheme),
         release_notes_url: publish.release_notes_url,
         github_cursor: publish.github_cursor,
         published_at: publish.published_at,
@@ -109,7 +111,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: added.uuid,
       name: added.name,
       type: added.type,
-      version_scheme: added.version_scheme,
+      version_scheme: ensure_regex(added.version_scheme),
       website: added.website,
       github: added.github,
       licenses: added.licenses,
@@ -125,7 +127,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   def apply(%Software{} = software, %VersionSchemeChanged{} = change) do
     %Software{software |
-      version_scheme: change.version_scheme,
+      version_scheme: ensure_regex(change.version_scheme),
     }
   end
 
@@ -137,4 +139,8 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   defp validate_version_scheme(nil), do: {:ok, nil}
   defp validate_version_scheme(version_scheme), do: Regex.compile version_scheme
+
+  defp ensure_regex(nil), do: nil
+  defp ensure_regex(string) when is_binary(string), do: Regex.compile!(string)
+  defp ensure_regex(regex), do: regex
 end

@@ -38,14 +38,15 @@ defmodule ReleasePing.Api.Projectors.Software do
     existing_stable = existing_software.latest_version_stable
     existing_unstable = existing_software.latest_version_unstable
 
-    sem_ver = SemanticVersion.parse(published.version_string)
+    version_info = published.version_info
 
     new_version = %Version{
       id: published.uuid,
-      name: SemanticVersion.name(published.version_string),
-      major: sem_ver.major,
-      minor: sem_ver.minor,
-      patch: sem_ver.patch,
+      name: version_name(version_info),
+      major: version_info.major,
+      minor: version_info.minor,
+      patch: version_info.patch,
+      pre_release: version_info.pre_release,
       release_notes_url: published.release_notes_url,
       published_at: published.published_at,
     }
@@ -88,4 +89,11 @@ defmodule ReleasePing.Api.Projectors.Software do
       name -> %License{spdx_id: spdx_id, name: name}
     end
   end
+
+  defp version_name(version_info) do
+    "#{version_info.major}.#{version_info.minor}.#{version_info.patch}#{pre_release(version_info)}"
+  end
+
+  defp pre_release(%{pre_release: nil}), do: nil
+  defp pre_release(%{pre_release: pre_release}), do: "-#{pre_release}"
 end
