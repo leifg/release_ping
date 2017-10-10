@@ -4,7 +4,7 @@ defmodule ReleasePing.Core.Projectors.GithubReleasePoller do
   alias ReleasePing.Core.Events.{ReleasePublished, SoftwareAdded}
   alias ReleasePing.Core.GithubReleasePoller
 
-  project %SoftwareAdded{release_retrieval: "github_release_poller"} = added, %{stream_version: stream_version} do
+  project %SoftwareAdded{release_retrieval: :github_release_poller} = added, %{stream_version: stream_version} do
     Ecto.Multi.insert(multi, :software, %GithubReleasePoller{
       uuid: UUID.uuid4(),
       stream_version: stream_version,

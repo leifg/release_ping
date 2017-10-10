@@ -61,7 +61,7 @@ defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
       website: "https://erlang.org",
       github: "erlang/otp",
       licenses: ["Apache-2.0"],
-      release_retrieval: "github_release_poller",
+      release_retrieval: :github_release_poller,
     }
 
     GithubReleasePoller.handle(event, %{stream_version: 1, event_number: 1})

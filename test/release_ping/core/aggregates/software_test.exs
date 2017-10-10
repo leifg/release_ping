@@ -8,32 +8,32 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     test "succeeds when valid" do
       uuid = UUID.uuid4()
 
-      assert_events build(:add_software, uuid: uuid), [
-        %SoftwareAdded{
-          uuid: uuid,
-          name: "elixir",
-          type: :language,
-          version_scheme: "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?",
-          website: "https://elixir-lang.org",
-          github: "elixir-lang/elixir",
-          licenses: ["MIT"],
-          release_retrieval: :github_release_poller,
-        }
-      ]
+      assertion_fun = fn(_aggregate, event, _error) ->
+        assert event.__struct__ == SoftwareAdded
+        assert event.uuid == uuid
+        assert event.name == "elixir"
+        assert event.type == :language
+        assert event.version_scheme.source == "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?"
+        assert event.website == "https://elixir-lang.org"
+        assert event.github == "elixir-lang/elixir"
+        assert event.licenses == ["MIT"]
+        assert event.release_retrieval == :github_release_poller
+      end
+
+      assert_events build(:add_software, uuid: uuid), assertion_fun
     end
 
     test "changes internal state of software correctly" do
       assertion_fun = fn(aggregate, event, _error) ->
-        assert aggregate == %ReleasePing.Core.Aggregates.Software{
-          uuid: event.uuid,
-          name: event.name,
-          type: event.type,
-          version_scheme: Regex.compile!(event.version_scheme),
-          website: event.website,
-          github: event.github,
-          licenses: event.licenses,
-          release_retrieval: event.release_retrieval,
-        }
+        assert aggregate.__struct__ == ReleasePing.Core.Aggregates.Software
+        assert aggregate.uuid == event.uuid
+        assert aggregate.name == event.name
+        assert aggregate.type == event.type
+        assert aggregate.version_scheme.source == event.version_scheme.source
+        assert aggregate.website == event.website
+        assert aggregate.github == event.github
+        assert aggregate.licenses == event.licenses
+        assert aggregate.release_retrieval == event.release_retrieval
       end
 
       command = build(:add_software, uuid: UUID.uuid4())
@@ -84,13 +84,14 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
       uuid = UUID.uuid4()
       new_version_scheme = "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?(?:\\+(?<build_info>.+))?"
 
-      assert_events software, %ChangeVersionScheme{uuid: uuid, software_uuid: software.uuid, version_scheme: new_version_scheme}, [
-        %VersionSchemeChanged{
-          uuid: uuid,
-          software_uuid: software.uuid,
-          version_scheme: new_version_scheme,
-        }
-      ]
+      assertion_fun = fn(_aggregate, event, _error) ->
+        assert event.__struct__ == VersionSchemeChanged
+        assert event.uuid == uuid
+        assert event.software_uuid == software.uuid
+        assert event.version_scheme.source == new_version_scheme
+      end
+
+      assert_events software, %ChangeVersionScheme{uuid: uuid, software_uuid: software.uuid, version_scheme: new_version_scheme}, assertion_fun
     end
 
     test "returns no events when version scheme didn't change", %{software: software} do
