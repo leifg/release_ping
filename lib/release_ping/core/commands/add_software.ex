@@ -3,7 +3,7 @@ defmodule ReleasePing.Core.Commands.AddSoftware do
     uuid: String.t,
     name: String.t,
     type: ReleasePing.Enums.software_type,
-    version_scheme: Regex.t,
+    version_scheme: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
