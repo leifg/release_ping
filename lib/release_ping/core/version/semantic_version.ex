@@ -38,7 +38,7 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
     }
   end
 
-  @spec default_version_scheme :: String.t
+  @spec default_version_scheme :: Regex.t
   def default_version_scheme do
     ~r/(?<major>\d+)\.(?<minor>\d+)(?:\.(?<patch>\d+))?(?:-(?<pre_release>.+))?/
   end
