@@ -3,6 +3,7 @@ defmodule ReleasePing.Core.Version.PlainVersion do
 
   @behaviour SemanticVersion
 
+  def parse(version, _regex), do: parse(version)
   def parse(plain_version) do
     {:ok, version} = Version.parse(plain_version)
     %SemanticVersion{

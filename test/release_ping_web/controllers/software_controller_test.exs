@@ -43,12 +43,8 @@ defmodule ReleasePingWeb.SoftwareControllerTest do
     end
   end
 
-  defp fixture(:software) do
-    build(:software)
-  end
-
   defp add_software(_context) do
-    assert {:ok, core_software} = Core.add_software(fixture(:software))
+    assert {:ok, core_software} = Core.add_software(build(:software))
 
     release = build(:release, %{software_uuid: core_software.uuid})
     assert {:ok, release} = Core.publish_release(release)

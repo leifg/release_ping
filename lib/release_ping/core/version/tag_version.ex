@@ -3,6 +3,7 @@ defmodule ReleasePing.Core.Version.TagVersion do
 
   @behaviour SemanticVersion
 
+  def parse(version, _regex), do: parse(version)
   def parse("v" <> rest_of_version) do
     PlainVersion.parse(rest_of_version)
   end
