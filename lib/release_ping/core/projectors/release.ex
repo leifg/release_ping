@@ -3,10 +3,9 @@ defmodule ReleasePing.Core.Projectors.Release do
 
   alias ReleasePing.Core.Events.ReleasePublished
   alias ReleasePing.Core.Release
-  alias ReleasePing.Core.Version.SemanticVersion
 
   project %ReleasePublished{} = published, %{stream_version: stream_version} do
-    version = SemanticVersion.parse(published.version_string)
+    version = published.version_info
     Ecto.Multi.insert(multi, :software, %Release{
       uuid: published.uuid,
       stream_version: stream_version,
