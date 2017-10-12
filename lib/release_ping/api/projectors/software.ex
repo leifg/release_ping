@@ -3,7 +3,6 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   alias ReleasePing.Repo
   alias ReleasePing.Core.Events.{LicensesChanged, SoftwareAdded, ReleasePublished}
-  alias ReleasePing.Core.Version.SemanticVersion
   alias ReleasePing.Api.{Software, VersionUtils}
   alias ReleasePing.Api.Software.{License, Version}
 
