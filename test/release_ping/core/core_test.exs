@@ -19,10 +19,6 @@ defmodule ReleasePing.CoreTest do
       assert software.github == "elixir-lang/elixir"
       assert software.licenses == ["MIT"]
       assert software.release_retrieval == :github_release_poller
-
-      assert {:ok, %Software{} = software} = Core.software_by_github("elixir-lang", "elixir")
-      assert software.website == "https://elixir-lang.org"
-      assert software.release_retrieval == :github_release_poller
     end
 
     test "fails for existing software" do
