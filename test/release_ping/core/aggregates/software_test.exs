@@ -1,8 +1,8 @@
 defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   use ReleasePing.AggregateCase, aggregate: ReleasePing.Core.Aggregates.Software
 
-  alias ReleasePing.Core.Commands.{ChangeLicenses, ChangeVersionScheme}
-  alias ReleasePing.Core.Events.{LicensesChanged, ReleasePublished, SoftwareAdded, VersionSchemeChanged}
+  alias ReleasePing.Core.Commands.{ChangeLicenses, ChangeVersionScheme, CorrectWebsite}
+  alias ReleasePing.Core.Events.{LicensesChanged, ReleasePublished, SoftwareAdded, VersionSchemeChanged, WebsiteCorrected}
   alias ReleasePing.Core.Version.SemanticVersion
 
   describe "add software" do
@@ -73,6 +73,32 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
       new_licenses = software.licenses
 
       assert_events software, %ChangeLicenses{uuid: uuid, software_uuid: software.uuid, licenses: new_licenses}, []
+    end
+  end
+
+  describe "correct webiste" do
+    setup [
+      :add_software,
+    ]
+
+    test "succeeds when valid", %{software: software} do
+      uuid = UUID.uuid4()
+      new_website = "https://www.elixir-lang.org"
+
+      assert_events software, %CorrectWebsite{uuid: uuid, software_uuid: software.uuid, website: new_website}, [
+        %WebsiteCorrected{
+          uuid: uuid,
+          software_uuid: software.uuid,
+          website: new_website,
+        }
+      ]
+    end
+
+    test "returns no events when website didn't change", %{software: software} do
+      uuid = UUID.uuid4()
+      new_website = software.website
+
+      assert_events software, %CorrectWebsite{uuid: uuid, software_uuid: software.uuid, website: new_website}, []
     end
   end
 

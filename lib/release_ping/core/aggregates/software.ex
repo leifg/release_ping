@@ -1,7 +1,7 @@
 defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
-  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme, PublishRelease}
-  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, ReleasePublished, VersionSchemeChanged}
+  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme, CorrectWebsite, PublishRelease}
+  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, ReleasePublished, VersionSchemeChanged, WebsiteCorrected}
   alias ReleasePing.Core.Version.SemanticVersion
 
   @type release_retrieval :: :github_release_poller
@@ -104,6 +104,21 @@ defmodule ReleasePing.Core.Aggregates.Software do
     end
   end
 
+  @doc """
+  Corrects Website
+  """
+  def execute(%Software{} = software, %CorrectWebsite{} = correct) do
+    if software.website == correct.website do
+      nil
+    else
+      %WebsiteCorrected{
+        uuid: correct.uuid,
+        software_uuid: software.uuid,
+        website: correct.website,
+      }
+    end
+  end
+
   # state mutators
 
   def apply(%Software{} = software, %SoftwareAdded{} = added) do
@@ -134,6 +149,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def apply(%Software{} = software, %ReleasePublished{version_string: version_string}) do
     %Software{software |
       existing_releases: MapSet.put(software.existing_releases, version_string)
+    }
+  end
+
+  def apply(%Software{} = software, %WebsiteCorrected{} = corrected) do
+    %Software{software |
+      website: corrected.website,
     }
   end
 

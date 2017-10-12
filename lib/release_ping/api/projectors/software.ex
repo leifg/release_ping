@@ -2,7 +2,7 @@ defmodule ReleasePing.Api.Projectors.Software do
   use Commanded.Projections.Ecto, name: "Api.Projectors.Software"
 
   alias ReleasePing.Repo
-  alias ReleasePing.Core.Events.{LicensesChanged, SoftwareAdded, ReleasePublished}
+  alias ReleasePing.Core.Events.{LicensesChanged, SoftwareAdded, ReleasePublished, WebsiteCorrected}
   alias ReleasePing.Api.{Software, VersionUtils}
   alias ReleasePing.Api.Software.{License, Version}
 
@@ -30,6 +30,10 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   project %LicensesChanged{} = changed, _metadata do
     update_software(multi, changed)
+  end
+
+  project %WebsiteCorrected{} = corrected, _metadata do
+    update_software(multi, corrected)
   end
 
   defp update_software(multi, %ReleasePublished{} = published) do
@@ -76,6 +80,14 @@ defmodule ReleasePing.Api.Projectors.Software do
     changeset = existing_software
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:licenses, Enum.map(changed.licenses, &map_license/1))
+
+    Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp update_software(multi, %WebsiteCorrected{} = corrected) do
+    existing_software = Repo.get(Software, corrected.software_uuid)
+    changeset = existing_software
+      |> Ecto.Changeset.change(%{website: corrected.website})
 
     Ecto.Multi.update(multi, :api_software, changeset)
   end
