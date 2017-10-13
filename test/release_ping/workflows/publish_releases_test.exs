@@ -59,7 +59,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
         %PublishRelease{
           software_uuid: ^software_uuid,
           version_string: "OTP-20.0.1",
-          release_notes_url: "https://github.com/erlang/otp/releases/tag/OTP-20.0.1",
+          release_notes_url: nil,
           github_cursor: "tags:OTY=",
           published_at: "2017-06-30T13:21:23Z",
           seen_at: @seen_at,
@@ -68,7 +68,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
         %PublishRelease{
           software_uuid: ^software_uuid,
           version_string: "OTP-19.3.6.2",
-          release_notes_url: "https://github.com/erlang/otp/releases/tag/OTP-19.3.6.2",
+          release_notes_url: nil,
           github_cursor: "tags:OTI=",
           published_at: "2017-07-25T07:47:11Z",
           seen_at: @seen_at,
@@ -77,7 +77,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
         %PublishRelease{
           software_uuid: ^software_uuid,
           version_string: "OTP-20.0.2",
-          release_notes_url: "https://github.com/erlang/otp/releases/tag/OTP-20.0.2",
+          release_notes_url: nil,
           published_at: "2017-07-26T09:46:41Z",
           github_cursor: "tags:OTc=",
           seen_at: @seen_at,
@@ -86,7 +86,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
         %PublishRelease{
           software_uuid: ^software_uuid,
           version_string: "OTP-20.0.3",
-          release_notes_url: "https://github.com/erlang/otp/releases/tag/OTP-20.0.3",
+          release_notes_url: nil,
           github_cursor: "tags:OTg=",
           published_at: "2017-08-23T08:39:52Z",
           seen_at: @seen_at,
@@ -95,7 +95,7 @@ defmodule ReleasePing.Worflows.PublishReleasesTest do
         %PublishRelease{
           software_uuid: ^software_uuid,
           version_string: "OTP-20.0.4",
-          release_notes_url: "https://github.com/erlang/otp/releases/tag/OTP-20.0.4",
+          release_notes_url: nil,
           github_cursor: "tags:OTk=",
           published_at: "2017-08-25T07:36:12Z",
           seen_at: @seen_at,
