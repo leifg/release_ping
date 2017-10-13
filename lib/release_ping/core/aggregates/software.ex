@@ -1,7 +1,21 @@
 defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
-  alias ReleasePing.Core.Commands.{AddSoftware, ChangeLicenses, ChangeVersionScheme, CorrectWebsite, PublishRelease}
-  alias ReleasePing.Core.Events.{SoftwareAdded, LicensesChanged, ReleasePublished, VersionSchemeChanged, WebsiteCorrected}
+  alias ReleasePing.Core.Commands.{
+    AddSoftware,
+    ChangeLicenses,
+    ChangeVersionScheme,
+    CorrectReleaseNotesUrlTemplate,
+    CorrectWebsite,
+    PublishRelease
+  }
+  alias ReleasePing.Core.Events.{
+    SoftwareAdded,
+    LicensesChanged,
+    ReleasePublished,
+    ReleaseNotesUrlTemplateCorrected,
+    VersionSchemeChanged,
+    WebsiteCorrected
+  }
   alias ReleasePing.Core.Version.SemanticVersion
 
   @type release_retrieval :: :github_release_poller
@@ -12,6 +26,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     name: String.t,
     type: type,
     version_scheme: Regex.t,
+    release_notes_url_template: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -24,6 +39,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     name: nil,
     type: nil,
     version_scheme: nil,
+    release_notes_url_template: nil,
     website: nil,
     github: nil,
     licenses: nil,
@@ -42,6 +58,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
         name: add.name,
         type: add.type,
         version_scheme: add.version_scheme,
+        release_notes_url_template: add.release_notes_url_template,
         website: add.website,
         github: add.github,
         licenses: add.licenses,
@@ -53,16 +70,24 @@ defmodule ReleasePing.Core.Aggregates.Software do
   @doc """
   Publishes Release
   """
-  def execute(%Software{existing_releases: existing_releases, version_scheme: version_scheme}, %PublishRelease{} = publish) do
-    if MapSet.member?(existing_releases, publish.version_string) do
+  def execute(%Software{} = software, %PublishRelease{} = publish) do
+    if MapSet.member?(software.existing_releases, publish.version_string) do
       nil
     else
+      version_info = SemanticVersion.parse(publish.version_string, software.version_scheme)
+      release_notes_url = calculate_release_notes_url(
+        software.release_notes_url_template,
+        publish.release_notes_url,
+        publish.version_string,
+        version_info
+      )
+
       %ReleasePublished{
         uuid: publish.uuid,
         software_uuid: publish.software_uuid,
         version_string: publish.version_string,
-        version_info: SemanticVersion.parse(publish.version_string, version_scheme),
-        release_notes_url: publish.release_notes_url,
+        version_info: version_info,
+        release_notes_url: release_notes_url,
         github_cursor: publish.github_cursor,
         published_at: publish.published_at,
         seen_at: publish.seen_at,
@@ -119,6 +144,21 @@ defmodule ReleasePing.Core.Aggregates.Software do
     end
   end
 
+  @doc """
+  Corrects ReleaseNotesUrlTemplate
+  """
+  def execute(%Software{} = software, %CorrectReleaseNotesUrlTemplate{} = correct) do
+    if software.release_notes_url_template == correct.release_notes_url_template do
+      nil
+    else
+      %ReleaseNotesUrlTemplateCorrected{
+        uuid: correct.uuid,
+        software_uuid: software.uuid,
+        release_notes_url_template: correct.release_notes_url_template,
+      }
+    end
+  end
+
   # state mutators
 
   def apply(%Software{} = software, %SoftwareAdded{} = added) do
@@ -127,6 +167,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       name: added.name,
       type: added.type,
       version_scheme: ensure_regex(added.version_scheme),
+      release_notes_url_template: added.release_notes_url_template,
       website: added.website,
       github: added.github,
       licenses: added.licenses,
@@ -158,10 +199,25 @@ defmodule ReleasePing.Core.Aggregates.Software do
     }
   end
 
+  def apply(%Software{} = software, %ReleaseNotesUrlTemplateCorrected{} = corrected) do
+    %Software{software |
+      release_notes_url_template: corrected.release_notes_url_template,
+    }
+  end
+
   defp validate_version_scheme(nil), do: {:ok, nil}
   defp validate_version_scheme(version_scheme), do: Regex.compile version_scheme
 
   defp ensure_regex(nil), do: nil
   defp ensure_regex(string) when is_binary(string), do: Regex.compile!(string)
   defp ensure_regex(regex), do: regex
+
+  defp calculate_release_notes_url(release_notes_url_template, release_notes_url, version_string, version_info) do
+    case release_notes_url do
+      nil ->
+        assigns = version_info |> Map.from_struct() |> Map.merge(%{version_string: version_string})
+        EEx.eval_string(release_notes_url_template, assigns: assigns)
+      release_notes_url -> release_notes_url
+    end
+  end
 end
