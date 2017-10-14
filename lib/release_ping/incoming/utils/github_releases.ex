@@ -15,18 +15,18 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     defstruct [:version_string, :published_at, :release_notes_url, :release_notes_content, :pre_release]
   end
 
-  def merge_tags_and_releases(payloads, repo_owner, repo_name) do
+  def merge_tags_and_releases(payloads) do
     all_tags = payloads
       |> Enum.map(&fetch_tags/1)
       |> List.flatten()
       |> Enum.filter(&filter_tags/1)
-      |> reduce_tags(repo_owner, repo_name)
+      |> reduce_tags()
 
     all_releases = payloads
       |> Enum.map(&fetch_releases/1)
       |> List.flatten()
       |> Enum.filter(&filter_releases/1)
-      |> reduce_releases(repo_owner, repo_name)
+      |> reduce_releases()
 
     all_tags
       |> Map.merge(all_releases)
@@ -49,7 +49,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     !release["node"]["isDraft"]
   end
 
-  defp reduce_tags(tags, repo_owner, repo_name) do
+  defp reduce_tags(tags) do
     Enum.reduce(tags, %{}, fn(tag, agg) ->
       tag_node = tag["node"]
       tag_name = tag_node["name"]
@@ -69,7 +69,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     end)
   end
 
-  defp reduce_releases(tags, repo_owner, repo_name) do
+  defp reduce_releases(tags) do
     Enum.reduce(tags, %{}, fn(release, agg) ->
       release_node = release["node"]
       tag_name = release_node["tag"]["name"]

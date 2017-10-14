@@ -13,7 +13,7 @@ defmodule ReleasePing.Worflows.PublishReleases do
 
   def handle(%__MODULE__{}, %NewGithubReleasesFound{} = found_event) do
     found_event.payloads
-    |> GithubReleases.merge_tags_and_releases(found_event.repo_owner, found_event.repo_name)
+    |> GithubReleases.merge_tags_and_releases()
     |> Enum.map(fn(r) ->
       %PublishRelease{
         uuid: UUID.uuid4(),
