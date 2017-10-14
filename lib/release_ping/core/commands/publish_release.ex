@@ -15,7 +15,6 @@ defmodule ReleasePing.Core.Commands.PublishRelease do
     software_uuid: nil,
     version_string: nil,
     release_notes_url: nil,
-    version: nil,
     github_cursor: nil,
     published_at: nil,
     seen_at: nil,

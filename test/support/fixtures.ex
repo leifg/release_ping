@@ -161,6 +161,7 @@ defmodule ReleasePing.Fixtures do
                     "publishedAt": "2017-05-31T15:43:09Z",
                     "isDraft": false,
                     "isPrerelease": true,
+                    "url": "https://github.com/erlang/otp/releases/tag/OTP-20.0-rc1",
                     "tag": {
                       "id": "MDM6UmVmMzc0OTI3Ok9UUC0yMC4wLXJjMQ==",
                       "name": "OTP-20.0-rc1"
@@ -176,6 +177,7 @@ defmodule ReleasePing.Fixtures do
                     "publishedAt": "2017-05-31T16:12:17Z",
                     "isDraft": false,
                     "isPrerelease": true,
+                    "url": "https://github.com/erlang/otp/releases/tag/OTP-20.0-rc2",
                     "tag": {
                       "id": "MDM6UmVmMzc0OTI3Ok9UUC0yMC4wLXJjMg==",
                       "name": "OTP-20.0-rc2"
@@ -191,6 +193,7 @@ defmodule ReleasePing.Fixtures do
                     "publishedAt": "2017-06-21T12:21:02Z",
                     "isDraft": false,
                     "isPrerelease": false,
+                    "url": "https://github.com/erlang/otp/releases/tag/OTP-20.0",
                     "tag": {
                       "id": "MDM6UmVmMzc0OTI3Ok9UUC0yMC4w",
                       "name": "OTP-20.0"

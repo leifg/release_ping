@@ -61,7 +61,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
           version_string: tag_name,
           github_cursor: "tags:#{tag["cursor"]}",
           published_at: normalize_date(tag_target["author"]["date"]),
-          release_notes_url: "https://github.com/#{repo_owner}/#{repo_name}/releases/tag/#{tag_name}",
+          release_notes_url: nil,
           release_notes_content: tag_target["message"],
           pre_release: pre_release_from_version(tag_name),
         }
@@ -80,7 +80,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
           version_string: tag_name,
           github_cursor: "releases:#{release["cursor"]}",
           published_at: normalize_date(release_node["publishedAt"]),
-          release_notes_url: "https://github.com/#{repo_owner}/#{repo_name}/releases/tag/#{tag_name}",
+          release_notes_url: release_node["url"],
           release_notes_content: release_node["description"],
           pre_release: release_node["isPrerelease"],
         }

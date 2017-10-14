@@ -1,8 +1,19 @@
 defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   use ReleasePing.AggregateCase, aggregate: ReleasePing.Core.Aggregates.Software
 
-  alias ReleasePing.Core.Commands.{ChangeLicenses, ChangeVersionScheme, CorrectWebsite}
-  alias ReleasePing.Core.Events.{LicensesChanged, ReleasePublished, SoftwareAdded, VersionSchemeChanged, WebsiteCorrected}
+  alias ReleasePing.Core.Commands.{
+    ChangeLicenses,
+    ChangeVersionScheme,
+    CorrectReleaseNotesUrlTemplate,
+    CorrectWebsite
+  }
+  alias ReleasePing.Core.Events.{
+    LicensesChanged,
+    ReleaseNotesUrlTemplateCorrected,
+    ReleasePublished,
+    SoftwareAdded,
+    VersionSchemeChanged, WebsiteCorrected
+  }
   alias ReleasePing.Core.Version.SemanticVersion
 
   describe "add software" do
@@ -76,7 +87,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     end
   end
 
-  describe "correct webiste" do
+  describe "correct website" do
     setup [
       :add_software,
     ]
@@ -99,6 +110,32 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
       new_website = software.website
 
       assert_events software, %CorrectWebsite{uuid: uuid, software_uuid: software.uuid, website: new_website}, []
+    end
+  end
+
+  describe "correct release notes url template" do
+    setup [
+      :add_software,
+    ]
+
+    test "succeeds when valid", %{software: software} do
+      uuid = UUID.uuid4()
+      new_release_notes_url_template = "http://elixir-lang.org/version/<%= @version_string %>"
+
+      assert_events software, %CorrectReleaseNotesUrlTemplate{uuid: uuid, software_uuid: software.uuid, release_notes_url_template: new_release_notes_url_template}, [
+        %ReleaseNotesUrlTemplateCorrected{
+          uuid: uuid,
+          software_uuid: software.uuid,
+          release_notes_url_template: new_release_notes_url_template,
+        }
+      ]
+    end
+
+    test "returns no events when website didn't change", %{software: software} do
+      uuid = UUID.uuid4()
+      new_release_notes_url_template = software.release_notes_url_template
+
+      assert_events software, %CorrectReleaseNotesUrlTemplate{uuid: uuid, software_uuid: software.uuid, release_notes_url_template: new_release_notes_url_template}, []
     end
   end
 
@@ -147,6 +184,34 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
             major: 1,
             minor: 5,
             patch: 0,
+          },
+          published_at: "2017-07-25T07:27:16.000Z",
+          seen_at: "2017-07-25T07:30:00.000Z",
+          pre_release: false,
+        }
+      ]
+    end
+
+    test "succeeds when release_notes_url is not set", %{software: software} do
+      uuid = UUID.uuid4()
+
+      command = build(
+        :publish_release,
+        uuid: uuid,
+        software_uuid: software.uuid,
+        release_notes_url: nil,
+        version_string: "v1.5.2"
+      )
+      assert_events software, command, [
+        %ReleasePublished{
+          uuid: uuid,
+          software_uuid: software.uuid,
+          release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
+          version_string: "v1.5.2",
+          version_info: %SemanticVersion{
+            major: 1,
+            minor: 5,
+            patch: 2,
           },
           published_at: "2017-07-25T07:27:16.000Z",
           seen_at: "2017-07-25T07:30:00.000Z",
