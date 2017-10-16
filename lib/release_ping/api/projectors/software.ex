@@ -12,6 +12,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     "Apache-2.0" => "Apache License 2.0",
     "GPL-3.0" => "GNU General Public License v3.0",
     "MIT" => "MIT License",
+    "Ruby" => "Ruby License",
   }
 
   project %SoftwareAdded{} = added, %{stream_version: stream_version} do
