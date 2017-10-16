@@ -7,6 +7,19 @@ defmodule ReleasePing.CoreTest do
 
   alias ReleasePing.Wait
 
+  describe "read software" do
+    @tag :integration
+    test "finds software by uuid" do
+      assert {:ok, %Software{} = software} = Core.add_software(build(:software))
+
+      read_software = Core.software_by_uuid(software.uuid)
+
+      assert read_software.uuid == software.uuid
+      assert read_software.name == software.name
+      assert Regex.regex?(read_software.version_scheme)
+    end
+  end
+
   describe "add software" do
     @tag :integration
     test "succeeds with valid data" do

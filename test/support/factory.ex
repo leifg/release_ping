@@ -4,6 +4,10 @@ defmodule ReleasePing.Factory do
   alias ReleasePing.Core.Commands.{AddSoftware, PublishRelease}
 
   def software_factory do
+    elixir_factory()
+  end
+
+  def elixir_factory do
     %{
       name: "elixir",
       type: :language,
@@ -13,6 +17,19 @@ defmodule ReleasePing.Factory do
       github: "elixir-lang/elixir",
       release_retrieval: :github_release_poller,
       licenses: ["MIT"],
+    }
+  end
+
+  def erlang_factory do
+    %{
+      name: "erlang",
+      type: :language,
+      version_scheme: "OTP[-_](?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?:-(?<pre_release>.+))?",
+      release_notes_url_template: "https://github.com/erlang/otp/releases/tag/<%= @version_string %>",
+      website: "https://erlang.org",
+      github: "erlang/otp",
+      release_retrieval: :github_release_poller,
+      licenses: ["Apache-2.0"],
     }
   end
 

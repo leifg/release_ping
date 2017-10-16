@@ -22,7 +22,7 @@ defmodule ReleasePing.Core do
     }
       |> Router.dispatch()
       |> case do
-        :ok -> Wait.until(fn -> Repo.get(Software, uuid) end)
+        :ok -> Wait.until(fn -> software_by_uuid(uuid) end)
         reply -> reply
       end
   end
@@ -33,6 +33,13 @@ defmodule ReleasePing.Core do
       software_uuid: software_uuid,
       licenses: license_ids,
     })
+  end
+
+  def software_by_uuid(uuid) do
+    case Repo.get(Software, uuid) do
+      nil -> nil
+      software -> Map.put(software, :version_scheme, compile_regex!(software.version_scheme))
+    end
   end
 
   def all_software() do
@@ -69,4 +76,7 @@ defmodule ReleasePing.Core do
   def github_release_pollers do
     Repo.all(GithubReleasePoller)
   end
+
+  defp compile_regex!(nil), do: nil
+  defp compile_regex!(regex_string), do: Regex.compile!(regex_string)
 end

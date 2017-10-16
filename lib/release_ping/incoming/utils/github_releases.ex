@@ -1,7 +1,5 @@
 defmodule ReleasePing.Incoming.Utils.GithubReleases do
-
-  @pre_release_regex ~r/(?:-alpha)|(?:-beta)|(?:-rc)/
-  @valid_tag_regex ~r/\d+\.\d+/
+  alias ReleasePing.Core.Version.SemanticVersion
 
   defmodule NewRelease do
     @type t :: %__MODULE__{
@@ -15,12 +13,12 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     defstruct [:version_string, :published_at, :release_notes_url, :release_notes_content, :pre_release]
   end
 
-  def merge_tags_and_releases(payloads) do
+  def merge_tags_and_releases(payloads, version_scheme) do
     all_tags = payloads
       |> Enum.map(&fetch_tags/1)
       |> List.flatten()
-      |> Enum.filter(&filter_tags/1)
-      |> reduce_tags()
+      |> Enum.filter(fn(tag) -> filter_tags(tag, version_scheme) end)
+      |> reduce_tags(version_scheme)
 
     all_releases = payloads
       |> Enum.map(&fetch_releases/1)
@@ -41,15 +39,15 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     payload["data"]["repository"][name]["edges"]
   end
 
-  defp filter_tags(tag) do
-    String.match?(tag["node"]["name"], @valid_tag_regex)
+  defp filter_tags(tag, version_scheme) do
+    SemanticVersion.valid?(tag["node"]["name"], version_scheme)
   end
 
   defp filter_releases(release) do
     !release["node"]["isDraft"]
   end
 
-  defp reduce_tags(tags) do
+  defp reduce_tags(tags, version_scheme) do
     Enum.reduce(tags, %{}, fn(tag, agg) ->
       tag_node = tag["node"]
       tag_name = tag_node["name"]
@@ -63,7 +61,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
           published_at: normalize_date(tag_target["author"]["date"]),
           release_notes_url: nil,
           release_notes_content: tag_target["message"],
-          pre_release: pre_release_from_version(tag_name),
+          pre_release: pre_release_from_version(tag_name, version_scheme),
         }
       )
     end)
@@ -94,7 +92,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
     DateTime.to_iso8601(dt)
   end
 
-  defp pre_release_from_version(version) do
-    String.match?(version, @pre_release_regex)
+  defp pre_release_from_version(version, version_scheme) do
+    SemanticVersion.pre_release?(version, version_scheme)
   end
 end

@@ -28,6 +28,16 @@ defmodule ReleasePing.Core.Version.SemanticVersion do
     )
   end
 
+  @spec valid?(String.t, Regex.t) :: boolean
+  def valid?(version_string, version_scheme) do
+    String.match?(version_string, version_scheme)
+  end
+
+  @spec pre_release?(String.t, Regex.t) :: boolean
+  def pre_release?(version_string, version_scheme) do
+    parse(version_string, version_scheme).pre_release != nil
+  end
+
   @spec from_map(map) :: t
   def from_map(version_info) do
     %__MODULE__{
