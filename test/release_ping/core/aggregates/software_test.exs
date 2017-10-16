@@ -233,8 +233,6 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
 
     {software, _events, _error} = execute(build(:add_software, uuid: uuid))
 
-    [
-      software: software,
-    ]
+    {:ok, %{software: software}}
   end
 end
