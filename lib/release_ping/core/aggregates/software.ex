@@ -55,11 +55,11 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def execute(%Software{uuid: nil}, %AddSoftware{} = add) do
     case validate_version_scheme(add.version_scheme) do
       {:error, {reason, position}} -> {:error, {:regex_error, "'#{reason}' at position #{position}"}}
-      {:ok, _} -> %SoftwareAdded{
+      {:ok, version_scheme_regex} -> %SoftwareAdded{
         uuid: add.uuid,
         name: add.name,
         type: add.type,
-        version_scheme: add.version_scheme,
+        version_scheme: version_scheme_regex,
         release_notes_url_template: add.release_notes_url_template,
         website: add.website,
         github: add.github,
@@ -124,10 +124,10 @@ defmodule ReleasePing.Core.Aggregates.Software do
     else
       case validate_version_scheme(change.version_scheme) do
         {:error, {reason, position}} -> {:error, {:regex_error, "'#{reason}' at position #{position}"}}
-        {:ok, _} -> %VersionSchemeChanged{
+        {:ok, version_scheme_regex} -> %VersionSchemeChanged{
           uuid: change.uuid,
           software_uuid: software.uuid,
-          version_scheme: change.version_scheme,
+          version_scheme: version_scheme_regex,
         }
       end
     end
@@ -186,7 +186,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: added.uuid,
       name: added.name,
       type: added.type,
-      version_scheme: ensure_regex(added.version_scheme),
+      version_scheme: added.version_scheme,
       release_notes_url_template: added.release_notes_url_template,
       website: added.website,
       github: added.github,
@@ -203,7 +203,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   def apply(%Software{} = software, %VersionSchemeChanged{} = change) do
     %Software{software |
-      version_scheme: ensure_regex(change.version_scheme),
+      version_scheme: change.version_scheme,
     }
   end
 
@@ -233,10 +233,6 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   defp validate_version_scheme(nil), do: {:ok, nil}
   defp validate_version_scheme(version_scheme), do: Regex.compile version_scheme
-
-  defp ensure_regex(nil), do: nil
-  defp ensure_regex(string) when is_binary(string), do: Regex.compile!(string)
-  defp ensure_regex(regex), do: regex
 
   defp calculate_release_notes_url(release_notes_url_template, release_notes_url, version_string, version_info) do
     case release_notes_url do

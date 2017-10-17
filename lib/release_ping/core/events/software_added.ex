@@ -43,4 +43,10 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
     def safe_atom_map(string) when is_binary(string), do: String.to_existing_atom(string)
     def safe_atom_map(other), do: other
   end
+
+  defimpl Poison.Encoder, for: SoftwareAdded do
+    def encode(%{version_scheme: %Regex{} = version_scheme} = added, options) do
+      Poison.Encoder.Map.encode(%{added | version_scheme: Regex.source(version_scheme)}, options)
+    end
+  end
 end
