@@ -1,5 +1,5 @@
 defmodule ReleasePing.Incoming.Utils.GithubReleases do
-  alias ReleasePing.Core.Version.SemanticVersion
+  alias ReleasePing.Core.Version.VersionInfo
 
   defmodule NewRelease do
     @type t :: %__MODULE__{
@@ -40,7 +40,7 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
   end
 
   defp filter_tags(tag, version_scheme) do
-    SemanticVersion.valid?(tag["node"]["name"], version_scheme)
+    VersionInfo.valid?(tag["node"]["name"], version_scheme)
   end
 
   defp filter_releases(release) do
@@ -93,6 +93,6 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
   end
 
   defp pre_release_from_version(version, version_scheme) do
-    SemanticVersion.pre_release?(version, version_scheme)
+    VersionInfo.pre_release?(version, version_scheme)
   end
 end

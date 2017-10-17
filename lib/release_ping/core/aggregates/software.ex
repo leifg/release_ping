@@ -16,7 +16,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     VersionSchemeChanged,
     WebsiteCorrected
   }
-  alias ReleasePing.Core.Version.SemanticVersion
+  alias ReleasePing.Core.Version.VersionInfo
 
   @type release_retrieval :: :github_release_poller
   @type type :: :application | :language | :library
@@ -74,7 +74,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     if MapSet.member?(software.existing_releases, publish.version_string) do
       nil
     else
-      version_info = SemanticVersion.parse(publish.version_string, software.version_scheme)
+      version_info = VersionInfo.parse(publish.version_string, software.version_scheme)
       release_notes_url = calculate_release_notes_url(
         software.release_notes_url_template,
         publish.release_notes_url,

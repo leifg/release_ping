@@ -1,4 +1,4 @@
-defmodule ReleasePing.Core.Version.SemanticVersion do
+defmodule ReleasePing.Core.Version.VersionInfo do
   @type t :: %__MODULE__{
     major: non_neg_integer,
     minor: non_neg_integer,
