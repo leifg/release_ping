@@ -23,4 +23,10 @@ defmodule ReleasePing.Core.Events.VersionSchemeChanged do
     defp deserialize_version_scheme(nil), do: nil
     defp deserialize_version_scheme(version_scheme), do: Regex.compile!(version_scheme)
   end
+
+  defimpl Poison.Encoder, for: VersionSchemeChanged do
+    def encode(%{version_scheme: %Regex{} = version_scheme} = added, options) do
+      Poison.Encoder.Map.encode(%{added | version_scheme: Regex.source(version_scheme)}, options)
+    end
+  end
 end
