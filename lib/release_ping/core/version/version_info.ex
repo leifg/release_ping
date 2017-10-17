@@ -4,9 +4,10 @@ defmodule ReleasePing.Core.Version.VersionInfo do
     minor: non_neg_integer,
     patch: non_neg_integer,
     pre_release: String.t,
+    published_at: String.t,
   }
 
-  defstruct [:major, :minor, :patch, :pre_release]
+  defstruct [:major, :minor, :patch, :pre_release, :published_at]
 
   @spec parse(String.t, Regex.t) :: t
   def parse(version_string, version_scheme) do
@@ -28,6 +29,11 @@ defmodule ReleasePing.Core.Version.VersionInfo do
     )
   end
 
+  @spec published_at(t, String.t) :: t
+  def published_at(version_info, iso8601_datestring) do
+    %__MODULE__{version_info | published_at: iso8601_datestring}
+  end
+
   @spec valid?(String.t, Regex.t) :: boolean
   def valid?(version_string, version_scheme) do
     String.match?(version_string, version_scheme)
@@ -45,6 +51,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
       minor: version_info["minor"],
       patch: version_info["patch"],
       pre_release: version_info["pre_release"],
+      published_at: version_info["published_at"],
     }
   end
 

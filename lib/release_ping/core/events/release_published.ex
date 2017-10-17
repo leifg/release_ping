@@ -32,8 +32,10 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     end
 
     defp parse_version(%ReleasePublished{version_string: nil}), do: nil
-    defp parse_version(%ReleasePublished{version_string: version_string, version_info: nil}) do
-      VersionInfo.parse(version_string, VersionInfo.default_version_scheme())
+    defp parse_version(%ReleasePublished{version_string: version_string, version_info: nil, published_at: published_at}) do
+      version_string
+        |> VersionInfo.parse(VersionInfo.default_version_scheme())
+        |> VersionInfo.published_at(published_at)
     end
     defp parse_version(%ReleasePublished{version_info: %VersionInfo{} = version_info}), do: version_info
     defp parse_version(%ReleasePublished{version_info: %{} = version_info}) do

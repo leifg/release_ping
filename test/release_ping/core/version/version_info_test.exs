@@ -52,7 +52,27 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
     end
   end
 
+  describe "published_at" do
+    test "adds correct year/month/day info" do
+      version_info = %VersionInfo{
+        major: 1,
+        minor: 5,
+        patch: 2,
+        pre_release: nil,
+      }
+
+      assert VersionInfo.published_at(version_info, "2017-06-30T13:21:23Z") == %VersionInfo{
+        major: 1,
+        minor: 5,
+        patch: 2,
+        pre_release: nil,
+        published_at: "2017-06-30T13:21:23Z",
+      }
+    end
+  end
+
   @erlang_version_scheme ~r/OTP[-_](?<major>\d+)\.(?<minor>\d+)(?:\.(?<patch>\d+))?(?:-(?<pre_release>.+))?/
+
 
   describe "valid?" do
     test "returns true for release version" do
@@ -85,6 +105,7 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
         "minor" => 5,
         "patch" => 0,
         "pre_release" => "rc.2",
+        "published_at" => "2017-07-25T07:27:16.000Z",
       }
 
       assert VersionInfo.from_map(version_map) == %VersionInfo{
@@ -92,6 +113,7 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
         minor: 5,
         patch: 0,
         pre_release: "rc.2",
+        published_at: "2017-07-25T07:27:16.000Z",
       }
     end
   end

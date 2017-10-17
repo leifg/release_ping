@@ -74,7 +74,9 @@ defmodule ReleasePing.Core.Aggregates.Software do
     if MapSet.member?(software.existing_releases, publish.version_string) do
       nil
     else
-      version_info = VersionInfo.parse(publish.version_string, software.version_scheme)
+      version_info = publish.version_string
+                      |> VersionInfo.parse(software.version_scheme)
+                      |> VersionInfo.published_at(publish.published_at)
       release_notes_url = calculate_release_notes_url(
         software.release_notes_url_template,
         publish.release_notes_url,
