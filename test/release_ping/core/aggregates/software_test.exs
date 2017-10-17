@@ -14,7 +14,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     SoftwareAdded,
     VersionSchemeChanged, WebsiteCorrected
   }
-  alias ReleasePing.Core.Version.SemanticVersion
+  alias ReleasePing.Core.Version.VersionInfo
 
   describe "add software" do
     test "succeeds when valid" do
@@ -180,10 +180,11 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           software_uuid: software.uuid,
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0",
           version_string: "v1.5.0",
-          version_info: %SemanticVersion{
+          version_info: %VersionInfo{
             major: 1,
             minor: 5,
             patch: 0,
+            published_at: "2017-07-25T07:27:16.000Z",
           },
           published_at: "2017-07-25T07:27:16.000Z",
           seen_at: "2017-07-25T07:30:00.000Z",
@@ -208,10 +209,11 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           software_uuid: software.uuid,
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
           version_string: "v1.5.2",
-          version_info: %SemanticVersion{
+          version_info: %VersionInfo{
             major: 1,
             minor: 5,
             patch: 2,
+            published_at: "2017-07-25T07:27:16.000Z",  
           },
           published_at: "2017-07-25T07:27:16.000Z",
           seen_at: "2017-07-25T07:30:00.000Z",
