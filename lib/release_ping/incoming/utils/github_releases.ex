@@ -40,11 +40,11 @@ defmodule ReleasePing.Incoming.Utils.GithubReleases do
   end
 
   defp filter_tags(tag, version_scheme) do
-    VersionInfo.valid?(tag["node"]["name"], version_scheme)
+    tag["node"] && VersionInfo.valid?(tag["node"]["name"], version_scheme)
   end
 
   defp filter_releases(release) do
-    !release["node"]["isDraft"]
+    release["node"] && !release["node"]["isDraft"]
   end
 
   defp reduce_tags(tags, version_scheme) do
