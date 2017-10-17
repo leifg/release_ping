@@ -4,6 +4,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     AddSoftware,
     ChangeLicenses,
     ChangeVersionScheme,
+    CorrectName,
     CorrectReleaseNotesUrlTemplate,
     CorrectWebsite,
     PublishRelease
@@ -11,6 +12,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Events.{
     SoftwareAdded,
     LicensesChanged,
+    NameCorrected,
     ReleasePublished,
     ReleaseNotesUrlTemplateCorrected,
     VersionSchemeChanged,
@@ -147,6 +149,22 @@ defmodule ReleasePing.Core.Aggregates.Software do
   end
 
   @doc """
+  Corrects Name
+  """
+  def execute(%Software{} = software, %CorrectName{} = correct) do
+    if software.name == correct.name do
+      nil
+    else
+      %NameCorrected{
+        uuid: correct.uuid,
+        software_uuid: software.uuid,
+        name: correct.name,
+        reason: correct.reason,
+      }
+    end
+  end
+
+  @doc """
   Corrects ReleaseNotesUrlTemplate
   """
   def execute(%Software{} = software, %CorrectReleaseNotesUrlTemplate{} = correct) do
@@ -198,6 +216,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def apply(%Software{} = software, %WebsiteCorrected{} = corrected) do
     %Software{software |
       website: corrected.website,
+    }
+  end
+
+  def apply(%Software{} = software, %NameCorrected{} = corrected) do
+    %Software{software |
+      name: corrected.name,
     }
   end
 
