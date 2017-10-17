@@ -10,6 +10,7 @@ defmodule ReleasePing.Router do
     AddSoftware,
     ChangeLicenses,
     ChangeVersionScheme,
+    CorrectName,
     CorrectReleaseNotesUrlTemplate,
     CorrectWebsite,
     PublishRelease
@@ -26,7 +27,7 @@ defmodule ReleasePing.Router do
   middleware ReleasePing.Validation.Middleware.Uniqueness
 
   dispatch [AddSoftware], to: Software, identity: :uuid
-  dispatch [ChangeLicenses, ChangeVersionScheme, CorrectReleaseNotesUrlTemplate, CorrectWebsite, PublishRelease], to: Software, identity: :software_uuid
+  dispatch [ChangeLicenses, ChangeVersionScheme, CorrectName, CorrectReleaseNotesUrlTemplate, CorrectWebsite, PublishRelease], to: Software, identity: :software_uuid
 
   dispatch [ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid
   dispatch [AdjustCursor, PollGithubReleases, ChangeGithubToken], to: GithubEndpoint, identity: :github_uuid

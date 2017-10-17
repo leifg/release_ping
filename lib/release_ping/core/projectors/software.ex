@@ -3,6 +3,7 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   alias ReleasePing.Core.Events.{
     LicensesChanged,
+    NameCorrected,
     ReleaseNotesUrlTemplateCorrected,
     SoftwareAdded,
     VersionSchemeChanged,
@@ -32,6 +33,10 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   project %WebsiteCorrected{} = corrected, _metadata do
     update_software(multi, corrected.software_uuid, :website, corrected.website)
+  end
+
+  project %NameCorrected{} = corrected, _metadata do
+    update_software(multi, corrected.software_uuid, :name, corrected.name)
   end
 
   project %VersionSchemeChanged{} = corrected, _metadata do
