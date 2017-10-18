@@ -19,6 +19,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     "GPL-3.0" => "GNU General Public License v3.0",
     "BSD-2-Clause" => "BSD 2-clause",
     "BSD-3-Clause" => "BSD 3-clause",
+    "LGPL-2.1" => "GNU LGPLv2.1",
     "MIT" => "MIT License",
     "Ruby" => "Ruby License",
   }
