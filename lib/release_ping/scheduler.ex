@@ -8,6 +8,7 @@ defmodule ReleasePing.Scheduler do
 
   @to_adjust [
     {"erlang", "otp"},
+    {"fsharp", "fsharp"},
   ]
 
   def poll_releases do
