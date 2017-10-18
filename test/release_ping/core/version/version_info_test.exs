@@ -31,6 +31,16 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
       }
     end
 
+    test "returns correct version for Groovy pre release version" do
+      version_scheme = ~r/GROOVY_(?<major>\d+)_(?<minor>\d+)(?:_(?<patch>\d+))?(?:_(?<pre_release>.+))?/
+      assert VersionInfo.parse("GROOVY_2_6_0_ALPHA_1", version_scheme) == %VersionInfo{
+        major: 2,
+        minor: 6,
+        patch: 0,
+        pre_release: "alpha-1",
+      }
+    end
+
     test "returns correct version for Erlang major version" do
       version_scheme = VersionInfo.default_version_scheme()
       assert VersionInfo.parse("OTP-20.0", version_scheme) == %VersionInfo{

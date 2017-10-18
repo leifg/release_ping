@@ -23,7 +23,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
         major: parse_number(named_captures["major"]),
         minor: parse_number(named_captures["minor"]),
         patch: parse_number(named_captures["patch"]),
-        pre_release: named_captures["pre_release"],
+        pre_release: normalize_pre_release(named_captures["pre_release"]),
       },
       &update_unless_blank/3
     )
@@ -65,4 +65,9 @@ defmodule ReleasePing.Core.Version.VersionInfo do
 
   defp parse_number(""), do: 0
   defp parse_number(string), do: String.to_integer(string)
+
+  defp normalize_pre_release(nil), do: nil
+  defp normalize_pre_release(pre_release) do
+    pre_release |> String.downcase |> String.replace("_", "-")
+  end
 end
