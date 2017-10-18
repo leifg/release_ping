@@ -73,30 +73,31 @@ defmodule ReleasePing.Core.Aggregates.Software do
   Publishes Release
   """
   def execute(%Software{} = software, %PublishRelease{} = publish) do
-    if MapSet.member?(software.existing_releases, publish.version_string) do
-      nil
-    else
-      version_info = publish.version_string
-                      |> VersionInfo.parse(software.version_scheme)
-                      |> VersionInfo.published_at(publish.published_at)
-      release_notes_url = calculate_release_notes_url(
-        software.release_notes_url_template,
-        publish.release_notes_url,
-        publish.version_string,
-        version_info
-      )
+    cond do
+      is_nil(publish.version_string) -> nil
+      MapSet.member?(software.existing_releases, publish.version_string) -> nil
+      true ->
+        version_info = publish.version_string
+                        |> VersionInfo.parse(software.version_scheme)
+                        |> VersionInfo.published_at(publish.published_at)
+        release_notes_url = calculate_release_notes_url(
+          software.release_notes_url_template,
+          publish.release_notes_url,
+          publish.version_string,
+          version_info
+        )
 
-      %ReleasePublished{
-        uuid: publish.uuid,
-        software_uuid: publish.software_uuid,
-        version_string: publish.version_string,
-        version_info: version_info,
-        release_notes_url: release_notes_url,
-        github_cursor: publish.github_cursor,
-        published_at: publish.published_at,
-        seen_at: publish.seen_at,
-        pre_release: publish.pre_release,
-      }
+        %ReleasePublished{
+          uuid: publish.uuid,
+          software_uuid: publish.software_uuid,
+          version_string: publish.version_string,
+          version_info: version_info,
+          release_notes_url: release_notes_url,
+          github_cursor: publish.github_cursor,
+          published_at: publish.published_at,
+          seen_at: publish.seen_at,
+          pre_release: publish.pre_release,
+        }
     end
   end
 
