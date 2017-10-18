@@ -17,6 +17,7 @@ defmodule ReleasePing.Api.Projectors.Software do
   @known_licenses %{
     "Apache-2.0" => "Apache License 2.0",
     "GPL-3.0" => "GNU General Public License v3.0",
+    "BSD-2-Clause" => "BSD 2-clause",
     "BSD-3-Clause" => "BSD 3-clause",
     "MIT" => "MIT License",
     "Ruby" => "Ruby License",
