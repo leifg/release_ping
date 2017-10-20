@@ -12,6 +12,7 @@ defmodule ReleasePing.Router do
     ChangeVersionScheme,
     CorrectName,
     CorrectReleaseNotesUrlTemplate,
+    CorrectSlug,
     CorrectSoftwareType,
     CorrectWebsite,
     PublishRelease
@@ -33,6 +34,7 @@ defmodule ReleasePing.Router do
     ChangeVersionScheme,
     CorrectName,
     CorrectReleaseNotesUrlTemplate,
+    CorrectSlug,
     CorrectSoftwareType,
     CorrectWebsite,
     PublishRelease

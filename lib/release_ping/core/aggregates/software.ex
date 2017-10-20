@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     ChangeVersionScheme,
     CorrectName,
     CorrectReleaseNotesUrlTemplate,
+    CorrectSlug,
     CorrectSoftwareType,
     CorrectWebsite,
     PublishRelease
@@ -16,6 +17,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     NameCorrected,
     ReleasePublished,
     ReleaseNotesUrlTemplateCorrected,
+    SlugCorrected,
     SoftwareTypeCorrected,
     VersionSchemeChanged,
     WebsiteCorrected
@@ -29,6 +31,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     uuid: String.t,
     name: String.t,
     type: type,
+    slug: String.t,
     version_scheme: Regex.t,
     release_notes_url_template: String.t,
     website: String.t,
@@ -42,6 +45,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     uuid: nil,
     name: nil,
     type: nil,
+    slug: nil,
     version_scheme: nil,
     release_notes_url_template: nil,
     website: nil,
@@ -60,6 +64,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       {:ok, version_scheme_regex} -> %SoftwareAdded{
         uuid: add.uuid,
         name: add.name,
+        slug: add.slug,
         type: add.type,
         version_scheme: version_scheme_regex,
         release_notes_url_template: add.release_notes_url_template,
@@ -184,6 +189,23 @@ defmodule ReleasePing.Core.Aggregates.Software do
   end
 
   @doc """
+  Corrects SoftwareType
+  """
+  def execute(%Software{} = software, %CorrectSlug{} = correct) do
+    if software.slug == correct.slug do
+      nil
+    else
+      %SlugCorrected{
+        uuid: correct.uuid,
+        software_uuid: software.uuid,
+        slug: correct.slug,
+        reason: correct.reason,
+      }
+    end
+  end
+
+
+  @doc """
   Corrects ReleaseNotesUrlTemplate
   """
   def execute(%Software{} = software, %CorrectReleaseNotesUrlTemplate{} = correct) do
@@ -205,6 +227,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       uuid: added.uuid,
       name: added.name,
       type: added.type,
+      slug: added.slug,
       version_scheme: added.version_scheme,
       release_notes_url_template: added.release_notes_url_template,
       website: added.website,
@@ -247,6 +270,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def apply(%Software{} = software, %SoftwareTypeCorrected{} = corrected) do
     %Software{software |
       type: corrected.type,
+    }
+  end
+
+  def apply(%Software{} = software, %SlugCorrected{} = corrected) do
+    %Software{software |
+      slug: corrected.slug,
     }
   end
 

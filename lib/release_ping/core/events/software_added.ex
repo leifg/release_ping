@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   @type t :: %__MODULE__{
     uuid: String.t,
     name: String.t,
+    slug: String.t,
     type: ReleasePing.Enums.software_type,
     version_scheme: Regex.t,
     release_notes_url_template: String.t,
@@ -18,9 +19,10 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   defstruct [
     uuid: nil,
     name: nil,
+    type: nil,
+    slug: nil,
     version_scheme: nil,
     release_notes_url_template: nil,
-    type: nil,
     website: nil,
     github: nil,
     licenses: [],
