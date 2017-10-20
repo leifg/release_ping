@@ -26,6 +26,9 @@ defmodule ReleasePing.Router do
     PollGithubReleases
   }
 
+  alias ReleasePing.Outgoing.Aggregates.Subscription
+  alias ReleasePing.Outgoing.Commands.AddTrustedSubscription
+
   middleware ReleasePing.Validation.Middleware.Uniqueness
 
   dispatch [AddSoftware], to: Software, identity: :uuid
@@ -42,4 +45,6 @@ defmodule ReleasePing.Router do
 
   dispatch [ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid
   dispatch [AdjustCursor, PollGithubReleases, ChangeGithubToken], to: GithubEndpoint, identity: :github_uuid
+
+  dispatch [AddTrustedSubscription], to: Subscription, identity: :uuid
 end
