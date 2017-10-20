@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Projectors.Software do
     NameCorrected,
     ReleaseNotesUrlTemplateCorrected,
     SoftwareAdded,
+    SoftwareTypeCorrected,
     VersionSchemeChanged,
     WebsiteCorrected
   }
@@ -45,6 +46,10 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   project %ReleaseNotesUrlTemplateCorrected{} = corrected, _metadata do
     update_software(multi, corrected.software_uuid, :release_notes_url_template, corrected.release_notes_url_template)
+  end
+
+  project %SoftwareTypeCorrected{} = corrected, _metadata do
+    update_software(multi, corrected.software_uuid, :type, corrected.type)
   end
 
   defp update_software(multi, software_uuid, field_name, value) do

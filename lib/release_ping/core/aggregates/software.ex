@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     ChangeVersionScheme,
     CorrectName,
     CorrectReleaseNotesUrlTemplate,
+    CorrectSoftwareType,
     CorrectWebsite,
     PublishRelease
   }
@@ -15,6 +16,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     NameCorrected,
     ReleasePublished,
     ReleaseNotesUrlTemplateCorrected,
+    SoftwareTypeCorrected,
     VersionSchemeChanged,
     WebsiteCorrected
   }
@@ -166,6 +168,22 @@ defmodule ReleasePing.Core.Aggregates.Software do
   end
 
   @doc """
+  Corrects SoftwareType
+  """
+  def execute(%Software{} = software, %CorrectSoftwareType{} = correct) do
+    if software.type == correct.type do
+      nil
+    else
+      %SoftwareTypeCorrected{
+        uuid: correct.uuid,
+        software_uuid: software.uuid,
+        type: correct.type,
+        reason: correct.reason,
+      }
+    end
+  end
+
+  @doc """
   Corrects ReleaseNotesUrlTemplate
   """
   def execute(%Software{} = software, %CorrectReleaseNotesUrlTemplate{} = correct) do
@@ -223,6 +241,12 @@ defmodule ReleasePing.Core.Aggregates.Software do
   def apply(%Software{} = software, %NameCorrected{} = corrected) do
     %Software{software |
       name: corrected.name,
+    }
+  end
+
+  def apply(%Software{} = software, %SoftwareTypeCorrected{} = corrected) do
+    %Software{software |
+      type: corrected.type,
     }
   end
 
