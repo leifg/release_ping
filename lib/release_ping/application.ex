@@ -25,6 +25,8 @@ defmodule ReleasePing.Application do
 
       worker(ReleasePing.Incoming.Projectors.GithubEndpoint, [], id: :github_endpoint_projector),
 
+      worker(ReleasePing.Outgoing.Projectors.ActiveSubscription, [], id: :active_subscriptions_projector),
+
       worker(ReleasePing.Api.Projectors.Software, [], id: :api_software_projector),
     ]
 

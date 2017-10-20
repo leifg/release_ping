@@ -38,6 +38,7 @@ TRUNCATE TABLE
   ,github_endpoints
   ,projection_versions
   ,api_software
+  ,active_subscriptions
 RESTART IDENTITY;
 """
   end
