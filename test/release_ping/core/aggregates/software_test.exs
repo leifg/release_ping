@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     ChangeVersionScheme,
     CorrectName,
     CorrectReleaseNotesUrlTemplate,
+    CorrectSoftwareType,
     CorrectWebsite
   }
   alias ReleasePing.Core.Events.{
@@ -14,6 +15,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     ReleaseNotesUrlTemplateCorrected,
     ReleasePublished,
     SoftwareAdded,
+    SoftwareTypeCorrected,
     VersionSchemeChanged, WebsiteCorrected
   }
   alias ReleasePing.Core.Version.VersionInfo
@@ -193,6 +195,40 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
       new_name = software.name
 
       assert_events software, %CorrectName{uuid: uuid, software_uuid: software.uuid, name: new_name, reason:  "test purposes"}, []
+    end
+  end
+
+  describe "correct software type" do
+    setup [
+      :add_software,
+    ]
+
+    test "succeeds when valid", %{software: software} do
+      uuid = UUID.uuid4()
+      new_software_type = :application
+
+      command = %CorrectSoftwareType{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        type: new_software_type,
+        reason:  "test purposes"
+      }
+
+      event = %SoftwareTypeCorrected{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        type: new_software_type,
+        reason: "test purposes"
+      }
+
+      assert_events software, command, [event]
+    end
+
+    test "returns no events when name didn't change", %{software: software} do
+      uuid = UUID.uuid4()
+      new_software_type = software.type
+
+      assert_events software, %CorrectSoftwareType{uuid: uuid, software_uuid: software.uuid, type: new_software_type, reason:  "test purposes"}, []
     end
   end
 
