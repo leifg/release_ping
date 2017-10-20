@@ -7,6 +7,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     NameCorrected,
     SoftwareAdded,
     ReleasePublished,
+    SlugCorrected,
     WebsiteCorrected
   }
   alias ReleasePing.Api.{Software, VersionUtils}
@@ -29,6 +30,7 @@ defmodule ReleasePing.Api.Projectors.Software do
       id: added.uuid,
       stream_version: stream_version,
       name: added.name,
+      slug: added.slug,
       website: added.website,
       licenses: Enum.map(added.licenses, &map_license/1),
     })
@@ -47,6 +49,10 @@ defmodule ReleasePing.Api.Projectors.Software do
   end
 
   project %NameCorrected{} = corrected, _metadata do
+    update_software(multi, corrected)
+  end
+
+  project %SlugCorrected{} = corrected, _metadata do
     update_software(multi, corrected)
   end
 
@@ -110,6 +116,14 @@ defmodule ReleasePing.Api.Projectors.Software do
     existing_software = Repo.get(Software, corrected.software_uuid)
     changeset = existing_software
       |> Ecto.Changeset.change(%{name: corrected.name})
+
+    Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp update_software(multi, %SlugCorrected{} = corrected) do
+    existing_software = Repo.get(Software, corrected.software_uuid)
+    changeset = existing_software
+      |> Ecto.Changeset.change(%{slug: corrected.slug})
 
     Ecto.Multi.update(multi, :api_software, changeset)
   end

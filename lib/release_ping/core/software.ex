@@ -6,6 +6,7 @@ defmodule ReleasePing.Core.Software do
     uuid: String.t,
     name: String.t,
     type: String.t,
+    slug: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -19,6 +20,7 @@ defmodule ReleasePing.Core.Software do
   schema "software" do
     field :stream_version, :integer
     field :name, :string
+    field :slug, :string
     field :type, ReleasePing.Enums.SoftwareTypeEnum
     field :website, :string
     field :github, :string

@@ -11,6 +11,7 @@ defmodule ReleasePing.Factory do
     %{
       name: "elixir",
       type: :language,
+      slug: "elixir",
       version_scheme: "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?",
       release_notes_url_template: "https://github.com/elixir-lang/elixir/releases/tag/<%= @version_string %>",
       website: "https://elixir-lang.org",
@@ -24,6 +25,7 @@ defmodule ReleasePing.Factory do
     %{
       name: "erlang",
       type: :language,
+      slug: "erlang",
       version_scheme: "OTP[-_](?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?:-(?<pre_release>.+))?",
       release_notes_url_template: "https://github.com/erlang/otp/releases/tag/<%= @version_string %>",
       website: "https://erlang.org",

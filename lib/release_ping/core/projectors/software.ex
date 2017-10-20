@@ -7,6 +7,7 @@ defmodule ReleasePing.Core.Projectors.Software do
     ReleaseNotesUrlTemplateCorrected,
     SoftwareAdded,
     SoftwareTypeCorrected,
+    SlugCorrected,
     VersionSchemeChanged,
     WebsiteCorrected
   }
@@ -19,6 +20,7 @@ defmodule ReleasePing.Core.Projectors.Software do
       stream_version: stream_version,
       name: added.name,
       type: added.type,
+      slug: added.slug,
       version_scheme: serialize_regex(added.version_scheme),
       release_notes_url_template: added.release_notes_url_template,
       website: added.website,
@@ -50,6 +52,10 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   project %SoftwareTypeCorrected{} = corrected, _metadata do
     update_software(multi, corrected.software_uuid, :type, corrected.type)
+  end
+
+  project %SlugCorrected{} = corrected, _metadata do
+    update_software(multi, corrected.software_uuid, :slug, corrected.slug)
   end
 
   defp update_software(multi, software_uuid, field_name, value) do

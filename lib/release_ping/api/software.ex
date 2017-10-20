@@ -51,6 +51,7 @@ defmodule ReleasePing.Api.Software do
   @type t :: %__MODULE__{
     id: String.t,
     name: String.t,
+    slug: String.t,
     website: String.t,
     latest_version_stable: Version.t,
     latest_version_unstable: Version.t,
@@ -62,6 +63,7 @@ defmodule ReleasePing.Api.Software do
   schema "api_software" do
     field :stream_version, :integer
     field :name, :string
+    field :slug, :string
     field :website, :string
     embeds_one :latest_version_stable, Version, on_replace: :delete
     embeds_one :latest_version_unstable, Version, on_replace: :delete
