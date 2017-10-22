@@ -12,6 +12,24 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
     priority: non_neg_integer,
   }
 
+  @type notification_payload :: %{
+    uuid: String.t,
+    software: %{
+      uuid: String.to_existing_atom,
+      type: ReleasePing.Core.Aggregates.Software.type,
+      slug: String.t,
+      name: String.t,
+    },
+    version_string: String.t,
+    published_at: String.t,
+    version_info: %{
+      major: non_neg_integer,
+      minor: non_neg_integer,
+      patch: non_neg_integer,
+      pre_release: String.t,
+    }
+  }
+
   defstruct [
     uuid: nil,
     name: nil,
