@@ -12,9 +12,9 @@ defmodule ReleasePing.Outgoing.Projectors.ActiveSubscription do
       |> Enum.reduce([], fn(topic, acc) ->
         [type, slug] = String.split(topic, ":")
 
-        software = case slug do
+        software_uuid = case slug do
           "*" -> nil
-          slug -> Repo.get_by(Software, slug: slug)
+          slug -> Repo.get_by(Software, slug: slug).uuid
         end
 
         row = %{
@@ -25,7 +25,7 @@ defmodule ReleasePing.Outgoing.Projectors.ActiveSubscription do
           priority: sub.priority,
           type: type,
           topic: slug,
-          software_uuid: software.uuid,
+          software_uuid: software_uuid,
         } |> Map.put(:inserted_at, Timex.now)
           |> Map.put(:updated_at, Timex.now)
 
