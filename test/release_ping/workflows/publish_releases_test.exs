@@ -1,6 +1,6 @@
-defmodule ReleasePing.Worflows.PublishReleasesTest do
+defmodule ReleasePing.Workflows.PublishReleasesTest do
   alias ReleasePing.Core
-  alias ReleasePing.Worflows.PublishReleases
+  alias ReleasePing.Workflows.PublishReleases
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
   alias ReleasePing.Fixtures.GithubResponses
   alias ReleasePing.Core.Commands.PublishRelease

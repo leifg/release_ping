@@ -1,4 +1,8 @@
 defmodule ReleasePing.Outgoing.ActiveSubscription do
+  alias ReleasePing.Repo
+  alias ReleasePing.Outgoing.ActiveSubscription
+  import Ecto.Query, only: [from: 2]
+
   use Ecto.Schema
 
   @type t :: %__MODULE__{
@@ -25,5 +29,17 @@ defmodule ReleasePing.Outgoing.ActiveSubscription do
     field :software_uuid, :binary_id
 
     timestamps()
+  end
+
+  def by_uuid(uuid) do
+    Repo.all(from s in ActiveSubscription, where: s.uuid == ^uuid)
+  end
+
+  def matching(software) do
+    query = from s in ActiveSubscription,
+      where: s.type == "language" and (s.topic == ^software.slug or s.topic == "*"),
+      order_by: [asc: s.priority]
+
+    Repo.all(query)
   end
 end

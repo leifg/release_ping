@@ -1,4 +1,4 @@
-defmodule ReleasePing.Worflows.PublishReleases do
+defmodule ReleasePing.Workflows.PublishReleases do
   defstruct []
 
   alias ReleasePing.Incoming.Events.NewGithubReleasesFound
