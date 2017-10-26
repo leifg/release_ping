@@ -36,6 +36,7 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
       version_string: published.version_string,
       version_info: transform_version_info(published.version_info),
       published_at: published.published_at,
+      release_notes_url: published.release_notes_url,
     }
   end
 

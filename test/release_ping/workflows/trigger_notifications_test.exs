@@ -45,6 +45,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
           },
           version_string: "v1.5.2",
           published_at: "2017-09-29T12:10:47Z",
+          release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
           version_info: %{
             major: 1,
             minor: 5,
