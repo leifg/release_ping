@@ -23,6 +23,7 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
     },
     version_string: String.t,
     published_at: String.t,
+    release_notes_url: String.t,
     version_info: %{
       major: non_neg_integer,
       minor: non_neg_integer,
