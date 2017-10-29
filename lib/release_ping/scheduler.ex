@@ -9,7 +9,7 @@ defmodule ReleasePing.Scheduler do
   @to_adjust [
     {"erlang", "otp"},
     {"fsharp", "fsharp"},
-  ]
+    {"golang", "go"},
 
   def poll_releases do
     Logger.info("Polling Releases")
