@@ -65,7 +65,7 @@ defmodule ReleasePing.Api.Projectors.Software do
 
     new_version = %Version{
       id: published.uuid,
-      name: version_name(version_info),
+      name: published.display_version,
       major: version_info.major,
       minor: version_info.minor,
       patch: version_info.patch,
@@ -136,11 +136,4 @@ defmodule ReleasePing.Api.Projectors.Software do
       name -> %License{spdx_id: spdx_id, name: name}
     end
   end
-
-  defp version_name(version_info) do
-    "#{version_info.major}.#{version_info.minor}.#{version_info.patch}#{pre_release(version_info)}"
-  end
-
-  defp pre_release(%{pre_release: nil}), do: nil
-  defp pre_release(%{pre_release: pre_release}), do: "-#{pre_release}"
 end

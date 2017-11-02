@@ -8,6 +8,7 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     version_string: String.t,
     version_info: VersionInfo.t,
     release_notes_url: String.t,
+    display_version: String.t,
     published_at: String.t, # ISO 8601 Datetime
     seen_at: String.t, # ISO 8601 Datetime
     github_cursor: String.t,
@@ -20,6 +21,7 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     version_string: nil,
     version_info: nil,
     release_notes_url: nil,
+    display_version: nil,
     published_at: nil,
     seen_at: nil,
     github_cursor: nil,
@@ -28,7 +30,11 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
 
   defimpl Commanded.Serialization.JsonDecoder, for: ReleasePublished do
     def decode(event) do
-      %ReleasePublished{event | version_info: parse_version(event)}
+      version_info = parse_version(event)
+      %ReleasePublished{event |
+        version_info: version_info,
+        display_version: default_display_version(event.display_version, version_info),
+      }
     end
 
     defp parse_version(%ReleasePublished{version_string: nil}), do: nil
@@ -41,5 +47,17 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     defp parse_version(%ReleasePublished{version_info: %{} = version_info}) do
       VersionInfo.from_map(version_info)
     end
+
+    defp default_display_version(nil, version_info) do
+      parse_display_version(version_info)
+    end
+    defp default_display_version(display_version, _version_info), do: display_version
+
+    defp parse_display_version(version_info) do
+      "#{version_info.major}.#{version_info.minor}.#{version_info.patch}#{pre_release(version_info)}"
+    end
+  
+    defp pre_release(%{pre_release: nil}), do: nil
+    defp pre_release(%{pre_release: pre_release}), do: "-#{pre_release}"
   end
 end

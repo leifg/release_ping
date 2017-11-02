@@ -32,6 +32,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
         assert event.name == "elixir"
         assert event.type == :language
         assert event.version_scheme.source == "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?"
+        assert event.display_version_template == "<%= @major %>.<%= @minor %>.<%= @patch %><%= if @pre_release, do: \"-\#{@pre_release}\" %>"
         assert event.website == "https://elixir-lang.org"
         assert event.github == "elixir-lang/elixir"
         assert event.licenses == ["MIT"]
@@ -48,6 +49,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
         assert aggregate.name == event.name
         assert aggregate.type == event.type
         assert aggregate.version_scheme.source == event.version_scheme.source
+        assert aggregate.display_version_template == event.display_version_template
         assert aggregate.website == event.website
         assert aggregate.github == event.github
         assert aggregate.licenses == event.licenses
@@ -281,6 +283,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           uuid: uuid,
           software_uuid: software.uuid,
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0",
+          display_version: "1.5.0",
           version_string: "v1.5.0",
           version_info: %VersionInfo{
             major: 1,
@@ -310,6 +313,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
           uuid: uuid,
           software_uuid: software.uuid,
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
+          display_version: "1.5.2",
           version_string: "v1.5.2",
           version_info: %VersionInfo{
             major: 1,

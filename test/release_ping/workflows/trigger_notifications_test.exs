@@ -19,6 +19,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       pre_release: nil,
     },
     release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
+    display_version: "1.5.2",
     published_at: "2017-09-29T12:10:47Z",
     seen_at: "2017-09-29T13:10:47Z",
     github_cursor: "releases:Y3Vyc29yOnYyOpHOAHhy8Q==",
@@ -44,6 +45,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
             name: "elixir"
           },
           version_string: "v1.5.2",
+          display_version: "1.5.2",
           published_at: "2017-09-29T12:10:47Z",
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
           version_info: %{

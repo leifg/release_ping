@@ -34,6 +34,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     slug: String.t,
     version_scheme: Regex.t,
     release_notes_url_template: String.t,
+    display_version_template: String.t,
     website: String.t,
     github: String.t,
     licenses: [String.t],
@@ -48,6 +49,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     slug: nil,
     version_scheme: nil,
     release_notes_url_template: nil,
+    display_version_template: nil,
     website: nil,
     github: nil,
     licenses: nil,
@@ -68,6 +70,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
         type: add.type,
         version_scheme: version_scheme_regex,
         release_notes_url_template: add.release_notes_url_template,
+        display_version_template: add.display_version_template,
         website: add.website,
         github: add.github,
         licenses: add.licenses,
@@ -87,11 +90,14 @@ defmodule ReleasePing.Core.Aggregates.Software do
         version_info = publish.version_string
                         |> VersionInfo.parse(software.version_scheme)
                         |> VersionInfo.published_at(publish.published_at)
+        extended_version_info = extended_version_info(version_info, publish.version_string)
         release_notes_url = calculate_release_notes_url(
           software.release_notes_url_template,
           publish.release_notes_url,
-          publish.version_string,
-          version_info
+          extended_version_info
+        )
+        display_version = EEx.eval_string(
+          software.display_version_template , assigns: extended_version_info
         )
 
         %ReleasePublished{
@@ -100,6 +106,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
           version_string: publish.version_string,
           version_info: version_info,
           release_notes_url: release_notes_url,
+          display_version: display_version,
           github_cursor: publish.github_cursor,
           published_at: publish.published_at,
           seen_at: publish.seen_at,
@@ -230,6 +237,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
       slug: added.slug,
       version_scheme: added.version_scheme,
       release_notes_url_template: added.release_notes_url_template,
+      display_version_template: added.display_version_template,
       website: added.website,
       github: added.github,
       licenses: added.licenses,
@@ -288,12 +296,15 @@ defmodule ReleasePing.Core.Aggregates.Software do
   defp validate_version_scheme(nil), do: {:ok, nil}
   defp validate_version_scheme(version_scheme), do: Regex.compile version_scheme
 
-  defp calculate_release_notes_url(release_notes_url_template, release_notes_url, version_string, version_info) do
+  defp calculate_release_notes_url(release_notes_url_template, release_notes_url, version_info) do
     case release_notes_url do
       nil ->
-        assigns = version_info |> Map.from_struct() |> Map.merge(%{version_string: version_string})
-        EEx.eval_string(release_notes_url_template, assigns: assigns)
+        EEx.eval_string(release_notes_url_template, assigns: version_info)
       release_notes_url -> release_notes_url
     end
+  end
+
+  defp extended_version_info(version_info, version_string) do
+    version_info |> Map.from_struct() |> Map.merge(%{version_string: version_string})
   end
 end

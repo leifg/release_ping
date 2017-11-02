@@ -1,13 +1,14 @@
 defmodule ReleasePing.Repo.Migrations.AddVersionSchemeToCoreSoftwareProjection do
   use Ecto.Migration
+  alias Commanded.EventStore.Adapters.EventStore
 
   def up do
     execute "DELETE FROM projection_versions WHERE projection_name = 'Core.Projectors.Software';"
     execute "DELETE FROM software;"
     Application.ensure_all_started(:postgrex)
     Application.ensure_all_started(:eventstore)
-    Commanded.EventStore.Adapters.EventStore.subscribe_to_all_streams("Core.Projectors.Software", self())
-    Commanded.EventStore.Adapters.EventStore.unsubscribe_from_all_streams("Core.Projectors.Software")
+    EventStore.subscribe_to_all_streams("Core.Projectors.Software", self())
+    EventStore.unsubscribe_from_all_streams("Core.Projectors.Software")
 
     alter table(:software) do
       add :version_scheme, :text
