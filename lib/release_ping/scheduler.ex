@@ -10,6 +10,7 @@ defmodule ReleasePing.Scheduler do
     {"erlang", "otp"},
     {"fsharp", "fsharp"},
     {"golang", "go"},
+    {"SWI-Prolog", "swipl-devel"},
   ])
 
   def poll_releases do
