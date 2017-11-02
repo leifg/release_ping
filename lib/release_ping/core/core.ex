@@ -16,6 +16,7 @@ defmodule ReleasePing.Core do
       type: attrs[:type],
       slug: attrs[:slug],
       version_scheme: attrs[:version_scheme],
+      display_version_template: attrs[:display_version_template],
       website: attrs[:website],
       github: attrs[:github],
       licenses: attrs[:licenses],

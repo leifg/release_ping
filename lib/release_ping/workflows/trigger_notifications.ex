@@ -34,6 +34,7 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
         type: :language,
       },
       version_string: published.version_string,
+      display_version: published.display_version,
       version_info: transform_version_info(published.version_info),
       published_at: published.published_at,
       release_notes_url: published.release_notes_url,
