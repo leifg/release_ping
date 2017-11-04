@@ -56,7 +56,7 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     defp parse_display_version(version_info) do
       "#{version_info.major}.#{version_info.minor}.#{version_info.patch}#{pre_release(version_info)}"
     end
-  
+
     defp pre_release(%{pre_release: nil}), do: nil
     defp pre_release(%{pre_release: pre_release}), do: "-#{pre_release}"
   end
