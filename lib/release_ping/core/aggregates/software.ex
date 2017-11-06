@@ -23,6 +23,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     WebsiteCorrected
   }
   alias ReleasePing.Core.Version.VersionInfo
+  alias ReleasePing.Conversion
 
   @type release_retrieval :: :github_release_poller
   @type type :: :application | :language | :library
@@ -108,7 +109,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
           release_notes_url: release_notes_url,
           display_version: display_version,
           github_cursor: publish.github_cursor,
-          published_at: publish.published_at,
+          published_at: Conversion.from_iso8601_to_naive_datetime(publish.published_at),
           seen_at: publish.seen_at,
           pre_release: publish.pre_release,
         }

@@ -1,4 +1,6 @@
 defmodule ReleasePing.Core.Version.VersionInfo do
+  alias ReleasePing.Conversion
+
   @type t :: %__MODULE__{
     major: non_neg_integer,
     minor: non_neg_integer,
@@ -31,7 +33,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
 
   @spec published_at(t, String.t) :: t
   def published_at(version_info, iso8601_datestring) do
-    %__MODULE__{version_info | published_at: iso8601_datestring}
+    %__MODULE__{version_info | published_at: Conversion.from_iso8601_to_naive_datetime(iso8601_datestring)}
   end
 
   @spec valid?(String.t, Regex.t) :: boolean
@@ -51,7 +53,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
       minor: version_info["minor"],
       patch: version_info["patch"],
       pre_release: version_info["pre_release"],
-      published_at: version_info["published_at"],
+      published_at: Conversion.from_iso8601_to_naive_datetime(version_info["published_at"]),
     }
   end
 

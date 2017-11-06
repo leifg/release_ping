@@ -289,10 +289,10 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
             major: 1,
             minor: 5,
             patch: 0,
-            published_at: "2017-07-25T07:27:16.000Z",
+            published_at: ~N[2017-07-25 07:27:16.000],
           },
-          published_at: "2017-07-25T07:27:16.000Z",
-          seen_at: "2017-07-25T07:30:00.000Z",
+          published_at: ~N[2017-07-25 07:27:16.000],
+          seen_at: ~N[2017-07-25 07:30:00.000],
           pre_release: false,
         }
       ]
@@ -319,10 +319,10 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
             major: 1,
             minor: 5,
             patch: 2,
-            published_at: "2017-07-25T07:27:16.000Z",  
+            published_at: ~N[2017-07-25 07:27:16.000],
           },
-          published_at: "2017-07-25T07:27:16.000Z",
-          seen_at: "2017-07-25T07:30:00.000Z",
+          published_at: ~N[2017-07-25 07:27:16.000],
+          seen_at: ~N[2017-07-25 07:30:00.000],
           pre_release: false,
         }
       ]

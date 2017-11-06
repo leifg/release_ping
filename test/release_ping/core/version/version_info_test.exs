@@ -76,7 +76,7 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
         minor: 5,
         patch: 2,
         pre_release: nil,
-        published_at: "2017-06-30T13:21:23Z",
+        published_at: ~N[2017-06-30 13:21:23],
       }
     end
   end
@@ -123,7 +123,7 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
         minor: 5,
         patch: 0,
         pre_release: "rc.2",
-        published_at: "2017-07-25T07:27:16.000Z",
+        published_at: ~N[2017-07-25 07:27:16.000],
       }
     end
   end

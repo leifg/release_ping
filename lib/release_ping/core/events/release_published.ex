@@ -1,6 +1,7 @@
 defmodule ReleasePing.Core.Events.ReleasePublished do
   alias ReleasePing.Core.Version.VersionInfo
   alias ReleasePing.Core.Events.ReleasePublished
+  alias ReleasePing.Conversion
 
   @type t :: %__MODULE__{
     uuid: String.t,
@@ -9,8 +10,8 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
     version_info: VersionInfo.t,
     release_notes_url: String.t,
     display_version: String.t,
-    published_at: String.t, # ISO 8601 Datetime
-    seen_at: String.t, # ISO 8601 Datetime
+    published_at: NaiveDateTime.t,
+    seen_at: NaiveDateTime.t,
     github_cursor: String.t,
     pre_release: boolean,
   }
@@ -34,6 +35,8 @@ defmodule ReleasePing.Core.Events.ReleasePublished do
       %ReleasePublished{event |
         version_info: version_info,
         display_version: default_display_version(event.display_version, version_info),
+        published_at: Conversion.from_iso8601_to_naive_datetime(event.published_at),
+        seen_at: Conversion.from_iso8601_to_naive_datetime(event.seen_at),
       }
     end
 
