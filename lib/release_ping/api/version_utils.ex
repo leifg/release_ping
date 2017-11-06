@@ -23,4 +23,7 @@ defmodule ReleasePing.Api.VersionUtils do
   defp dump(%DateTime{} = datetime) do
     {:ok, DateTime.to_unix(datetime)}
   end
+  defp dump(%NaiveDateTime{} = datetime) do
+    datetime |> DateTime.from_naive!("Etc/UTC") |> dump()
+  end
 end
