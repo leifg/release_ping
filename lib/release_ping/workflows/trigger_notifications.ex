@@ -2,7 +2,9 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
   alias ReleasePing.Core.Events.ReleasePublished
   alias ReleasePing.Outgoing.Commands.NotifySubscriber
   alias ReleasePing.Outgoing.ActiveSubscription
+  use Timex
 
+  @hours_to_be_considered_new 24
   defstruct []
 
   use Commanded.ProcessManagers.ProcessManager,
@@ -13,15 +15,17 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
   def handle(%__MODULE__{}, %ReleasePublished{} = published) do
     software = ReleasePing.Core.software_by_uuid(published.software_uuid)
 
-    Enum.map(ActiveSubscription.matching(software), fn(subscription) ->
-      %NotifySubscriber{
-        uuid: UUID.uuid4(),
-        release_uuid: published.uuid,
-        subscription_uuid: subscription.uuid,
-        session_uuid: UUID.uuid4(),
-        payload: extract_payload(published, software)
-      }
-    end)
+    if Timex.diff(published.seen_at, published.published_at, :hours) <= @hours_to_be_considered_new do
+      Enum.map(ActiveSubscription.matching(software), fn(subscription) ->
+        %NotifySubscriber{
+          uuid: UUID.uuid4(),
+          release_uuid: published.uuid,
+          subscription_uuid: subscription.uuid,
+          session_uuid: UUID.uuid4(),
+          payload: extract_payload(published, software)
+        }
+      end)
+    end
   end
 
   defp extract_payload(published, software) do

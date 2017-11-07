@@ -4,12 +4,13 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
   alias ReleasePing.Core.Events.ReleasePublished
   alias ReleasePing.Core.Version.VersionInfo
   alias ReleasePing.{Repo, Router, Wait}
+  alias ReleasePing.Workflows.TriggerNotifications
 
   use ReleasePing.DataCase
 
-  @pm_state %ReleasePing.Workflows.TriggerNotifications{}
+  @pm_state %TriggerNotifications{}
 
-  @event %ReleasePublished{
+  @new_release_event %ReleasePublished{
     uuid: "fef12aba-3ae4-4532-8790-c0ec3182719b",
     version_string: "v1.5.2",
     version_info: %VersionInfo{
@@ -20,8 +21,25 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
     },
     release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
     display_version: "1.5.2",
-    published_at: "2017-09-29T12:10:47Z",
-    seen_at: "2017-09-29T13:10:47Z",
+    published_at: ~N[2017-09-29T12:10:47Z],
+    seen_at: ~N[2017-09-29T13:10:47Z],
+    github_cursor: "releases:Y3Vyc29yOnYyOpHOAHhy8Q==",
+    pre_release: false,
+  }
+
+  @old_release_event %ReleasePublished{
+    uuid: "abd5c303-f69e-4028-a587-7ff397662426",
+    version_string: "v1.4.3",
+    version_info: %VersionInfo{
+      major: 1,
+      minor: 4,
+      patch: 3,
+      pre_release: nil,
+    },
+    release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.4.3",
+    display_version: "1.4.3",
+    published_at: ~N[2017-05-15 12:51:41],
+    seen_at: ~N[2017-11-07 14:19:47],
     github_cursor: "releases:Y3Vyc29yOnYyOpHOAHhy8Q==",
     pre_release: false,
   }
@@ -31,13 +49,13 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       software = add_software()
       subscription = add_subscription()
 
-      commands = ReleasePing.Workflows.TriggerNotifications.handle(@pm_state, Map.put(@event, :software_uuid, software.uuid))
+      commands = TriggerNotifications.handle(@pm_state, Map.put(@new_release_event, :software_uuid, software.uuid))
       expected_command = %NotifySubscriber{
         subscription_uuid: subscription.uuid,
-        release_uuid: @event.uuid,
+        release_uuid: @new_release_event.uuid,
         attempt: 1,
         payload: %{
-          uuid: @event.uuid,
+          uuid: @new_release_event.uuid,
           software: %{
             uuid: software.uuid,
             type: :language,
@@ -46,7 +64,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
           },
           version_string: "v1.5.2",
           display_version: "1.5.2",
-          published_at: "2017-09-29T12:10:47Z",
+          published_at: ~N[2017-09-29 12:10:47],
           release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
           version_info: %{
             major: 1,
@@ -63,6 +81,16 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       assert command.session_uuid != nil
 
       assert normalize_command(command) == expected_command
+    end
+
+    test "ignores old release" do
+      software = add_software()
+      add_subscription()
+
+      expected_commands = nil
+      commands = TriggerNotifications.handle(@pm_state, Map.put(@old_release_event, :software_uuid, software.uuid))
+
+      assert commands == expected_commands
     end
   end
 
