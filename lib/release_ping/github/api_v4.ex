@@ -33,7 +33,7 @@ defmodule ReleasePing.Github.ApiV4 do
         resetAt
       }
       repository(owner: "#{release_request.repo_owner}", name: "#{release_request.repo_name}") {
-        tags: refs(refPrefix: "refs/tags/", first: #{release_request.page_size}, after: #{cursor(release_request.last_cursor_tags)}, direction: ASC) {
+        tags: refs(refPrefix: "refs/tags/", first: #{release_request.page_size}, after: #{cursor(release_request.last_cursor_tags)}, orderBy: {field: TAG_COMMIT_DATE, direction:ASC}) {
           edges {
             cursor
             node {
