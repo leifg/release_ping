@@ -7,6 +7,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     NameCorrected,
     SoftwareAdded,
     ReleasePublished,
+    ReleaseNotesUrlTemplateCorrected,
     SlugCorrected,
     WebsiteCorrected
   }
@@ -53,6 +54,10 @@ defmodule ReleasePing.Api.Projectors.Software do
   end
 
   project %SlugCorrected{} = corrected, _metadata do
+    update_software(multi, corrected)
+  end
+
+  project %ReleaseNotesUrlTemplateCorrected{} = corrected, _metadata do
     update_software(multi, corrected)
   end
 
@@ -124,6 +129,23 @@ defmodule ReleasePing.Api.Projectors.Software do
     existing_software = Repo.get(Software, corrected.software_uuid)
     changeset = existing_software
       |> Ecto.Changeset.change(%{slug: corrected.slug})
+
+    Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp update_software(multi, %ReleaseNotesUrlTemplateCorrected{} = corrected) do
+    existing_software = Repo.get(Software, corrected.software_uuid)
+
+    new_stable_rnu = EEx.eval_string(corrected.release_notes_url_template, assigns: Map.from_struct(existing_software.latest_version_stable)) |> IO.inspect(label: "here the version")
+    new_unstable_rnu = EEx.eval_string(corrected.release_notes_url_template, assigns: Map.from_struct(existing_software.latest_version_unstable)) |> IO.inspect(label: "here the version")
+
+    latest_changeset_stable = Ecto.Changeset.change(existing_software.latest_version_stable, release_notes_url: new_stable_rnu)
+    latest_changeset_unstable = Ecto.Changeset.change(existing_software.latest_version_unstable, release_notes_url: new_unstable_rnu)
+
+    changeset = existing_software
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
+      |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
 
     Ecto.Multi.update(multi, :api_software, changeset)
   end
