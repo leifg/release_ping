@@ -2,7 +2,7 @@ use Mix.Config
 
 config :release_ping, ReleasePing.Scheduler,
   jobs: [
-    {"@daily", {ReleasePing.Scheduler, :poll_releases, []}}
+    {"0 0,12 * * *", {ReleasePing.Scheduler, :poll_releases, []}}
   ]
 
 config :eventstore, EventStore.Storage,
