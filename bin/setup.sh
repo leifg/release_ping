@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Creating write store"
-mix event_store.create
+mix do event_store.create, event_store.init
 
 echo "Creating read store"
 mix ecto.create

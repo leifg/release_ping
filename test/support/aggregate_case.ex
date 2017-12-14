@@ -8,7 +8,7 @@ defmodule ReleasePing.AggregateCase do
 
   using [aggregate: aggregate] do
     quote bind_quoted: [aggregate: aggregate] do
-      use Commanded.EventStore.Serializer
+      @serializer EventStore.configured_serializer()
       @aggregate aggregate
 
       import ReleasePing.Factory
