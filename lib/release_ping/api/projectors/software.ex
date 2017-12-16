@@ -18,10 +18,11 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   @known_licenses %{
     "Apache-2.0" => "Apache License 2.0",
+    "GPL-2.0" => "GNU General Public License v2.0",
     "GPL-3.0" => "GNU General Public License v3.0",
     "BSD-2-Clause" => "BSD 2-clause",
     "BSD-3-Clause" => "BSD 3-clause",
-    "EPL-1.0" => "Eclipse Public License 1.0",
+    "EPL-1.0" =>  "Eclipse Public License 1.0",
     "LGPL-2.1" => "GNU LGPLv2.1",
     "LGPL-3.0" => "GNU LGPLv3.0",
     "MIT" => "MIT License",
@@ -77,6 +78,7 @@ defmodule ReleasePing.Api.Projectors.Software do
       minor: version_info.minor,
       patch: version_info.patch,
       pre_release: version_info.pre_release,
+      build_metadata: version_info.build_metadata,
       release_notes_url: published.release_notes_url,
       published_at: published.published_at,
     }

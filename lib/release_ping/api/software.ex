@@ -29,6 +29,7 @@ defmodule ReleasePing.Api.Software do
       minor: integer,
       patch: integer,
       pre_release: String.t,
+      build_metadata: String.t,
       release_notes_url: String.t,
       published_at: DateTime.t,
     }
@@ -43,6 +44,7 @@ defmodule ReleasePing.Api.Software do
       field :minor, :integer
       field :patch, :integer
       field :pre_release, :string
+      field :build_metadata, :string
       field :release_notes_url, :string
       field :published_at, :utc_datetime
     end

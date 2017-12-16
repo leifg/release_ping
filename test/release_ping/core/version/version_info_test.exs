@@ -52,6 +52,17 @@ defmodule ReleasePing.Core.Version.Aggregates.VersionInfoTest do
     end
 
     test "returns correct version for Erlang pre release version" do
+      version_scheme = ~r/jdk-?(?<major>\d+)(?<build_metadata>.+)/
+      assert VersionInfo.parse("jdk-9+148", version_scheme) == %VersionInfo{
+        major: 9,
+        minor: 0,
+        patch: 0,
+        pre_release: nil,
+        build_metadata: "+148",
+      }
+    end
+
+    test "returns correct version for Java version" do
       version_scheme = VersionInfo.default_version_scheme()
       assert VersionInfo.parse("OTP-20.0-rc2", version_scheme) == %VersionInfo{
         major: 20,

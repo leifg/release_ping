@@ -71,6 +71,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
             minor: 5,
             patch: 2,
             pre_release: nil,
+            build_metadata: nil,
           }
         }
       }
