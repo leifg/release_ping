@@ -6,10 +6,11 @@ defmodule ReleasePing.Core.Version.VersionInfo do
     minor: non_neg_integer,
     patch: non_neg_integer,
     pre_release: String.t,
+    build_metadata: String.t,
     published_at: String.t,
   }
 
-  defstruct [:major, :minor, :patch, :pre_release, :published_at]
+  defstruct [:major, :minor, :patch, :pre_release, :build_metadata, :published_at]
 
   @spec parse(String.t, Regex.t) :: t
   def parse(version_string, version_scheme) do
@@ -19,6 +20,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
         major: 0,
         minor: 0,
         patch: 0,
+        build_metadata: nil,
         pre_release: nil,
       },
       %__MODULE__{
@@ -26,6 +28,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
         minor: parse_number(named_captures["minor"]),
         patch: parse_number(named_captures["patch"]),
         pre_release: normalize_pre_release(named_captures["pre_release"]),
+        build_metadata: named_captures["build_metadata"],
       },
       &update_unless_blank/3
     )
@@ -53,6 +56,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
       minor: version_info["minor"],
       patch: version_info["patch"],
       pre_release: version_info["pre_release"],
+      build_metadata: version_info["build_metadata"],
       published_at: Conversion.from_iso8601_to_naive_datetime(version_info["published_at"]),
     }
   end
@@ -65,6 +69,7 @@ defmodule ReleasePing.Core.Version.VersionInfo do
   defp update_unless_blank(_k, v1, ""), do: v1
   defp update_unless_blank(_k, _v1, v2), do: v2
 
+  defp parse_number(nil), do: 0
   defp parse_number(""), do: 0
   defp parse_number(string), do: String.to_integer(string)
 

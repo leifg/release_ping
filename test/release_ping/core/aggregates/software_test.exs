@@ -31,7 +31,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
         assert event.uuid == uuid
         assert event.name == "elixir"
         assert event.type == :language
-        assert event.version_scheme.source == "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?"
+        assert event.version_scheme.source == "v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<pre_release>.+))?(?:\\+(?<build_metadata>.+))?"
         assert event.display_version_template == "<%= @major %>.<%= @minor %>.<%= @patch %><%= if @pre_release, do: \"-\#{@pre_release}\" %>"
         assert event.website == "https://elixir-lang.org"
         assert event.github == "elixir-lang/elixir"
@@ -319,6 +319,37 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
             major: 1,
             minor: 5,
             patch: 2,
+            published_at: ~N[2017-07-25 07:27:16.000],
+          },
+          published_at: ~N[2017-07-25 07:27:16.000],
+          seen_at: ~N[2017-07-25 07:30:00.000],
+          pre_release: false,
+        }
+      ]
+    end
+
+    test "sets correct values with build metadata", %{software: software} do
+      uuid = UUID.uuid4()
+
+      command = build(
+        :publish_release,
+        uuid: uuid,
+        software_uuid: software.uuid,
+        release_notes_url: nil,
+        version_string: "v1.5.2+5294a73"
+      )
+      assert_events software, command, [
+        %ReleasePublished{
+          uuid: uuid,
+          software_uuid: software.uuid,
+          release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2+5294a73",
+          display_version: "1.5.2",
+          version_string: "v1.5.2+5294a73",
+          version_info: %VersionInfo{
+            major: 1,
+            minor: 5,
+            patch: 2,
+            build_metadata: "5294a73",
             published_at: ~N[2017-07-25 07:27:16.000],
           },
           published_at: ~N[2017-07-25 07:27:16.000],
