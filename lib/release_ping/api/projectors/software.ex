@@ -26,6 +26,8 @@ defmodule ReleasePing.Api.Projectors.Software do
     "LGPL-2.1" => "GNU LGPLv2.1",
     "LGPL-3.0" => "GNU LGPLv3.0",
     "MIT" => "MIT License",
+    "PHP-3.0" => "PHP License v3.0",
+    "PHP-3.01" => "PHP License v3.01",
     "Ruby" => "Ruby License",
   }
 
