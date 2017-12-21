@@ -22,6 +22,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     "GPL-3.0" => "GNU General Public License v3.0",
     "BSD-2-Clause" => "BSD 2-clause",
     "BSD-3-Clause" => "BSD 3-clause",
+    "BSL-1.0" => "Boost Software License 1.0",
     "EPL-1.0" =>  "Eclipse Public License 1.0",
     "LGPL-2.1" => "GNU LGPLv2.1",
     "LGPL-3.0" => "GNU LGPLv3.0",
