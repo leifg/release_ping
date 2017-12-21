@@ -8,6 +8,7 @@ defmodule ReleasePing.Router do
   alias ReleasePing.Core.Aggregates.Software
   alias ReleasePing.Core.Commands.{
     AddSoftware,
+    AdjustReleaseNotesUrl,
     ChangeLicenses,
     ChangeVersionScheme,
     CorrectName,
@@ -33,6 +34,7 @@ defmodule ReleasePing.Router do
 
   dispatch [AddSoftware], to: Software, identity: :uuid
   dispatch [
+    AdjustReleaseNotesUrl,
     ChangeLicenses,
     ChangeVersionScheme,
     CorrectName,

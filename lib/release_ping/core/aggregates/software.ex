@@ -2,6 +2,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
   alias ReleasePing.Core.Aggregates.Software
   alias ReleasePing.Core.Commands.{
     AddSoftware,
+    AdjustReleaseNotesUrl,
     ChangeLicenses,
     ChangeVersionScheme,
     CorrectName,
@@ -16,6 +17,7 @@ defmodule ReleasePing.Core.Aggregates.Software do
     LicensesChanged,
     NameCorrected,
     ReleasePublished,
+    ReleaseNotesUrlAdjusted,
     ReleaseNotesUrlTemplateCorrected,
     SlugCorrected,
     SoftwareTypeCorrected,
@@ -228,6 +230,22 @@ defmodule ReleasePing.Core.Aggregates.Software do
     end
   end
 
+  @doc """
+  Adjust ReleaseNotesUrl
+  """
+  def execute(%Software{} = software, %AdjustReleaseNotesUrl{} = adjust) do
+    if MapSet.member?(software.existing_releases, adjust.version_string) do
+      %ReleaseNotesUrlAdjusted{
+        uuid: adjust.uuid,
+        software_uuid: software.uuid,
+        version_string: adjust.version_string,
+        release_notes_url: adjust.release_notes_url,
+      }
+    else
+      {:error, {:inconsistency_error, "Version '#{adjust.version_string}' does not exist"}}
+    end
+  end
+
   # state mutators
 
   def apply(%Software{} = software, %SoftwareAdded{} = added) do
@@ -292,6 +310,10 @@ defmodule ReleasePing.Core.Aggregates.Software do
     %Software{software |
       release_notes_url_template: corrected.release_notes_url_template,
     }
+  end
+
+  def apply(%Software{} = software, %ReleaseNotesUrlAdjusted{}) do
+    software
   end
 
   defp validate_version_scheme(nil), do: {:ok, nil}

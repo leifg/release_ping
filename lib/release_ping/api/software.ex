@@ -25,6 +25,7 @@ defmodule ReleasePing.Api.Software do
     @type t :: %__MODULE__{
       id: String.t,
       name: String.t,
+      version_string: String.t,
       major: integer,
       minor: integer,
       patch: integer,
@@ -40,6 +41,7 @@ defmodule ReleasePing.Api.Software do
 
     embedded_schema do
       field :name, :string
+      field :version_string, :string
       field :major, :integer
       field :minor, :integer
       field :patch, :integer

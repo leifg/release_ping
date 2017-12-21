@@ -7,6 +7,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     NameCorrected,
     SoftwareAdded,
     ReleasePublished,
+    ReleaseNotesUrlAdjusted,
     ReleaseNotesUrlTemplateCorrected,
     SlugCorrected,
     WebsiteCorrected
@@ -67,6 +68,10 @@ defmodule ReleasePing.Api.Projectors.Software do
     update_software(multi, corrected)
   end
 
+  project %ReleaseNotesUrlAdjusted{} = corrected, _metadata do
+    update_software(multi, corrected)
+  end
+
   defp update_software(multi, %ReleasePublished{} = published) do
     existing_software = Repo.get(Software, published.software_uuid)
     existing_stable = existing_software.latest_version_stable
@@ -77,6 +82,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     new_version = %Version{
       id: published.uuid,
       name: published.display_version,
+      version_string: published.version_string,
       major: version_info.major,
       minor: version_info.minor,
       patch: version_info.patch,
@@ -155,6 +161,28 @@ defmodule ReleasePing.Api.Projectors.Software do
       |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
 
     Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp update_software(multi, %ReleaseNotesUrlAdjusted{} = adjusted) do
+    existing_software = Repo.get(Software, adjusted.software_uuid)
+
+    latest_changeset_stable = change_release_notes_url(existing_software.latest_version_stable, adjusted.version_string, adjusted.release_notes_url)
+    latest_changeset_unstable = change_release_notes_url(existing_software.latest_version_unstable, adjusted.version_string, adjusted.release_notes_url)
+
+    changeset = existing_software
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
+      |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
+
+    Ecto.Multi.update(multi, :api_software, changeset)
+  end
+
+  defp change_release_notes_url(version_info, version_string, release_notes_url) do
+    if version_info.version_string == version_string do
+      Ecto.Changeset.change(version_info, release_notes_url: release_notes_url)
+    else
+      Ecto.Changeset.change(version_info)
+    end
   end
 
   defp map_license(spdx_id) do
