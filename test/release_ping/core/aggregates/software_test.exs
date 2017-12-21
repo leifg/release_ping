@@ -2,6 +2,7 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   use ReleasePing.AggregateCase, aggregate: ReleasePing.Core.Aggregates.Software
 
   alias ReleasePing.Core.Commands.{
+    AdjustReleaseNotesUrl,
     ChangeLicenses,
     ChangeVersionScheme,
     CorrectName,
@@ -13,12 +14,14 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
   alias ReleasePing.Core.Events.{
     LicensesChanged,
     NameCorrected,
+    ReleaseNotesUrlAdjusted,
     ReleaseNotesUrlTemplateCorrected,
     ReleasePublished,
     SoftwareAdded,
     SoftwareTypeCorrected,
     SlugCorrected,
-    VersionSchemeChanged, WebsiteCorrected
+    VersionSchemeChanged,
+    WebsiteCorrected,
   }
   alias ReleasePing.Core.Version.VersionInfo
 
@@ -367,10 +370,66 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     end
   end
 
+  describe "change release notes url of a version" do
+    setup [
+      :add_software,
+      :publish_release,
+    ]
+
+    test "correctly changes release notes url for existing version", %{software: software} do
+      uuid = UUID.uuid4()
+
+      command = %AdjustReleaseNotesUrl{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        version_string: "v1.5.0",
+        release_notes_url: "http://elixir-lang.org/very_custom_release_notes_url.html",
+      }
+
+      event = %ReleaseNotesUrlAdjusted{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        version_string: "v1.5.0",
+        release_notes_url: "http://elixir-lang.org/very_custom_release_notes_url.html",
+      }
+
+      assert_events software, command, [event]
+    end
+
+    test "returns error when release doesn't exist", %{software: software} do
+      uuid = UUID.uuid4()
+
+      command = %AdjustReleaseNotesUrl{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        version_string: "DoesntExist",
+        release_notes_url: "http://elixir-lang.org/very_custom_release_notes_url.html",
+      }
+
+      assert_error software, command, {:error, {:inconsistency_error, "Version 'DoesntExist' does not exist"}}
+    end
+  end
+
   defp add_software(_context) do
     uuid = UUID.uuid4()
 
     {software, _events, _error} = execute(build(:add_software, uuid: uuid))
+
+    {:ok, %{software: software}}
+  end
+
+  defp publish_release(%{software: software}) do
+    uuid = UUID.uuid4()
+
+    command = build(
+      :publish_release,
+      uuid: uuid,
+      software_uuid: software.uuid,
+      release_notes_url: nil,
+      version_string: "v1.5.0"
+    )
+
+    {software, _events, _error} = execute(command, software)
 
     {:ok, %{software: software}}
   end
