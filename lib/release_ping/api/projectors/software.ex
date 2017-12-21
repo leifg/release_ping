@@ -77,6 +77,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     new_version = %Version{
       id: published.uuid,
       name: published.display_version,
+      version_string: published.version_string,
       major: version_info.major,
       minor: version_info.minor,
       patch: version_info.patch,
