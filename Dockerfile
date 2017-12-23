@@ -1,4 +1,4 @@
-FROM alpine:3.6
+FROM alpine:3.7
 MAINTAINER Leif Gensert <leif@leif.io>
 
 RUN apk add --no-cache ncurses-libs openssl postgresql-client bash
