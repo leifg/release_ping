@@ -9,7 +9,7 @@ config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "${POSTGRES_USER}",
   password: "${POSTGRES_PASSWORD}",
-  database: "eventstore",
+  database: "${EVENTSTORE_DB}",
   hostname: "${POSTGRES_HOST}",
   pool: DBConnection.Poolboy,
   pool_size: 10
@@ -18,7 +18,7 @@ config :release_ping, ReleasePing.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "${POSTGRES_USER}",
   password: "${POSTGRES_PASSWORD}",
-  database: "release_ping_readstore",
+  database: "${READSTORE_DB}",
   hostname: "${POSTGRES_HOST}",
   pool_size: 10
 
