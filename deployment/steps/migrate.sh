@@ -2,7 +2,7 @@
 
 set -e
 
-service_name=hn-vanity-readstore-migrator-${2}
+service_name=release-ping-readstore-migrator-${2}
 
 echo "Running ${service_name}"
 docker-cloud service run --sync \
