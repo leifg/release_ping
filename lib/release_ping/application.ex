@@ -31,8 +31,10 @@ defmodule ReleasePing.Application do
       worker(ReleasePing.Api.Projectors.Software, [], id: :api_software_projector),
     ]
 
+    {:ok, application_name} = :application.get_application(__MODULE__)
+    {:ok, version} = :application.get_key(application_name, :vsn)
 
-    Logger.info("Starting Application")
+    Logger.info("Starting #{application_name}-#{version}")
 
     opts = [strategy: :one_for_one, name: ReleasePing.Supervisor]
     Supervisor.start_link(children, opts)
