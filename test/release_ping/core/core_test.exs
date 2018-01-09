@@ -44,7 +44,7 @@ defmodule ReleasePing.CoreTest do
     test "updates github pollers" do
       assert {:ok, %Software{} = software} = Core.add_software(build(:software))
 
-      Wait.until(fn -> (Core.github_release_pollers() |> length) > 0 end)
+      Wait.until(fn -> Core.github_release_pollers() |> length > 0 end)
 
       [poller] = Core.github_release_pollers()
 
@@ -73,9 +73,15 @@ defmodule ReleasePing.CoreTest do
       assert release.major_version == 1
       assert release.minor_version == 5
       assert release.patch_version == 0
-      assert release.published_at == DateTime.from_naive!(~N[2017-07-25 07:27:16.000000], "Etc/UTC")
+
+      assert release.published_at ==
+               DateTime.from_naive!(~N[2017-07-25 07:27:16.000000], "Etc/UTC")
+
       assert release.seen_at == DateTime.from_naive!(~N[2017-07-25 07:30:00.000000], "Etc/UTC")
-      assert release.release_notes_url == "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0"
+
+      assert release.release_notes_url ==
+               "https://github.com/elixir-lang/elixir/releases/tag/v1.5.0"
+
       assert release.pre_release == false
     end
   end

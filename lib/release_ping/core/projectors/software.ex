@@ -11,6 +11,7 @@ defmodule ReleasePing.Core.Projectors.Software do
     VersionSchemeChanged,
     WebsiteCorrected
   }
+
   alias ReleasePing.Core.Software
   alias ReleasePing.Repo
 
@@ -26,7 +27,7 @@ defmodule ReleasePing.Core.Projectors.Software do
       website: added.website,
       github: added.github,
       licenses: added.licenses,
-      release_retrieval: added.release_retrieval,
+      release_retrieval: added.release_retrieval
     })
   end
 
@@ -43,11 +44,21 @@ defmodule ReleasePing.Core.Projectors.Software do
   end
 
   project %VersionSchemeChanged{} = corrected, _metadata do
-    update_software(multi, corrected.software_uuid, :version_scheme, serialize_regex(corrected.version_scheme))
+    update_software(
+      multi,
+      corrected.software_uuid,
+      :version_scheme,
+      serialize_regex(corrected.version_scheme)
+    )
   end
 
   project %ReleaseNotesUrlTemplateCorrected{} = corrected, _metadata do
-    update_software(multi, corrected.software_uuid, :release_notes_url_template, corrected.release_notes_url_template)
+    update_software(
+      multi,
+      corrected.software_uuid,
+      :release_notes_url_template,
+      corrected.release_notes_url_template
+    )
   end
 
   project %SoftwareTypeCorrected{} = corrected, _metadata do
@@ -60,7 +71,9 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   defp update_software(multi, software_uuid, field_name, value) do
     existing_software = Repo.get(Software, software_uuid)
-    changeset = existing_software
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change(%{field_name => value})
 
     Ecto.Multi.update(multi, :software, changeset)

@@ -12,11 +12,13 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
     router: ReleasePing.Router
 
   def interested?(%ReleasePublished{software_uuid: software_uuid}), do: {:start, software_uuid}
+
   def handle(%__MODULE__{}, %ReleasePublished{} = published) do
     software = ReleasePing.Core.software_by_uuid(published.software_uuid)
 
-    if Timex.diff(published.seen_at, published.published_at, :hours) <= @hours_to_be_considered_new do
-      Enum.map(ActiveSubscription.matching(software), fn(subscription) ->
+    if Timex.diff(published.seen_at, published.published_at, :hours) <=
+         @hours_to_be_considered_new do
+      Enum.map(ActiveSubscription.matching(software), fn subscription ->
         %NotifySubscriber{
           uuid: UUID.uuid4(),
           release_uuid: published.uuid,
@@ -35,13 +37,13 @@ defmodule ReleasePing.Workflows.TriggerNotifications do
         uuid: software.uuid,
         name: software.name,
         slug: software.slug,
-        type: :language,
+        type: :language
       },
       version_string: published.version_string,
       display_version: published.display_version,
       version_info: transform_version_info(published.version_info),
       published_at: published.published_at,
-      release_notes_url: published.release_notes_url,
+      release_notes_url: published.release_notes_url
     }
   end
 

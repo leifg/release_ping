@@ -3,7 +3,7 @@ defmodule ReleasePing.Api.VersionUtils do
 
   @type compare_result :: :lt | :gt | :eq
 
-  @spec compare(Version.t, Version.t) :: compare_result
+  @spec compare(Version.t(), Version.t()) :: compare_result
   def compare(version1, version2) do
     {:ok, cmp1} = dump(version1)
     {:ok, cmp2} = dump(version2)
@@ -19,10 +19,13 @@ defmodule ReleasePing.Api.VersionUtils do
     {:ok, published_at} = dump(published_at)
     {:ok, {major, minor, patch, published_at}}
   end
+
   defp dump(input) when is_binary(input), do: {:ok, input}
+
   defp dump(%DateTime{} = datetime) do
     {:ok, DateTime.to_unix(datetime)}
   end
+
   defp dump(%NaiveDateTime{} = datetime) do
     datetime |> DateTime.from_naive!("Etc/UTC") |> dump()
   end

@@ -1,12 +1,13 @@
 defmodule ReleasePing.AggregateCase do
   alias Commanded.EventStore.TypeProvider
+
   @moduledoc """
   This module defines the test case to be used by aggregate tests.
   """
 
   use ExUnit.CaseTemplate
 
-  using [aggregate: aggregate] do
+  using aggregate: aggregate do
     quote bind_quoted: [aggregate: aggregate] do
       @serializer EventStore.configured_serializer()
       @aggregate aggregate
@@ -25,7 +26,7 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp assert_events(aggregate, commands, expected_events) do
-        assertion_fun = fn(_predicate_aggregate, predicate_events, predicate_error) ->
+        assertion_fun = fn _predicate_aggregate, predicate_events, predicate_error ->
           assert is_nil(predicate_error)
           assert List.wrap(predicate_events) == expected_events
         end
@@ -38,7 +39,7 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp assert_error(aggregate, commands, expected_error) do
-        assertion_fun = fn(_predicate_aggregate, predicate_events, predicate_error) ->
+        assertion_fun = fn _predicate_aggregate, predicate_events, predicate_error ->
           assert predicate_error == expected_error
         end
 
@@ -47,16 +48,19 @@ defmodule ReleasePing.AggregateCase do
 
       # execute one or more commands against an aggregate
       defp execute(commands, aggregate \\ %@aggregate{})
+
       defp execute(commands, aggregate) do
         commands
         |> List.wrap()
         |> Enum.reduce({aggregate, [], nil}, fn
-          (command, {aggregate, _events, nil}) ->
+          command, {aggregate, _events, nil} ->
             case @aggregate.execute(aggregate, command) do
               {:error, reason} = error -> {aggregate, nil, error}
               events -> {evolve(aggregate, events), serialize_deserialize(events), nil}
             end
-          (command, {aggregate, _events, _error} = reply) -> reply
+
+          command, {aggregate, _events, _error} = reply ->
+            reply
         end)
       end
 
@@ -73,11 +77,14 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp serialize_deserialize(nil), do: nil
+
       defp serialize_deserialize(events) when is_list(events) do
         Enum.map(events, &serialize_deserialize/1)
       end
+
       defp serialize_deserialize(event) do
-        event |> @serializer.serialize() |> @serializer.deserialize(type: TypeProvider.to_string(event))
+        event |> @serializer.serialize()
+        |> @serializer.deserialize(type: TypeProvider.to_string(event))
       end
     end
   end

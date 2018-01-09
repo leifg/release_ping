@@ -12,23 +12,32 @@ defmodule ReleasePing.Application do
     children = [
       supervisor(ReleasePing.Repo, []),
       supervisor(ReleasePingWeb.Endpoint, []),
-
       worker(ReleasePing.Scheduler, []),
-
       worker(ReleasePing.Validation.Unique, []),
-
-      worker(ReleasePing.Workflows.PublishReleases, [[start_from: :origin]], id: :publish_releases_workflow),
-      worker(ReleasePing.Workflows.TriggerNotifications, [[start_from: :origin]], id: :trigger_notifications_workflow),
-
+      worker(
+        ReleasePing.Workflows.PublishReleases,
+        [[start_from: :origin]],
+        id: :publish_releases_workflow
+      ),
+      worker(
+        ReleasePing.Workflows.TriggerNotifications,
+        [[start_from: :origin]],
+        id: :trigger_notifications_workflow
+      ),
       worker(ReleasePing.Core.Projectors.Software, [], id: :software_projector),
       worker(ReleasePing.Core.Projectors.Release, [], id: :release_projector),
-      worker(ReleasePing.Core.Projectors.GithubReleasePoller, [], id: :github_release_poller_projector),
-
+      worker(
+        ReleasePing.Core.Projectors.GithubReleasePoller,
+        [],
+        id: :github_release_poller_projector
+      ),
       worker(ReleasePing.Incoming.Projectors.GithubEndpoint, [], id: :github_endpoint_projector),
-
-      worker(ReleasePing.Outgoing.Projectors.ActiveSubscription, [], id: :active_subscriptions_projector),
-
-      worker(ReleasePing.Api.Projectors.Software, [], id: :api_software_projector),
+      worker(
+        ReleasePing.Outgoing.Projectors.ActiveSubscription,
+        [],
+        id: :active_subscriptions_projector
+      ),
+      worker(ReleasePing.Api.Projectors.Software, [], id: :api_software_projector)
     ]
 
     {:ok, application_name} = :application.get_application(__MODULE__)

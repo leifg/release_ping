@@ -6,9 +6,9 @@ defmodule ReleasePing.Mixfile do
       app: :release_ping,
       version: "0.0.0-development",
       elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
   end
@@ -21,13 +21,13 @@ defmodule ReleasePing.Mixfile do
         :inets,
         :runtime_tools,
         :eventstore,
-        :ecto,
+        :ecto
       ]
     ]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
     [
@@ -49,7 +49,7 @@ defmodule ReleasePing.Mixfile do
       {:ex_machina, "~> 2.0", only: :test},
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:distillery, "~> 1.4", runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end

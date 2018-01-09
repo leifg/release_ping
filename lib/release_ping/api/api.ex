@@ -9,7 +9,7 @@ defmodule ReleasePing.Api do
       from(
         s in Software,
         order_by: s.name,
-        where: not(is_nil(s.latest_version_stable)) and not(is_nil(s.latest_version_unstable))
+        where: not is_nil(s.latest_version_stable) and not is_nil(s.latest_version_unstable)
       )
     )
   end

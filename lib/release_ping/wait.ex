@@ -17,8 +17,12 @@ defmodule ReleasePing.Wait do
       result when result in [nil, false] ->
         :timer.sleep(@default_retry_interval)
         until(max(0, timeout - @default_retry_interval), fun)
-      true -> :ok
-      result -> {:ok, result}
+
+      true ->
+        :ok
+
+      result ->
+        {:ok, result}
     end
   end
 end

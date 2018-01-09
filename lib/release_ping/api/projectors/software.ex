@@ -2,6 +2,7 @@ defmodule ReleasePing.Api.Projectors.Software do
   use Commanded.Projections.Ecto, name: "Api.Projectors.Software"
 
   alias ReleasePing.Repo
+
   alias ReleasePing.Core.Events.{
     LicensesChanged,
     NameCorrected,
@@ -12,6 +13,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     SlugCorrected,
     WebsiteCorrected
   }
+
   alias ReleasePing.Api.{Software, VersionUtils}
   alias ReleasePing.Api.Software.{License, Version}
 
@@ -24,13 +26,13 @@ defmodule ReleasePing.Api.Projectors.Software do
     "BSD-2-Clause" => "BSD 2-clause",
     "BSD-3-Clause" => "BSD 3-clause",
     "BSL-1.0" => "Boost Software License 1.0",
-    "EPL-1.0" =>  "Eclipse Public License 1.0",
+    "EPL-1.0" => "Eclipse Public License 1.0",
     "LGPL-2.1" => "GNU LGPLv2.1",
     "LGPL-3.0" => "GNU LGPLv3.0",
     "MIT" => "MIT License",
     "PHP-3.0" => "PHP License v3.0",
     "PHP-3.01" => "PHP License v3.01",
-    "Ruby" => "Ruby License",
+    "Ruby" => "Ruby License"
   }
 
   project %SoftwareAdded{} = added, %{stream_version: stream_version} do
@@ -40,7 +42,7 @@ defmodule ReleasePing.Api.Projectors.Software do
       name: added.name,
       slug: added.slug,
       website: added.website,
-      licenses: Enum.map(added.licenses, &map_license/1),
+      licenses: Enum.map(added.licenses, &map_license/1)
     })
   end
 
@@ -89,23 +91,26 @@ defmodule ReleasePing.Api.Projectors.Software do
       pre_release: version_info.pre_release,
       build_metadata: version_info.build_metadata,
       release_notes_url: published.release_notes_url,
-      published_at: published.published_at,
+      published_at: published.published_at
     }
 
-    stable_version_to_set = cond do
-      published.pre_release -> existing_stable
-      existing_stable == nil -> new_version
-      VersionUtils.compare(new_version, existing_stable) == :gt -> new_version
-      true -> existing_stable
-    end
+    stable_version_to_set =
+      cond do
+        published.pre_release -> existing_stable
+        existing_stable == nil -> new_version
+        VersionUtils.compare(new_version, existing_stable) == :gt -> new_version
+        true -> existing_stable
+      end
 
-    unstable_version_to_set = cond do
-      existing_unstable == nil -> new_version
-      VersionUtils.compare(new_version, existing_unstable) == :gt -> new_version
-      true -> existing_unstable
-    end
+    unstable_version_to_set =
+      cond do
+        existing_unstable == nil -> new_version
+        VersionUtils.compare(new_version, existing_unstable) == :gt -> new_version
+        true -> existing_unstable
+      end
 
-    changeset = existing_software
+    changeset =
+      existing_software
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:latest_version_stable, stable_version_to_set)
       |> Ecto.Changeset.put_embed(:latest_version_unstable, unstable_version_to_set)
@@ -115,7 +120,9 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   defp update_software(multi, %LicensesChanged{} = changed) do
     existing_software = Repo.get(Software, changed.software_uuid)
-    changeset = existing_software
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:licenses, Enum.map(changed.licenses, &map_license/1))
 
@@ -124,7 +131,9 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   defp update_software(multi, %WebsiteCorrected{} = corrected) do
     existing_software = Repo.get(Software, corrected.software_uuid)
-    changeset = existing_software
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change(%{website: corrected.website})
 
     Ecto.Multi.update(multi, :api_software, changeset)
@@ -132,7 +141,9 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   defp update_software(multi, %NameCorrected{} = corrected) do
     existing_software = Repo.get(Software, corrected.software_uuid)
-    changeset = existing_software
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change(%{name: corrected.name})
 
     Ecto.Multi.update(multi, :api_software, changeset)
@@ -140,7 +151,9 @@ defmodule ReleasePing.Api.Projectors.Software do
 
   defp update_software(multi, %SlugCorrected{} = corrected) do
     existing_software = Repo.get(Software, corrected.software_uuid)
-    changeset = existing_software
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change(%{slug: corrected.slug})
 
     Ecto.Multi.update(multi, :api_software, changeset)
@@ -149,13 +162,32 @@ defmodule ReleasePing.Api.Projectors.Software do
   defp update_software(multi, %ReleaseNotesUrlTemplateCorrected{} = corrected) do
     existing_software = Repo.get(Software, corrected.software_uuid)
 
-    new_stable_rnu = EEx.eval_string(corrected.release_notes_url_template, assigns: Map.from_struct(existing_software.latest_version_stable))
-    new_unstable_rnu = EEx.eval_string(corrected.release_notes_url_template, assigns: Map.from_struct(existing_software.latest_version_unstable))
+    new_stable_rnu =
+      EEx.eval_string(
+        corrected.release_notes_url_template,
+        assigns: Map.from_struct(existing_software.latest_version_stable)
+      )
 
-    latest_changeset_stable = Ecto.Changeset.change(existing_software.latest_version_stable, release_notes_url: new_stable_rnu)
-    latest_changeset_unstable = Ecto.Changeset.change(existing_software.latest_version_unstable, release_notes_url: new_unstable_rnu)
+    new_unstable_rnu =
+      EEx.eval_string(
+        corrected.release_notes_url_template,
+        assigns: Map.from_struct(existing_software.latest_version_unstable)
+      )
 
-    changeset = existing_software
+    latest_changeset_stable =
+      Ecto.Changeset.change(
+        existing_software.latest_version_stable,
+        release_notes_url: new_stable_rnu
+      )
+
+    latest_changeset_unstable =
+      Ecto.Changeset.change(
+        existing_software.latest_version_unstable,
+        release_notes_url: new_unstable_rnu
+      )
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
       |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
@@ -166,10 +198,22 @@ defmodule ReleasePing.Api.Projectors.Software do
   defp update_software(multi, %ReleaseNotesUrlAdjusted{} = adjusted) do
     existing_software = Repo.get(Software, adjusted.software_uuid)
 
-    latest_changeset_stable = change_release_notes_url(existing_software.latest_version_stable, adjusted.version_string, adjusted.release_notes_url)
-    latest_changeset_unstable = change_release_notes_url(existing_software.latest_version_unstable, adjusted.version_string, adjusted.release_notes_url)
+    latest_changeset_stable =
+      change_release_notes_url(
+        existing_software.latest_version_stable,
+        adjusted.version_string,
+        adjusted.release_notes_url
+      )
 
-    changeset = existing_software
+    latest_changeset_unstable =
+      change_release_notes_url(
+        existing_software.latest_version_unstable,
+        adjusted.version_string,
+        adjusted.release_notes_url
+      )
+
+    changeset =
+      existing_software
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
       |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
@@ -188,9 +232,11 @@ defmodule ReleasePing.Api.Projectors.Software do
   defp map_license(spdx_id) do
     case Map.get(@known_licenses, spdx_id) do
       nil ->
-        Logger.warn "Unknown License identifier #{spdx_id}"
+        Logger.warn("Unknown License identifier #{spdx_id}")
         %License{spdx_id: spdx_id}
-      name -> %License{spdx_id: spdx_id, name: name}
+
+      name ->
+        %License{spdx_id: spdx_id, name: name}
     end
   end
 end

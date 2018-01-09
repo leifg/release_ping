@@ -2,14 +2,14 @@ defmodule ReleasePing.Incoming.Events.CursorAdjusted do
   alias ReleasePing.Incoming.Events.CursorAdjusted
 
   @type t :: %__MODULE__{
-    uuid: String.t,
-    github_uuid: String.t,
-    software_uuid: String.t,
-    repo_owner: String.t,
-    repo_name: String.t,
-    type: ReleasePing.Incoming.Commands.AdjustCursor.cursor_type,
-    cursor: String.t
-  }
+          uuid: String.t(),
+          github_uuid: String.t(),
+          software_uuid: String.t(),
+          repo_owner: String.t(),
+          repo_name: String.t(),
+          type: ReleasePing.Incoming.Commands.AdjustCursor.cursor_type(),
+          cursor: String.t()
+        }
 
   defstruct [
     :uuid,
@@ -18,14 +18,12 @@ defmodule ReleasePing.Incoming.Events.CursorAdjusted do
     :repo_owner,
     :repo_name,
     :type,
-    :cursor,
+    :cursor
   ]
 
   defimpl Commanded.Serialization.JsonDecoder, for: CursorAdjusted do
     def decode(event) do
-      %CursorAdjusted{event |
-        type: safe_atom_map(event.type),
-      }
+      %CursorAdjusted{event | type: safe_atom_map(event.type)}
     end
 
     def safe_atom_map(nil), do: nil

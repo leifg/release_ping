@@ -6,7 +6,7 @@ defmodule ReleasePing.Core do
   @doc """
   Add Software
   """
-  @spec add_software(map) :: Software.t | {:error, any}
+  @spec add_software(map) :: Software.t() | {:error, any}
   def add_software(attrs) do
     uuid = UUID.uuid4()
 
@@ -20,20 +20,20 @@ defmodule ReleasePing.Core do
       website: attrs[:website],
       github: attrs[:github],
       licenses: attrs[:licenses],
-      release_retrieval: attrs[:release_retrieval],
+      release_retrieval: attrs[:release_retrieval]
     }
-      |> Router.dispatch()
-      |> case do
-        :ok -> Wait.until(fn -> software_by_uuid(uuid) end)
-        reply -> reply
-      end
+    |> Router.dispatch()
+    |> case do
+      :ok -> Wait.until(fn -> software_by_uuid(uuid) end)
+      reply -> reply
+    end
   end
 
   def change_licenses(%{software_uuid: software_uuid, spdx_ids: license_ids}) do
     Router.dispatch(%ChangeLicenses{
       uuid: UUID.uuid4(),
       software_uuid: software_uuid,
-      licenses: license_ids,
+      licenses: license_ids
     })
   end
 
@@ -51,7 +51,7 @@ defmodule ReleasePing.Core do
   @doc """
   Publish a Release
   """
-  @spec publish_release(map) :: Release.t | {:error, any}
+  @spec publish_release(map) :: Release.t() | {:error, any}
   def publish_release(attrs) do
     uuid = UUID.uuid4()
 
@@ -62,13 +62,13 @@ defmodule ReleasePing.Core do
       release_notes_url: attrs[:release_notes_url],
       published_at: attrs[:published_at],
       seen_at: attrs[:seen_at],
-      pre_release: attrs[:pre_release],
+      pre_release: attrs[:pre_release]
     }
-      |> Router.dispatch()
-      |> case do
-        :ok -> Wait.until(fn -> Repo.get(Release, uuid) end)
-        reply -> reply
-      end
+    |> Router.dispatch()
+    |> case do
+      :ok -> Wait.until(fn -> Repo.get(Release, uuid) end)
+      reply -> reply
+    end
   end
 
   @doc """

@@ -17,14 +17,14 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       major: 1,
       minor: 5,
       patch: 2,
-      pre_release: nil,
+      pre_release: nil
     },
     release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.5.2",
     display_version: "1.5.2",
     published_at: ~N[2017-09-29T12:10:47Z],
     seen_at: ~N[2017-09-29T13:10:47Z],
     github_cursor: "releases:Y3Vyc29yOnYyOpHOAHhy8Q==",
-    pre_release: false,
+    pre_release: false
   }
 
   @old_release_event %ReleasePublished{
@@ -34,14 +34,14 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       major: 1,
       minor: 4,
       patch: 3,
-      pre_release: nil,
+      pre_release: nil
     },
     release_notes_url: "https://github.com/elixir-lang/elixir/releases/tag/v1.4.3",
     display_version: "1.4.3",
     published_at: ~N[2017-05-15 12:51:41],
     seen_at: ~N[2017-11-07 14:19:47],
     github_cursor: "releases:Y3Vyc29yOnYyOpHOAHhy8Q==",
-    pre_release: false,
+    pre_release: false
   }
 
   describe "handle/2" do
@@ -49,7 +49,12 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       software = add_software()
       subscription = add_subscription()
 
-      commands = TriggerNotifications.handle(@pm_state, Map.put(@new_release_event, :software_uuid, software.uuid))
+      commands =
+        TriggerNotifications.handle(
+          @pm_state,
+          Map.put(@new_release_event, :software_uuid, software.uuid)
+        )
+
       expected_command = %NotifySubscriber{
         subscription_uuid: subscription.uuid,
         release_uuid: @new_release_event.uuid,
@@ -71,7 +76,7 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
             minor: 5,
             patch: 2,
             pre_release: nil,
-            build_metadata: nil,
+            build_metadata: nil
           }
         }
       }
@@ -89,7 +94,12 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       add_subscription()
 
       expected_commands = nil
-      commands = TriggerNotifications.handle(@pm_state, Map.put(@old_release_event, :software_uuid, software.uuid))
+
+      commands =
+        TriggerNotifications.handle(
+          @pm_state,
+          Map.put(@old_release_event, :software_uuid, software.uuid)
+        )
 
       assert commands == expected_commands
     end
@@ -113,17 +123,18 @@ defmodule ReleasePing.Workflows.NotifySubscriberTest do
       callback_url: "https://leifg.ngrok.io",
       secret: "AtA6b2htZzp2IrgZ5so9",
       topics: ["language:elixir"],
-      priority: 0,
+      priority: 0
     }
 
     Router.dispatch(command)
 
-    {:ok, subscription} = Wait.until(fn ->
-      case ActiveSubscription.by_uuid(uuid) do
-        [] -> nil
-        [sub] -> sub
-      end
-    end)
+    {:ok, subscription} =
+      Wait.until(fn ->
+        case ActiveSubscription.by_uuid(uuid) do
+          [] -> nil
+          [sub] -> sub
+        end
+      end)
 
     subscription
   end

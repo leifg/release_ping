@@ -1,6 +1,6 @@
 defmodule ReleasePing.Outgoing.Utils.WebhookClient do
   use Tesla
-  plug Tesla.Middleware.Tuples
+  plug(Tesla.Middleware.Tuples)
 
   def notify(url, message, signature, notify_event) do
     headers = %{
@@ -10,6 +10,7 @@ defmodule ReleasePing.Outgoing.Utils.WebhookClient do
       "x-rp-webhook-attempt" => notify_event.attempt,
       "x-rp-webhook-signature" => signature
     }
+
     post(url, message, headers: headers)
   end
 end

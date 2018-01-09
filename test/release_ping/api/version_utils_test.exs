@@ -10,14 +10,14 @@ defmodule ReleasePing.Api.VersionUtilsTest do
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-07-25T07:47:11Z"),
+        published_at: to_datetime("2017-07-25T07:47:11Z")
       }
 
       version2 = %Version{
         major: 0,
         minor: 9,
         patch: 9,
-        published_at: to_datetime("2017-06-30T13:21:23Z"),
+        published_at: to_datetime("2017-06-30T13:21:23Z")
       }
 
       assert VersionUtils.compare(version1, version2) == :gt
@@ -28,14 +28,14 @@ defmodule ReleasePing.Api.VersionUtilsTest do
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-07-25T07:47:11Z"),
+        published_at: to_datetime("2017-07-25T07:47:11Z")
       }
 
       version2 = %Version{
         major: 1,
         minor: 1,
         patch: 0,
-        published_at: to_datetime("2017-07-26T09:46:41Z"),
+        published_at: to_datetime("2017-07-26T09:46:41Z")
       }
 
       assert VersionUtils.compare(version1, version2) == :lt
@@ -46,14 +46,14 @@ defmodule ReleasePing.Api.VersionUtilsTest do
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-07-25T07:47:11Z"),
+        published_at: to_datetime("2017-07-25T07:47:11Z")
       }
 
       version2 = %Version{
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-07-25T07:47:11Z"),
+        published_at: to_datetime("2017-07-25T07:47:11Z")
       }
 
       assert VersionUtils.compare(version1, version2) == :eq
@@ -64,14 +64,14 @@ defmodule ReleasePing.Api.VersionUtilsTest do
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-07-26T09:46:41Z"),
+        published_at: to_datetime("2017-07-26T09:46:41Z")
       }
 
       version2 = %Version{
         major: 1,
         minor: 0,
         patch: 0,
-        published_at: to_datetime("2017-06-30T13:21:23Z"),
+        published_at: to_datetime("2017-06-30T13:21:23Z")
       }
 
       assert VersionUtils.compare(version1, version2) == :gt

@@ -3,7 +3,7 @@ defmodule ReleasePingWeb.SoftwareController do
 
   alias ReleasePing.Api
 
-  action_fallback ReleasePingWeb.FallbackController
+  action_fallback(ReleasePingWeb.FallbackController)
 
   def index(conn, _params) do
     render(conn, "index.json", software: Api.all_software())
