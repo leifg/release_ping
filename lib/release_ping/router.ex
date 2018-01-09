@@ -6,6 +6,7 @@ defmodule ReleasePing.Router do
   use Commanded.Commands.Router
 
   alias ReleasePing.Core.Aggregates.Software
+
   alias ReleasePing.Core.Commands.{
     AddSoftware,
     AdjustReleaseNotesUrl,
@@ -20,6 +21,7 @@ defmodule ReleasePing.Router do
   }
 
   alias ReleasePing.Incoming.Aggregates.GithubEndpoint
+
   alias ReleasePing.Incoming.Commands.{
     AdjustCursor,
     ConfigureGithubEndpoint,
@@ -30,24 +32,34 @@ defmodule ReleasePing.Router do
   alias ReleasePing.Outgoing.Aggregates.Subscription
   alias ReleasePing.Outgoing.Commands.{AddTrustedSubscription, NotifySubscriber}
 
-  middleware ReleasePing.Validation.Middleware.Uniqueness
+  middleware(ReleasePing.Validation.Middleware.Uniqueness)
 
-  dispatch [AddSoftware], to: Software, identity: :uuid
-  dispatch [
-    AdjustReleaseNotesUrl,
-    ChangeLicenses,
-    ChangeVersionScheme,
-    CorrectName,
-    CorrectReleaseNotesUrlTemplate,
-    CorrectSlug,
-    CorrectSoftwareType,
-    CorrectWebsite,
-    PublishRelease
-  ], to: Software, identity: :software_uuid
+  dispatch([AddSoftware], to: Software, identity: :uuid)
 
-  dispatch [ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid
-  dispatch [AdjustCursor, PollGithubReleases, ChangeGithubToken], to: GithubEndpoint, identity: :github_uuid
+  dispatch(
+    [
+      AdjustReleaseNotesUrl,
+      ChangeLicenses,
+      ChangeVersionScheme,
+      CorrectName,
+      CorrectReleaseNotesUrlTemplate,
+      CorrectSlug,
+      CorrectSoftwareType,
+      CorrectWebsite,
+      PublishRelease
+    ],
+    to: Software,
+    identity: :software_uuid
+  )
 
-  dispatch [AddTrustedSubscription], to: Subscription, identity: :uuid
-  dispatch [NotifySubscriber], to: Subscription, identity: :subscription_uuid
+  dispatch([ConfigureGithubEndpoint], to: GithubEndpoint, identity: :uuid)
+
+  dispatch(
+    [AdjustCursor, PollGithubReleases, ChangeGithubToken],
+    to: GithubEndpoint,
+    identity: :github_uuid
+  )
+
+  dispatch([AddTrustedSubscription], to: Subscription, identity: :uuid)
+  dispatch([NotifySubscriber], to: Subscription, identity: :subscription_uuid)
 end

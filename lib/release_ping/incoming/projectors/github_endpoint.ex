@@ -10,7 +10,7 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpoint do
       stream_version: stream_version,
       rate_limit_total: configured.rate_limit_total,
       rate_limit_remaining: configured.rate_limit_remaining,
-      rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset),
+      rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset)
     })
   end
 
@@ -19,11 +19,17 @@ defmodule ReleasePing.Incoming.Projectors.GithubEndpoint do
       rate_limit_total: api_called.rate_limit_total,
       rate_limit_remaining: api_called.rate_limit_remaining,
       rate_limit_reset: NaiveDateTime.from_iso8601!(api_called.rate_limit_reset),
-      stream_version: stream_version,
+      stream_version: stream_version
     ]
 
-    Ecto.Multi.update_all(multi, :github_endpoints, from(gh in GithubEndpoint, where: gh.uuid == ^uuid), [
-      set: changes
-    ], returning: true)
+    Ecto.Multi.update_all(
+      multi,
+      :github_endpoints,
+      from(gh in GithubEndpoint, where: gh.uuid == ^uuid),
+      [
+        set: changes
+      ],
+      returning: true
+    )
   end
 end

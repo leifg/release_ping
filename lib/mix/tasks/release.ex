@@ -1,7 +1,7 @@
 defmodule ReleasePing.ReleaseTasks do
   @start_apps [
     :postgrex,
-    :ecto,
+    :ecto
   ]
 
   @apps [
@@ -12,10 +12,10 @@ defmodule ReleasePing.ReleaseTasks do
 
   def migrate do
     start_and_stop(fn ->
-      IO.puts "Starting repo.."
+      IO.puts("Starting repo..")
       @repo.start_link(pool_size: 1)
 
-      IO.puts "Running migrations"
+      IO.puts("Running migrations")
       Enum.each(@apps, &run_migrations_for/1)
     end)
   end
@@ -29,9 +29,10 @@ defmodule ReleasePing.ReleaseTasks do
   def create_writestore do
     Application.ensure_all_started(:eventstore)
     config = EventStore.Config.parse(Application.get_env(:eventstore, EventStore.Storage))
+
     case EventStore.Storage.Database.create(config) do
       :ok -> initialize_storage(config)
-      {:error, :already_up} -> IO.puts "The EventStore database already exists."
+      {:error, :already_up} -> IO.puts("The EventStore database already exists.")
     end
   end
 
@@ -45,21 +46,21 @@ defmodule ReleasePing.ReleaseTasks do
   defp priv_dir(app), do: "#{:code.priv_dir(app)}"
 
   defp start_and_stop(fun) do
-    IO.puts "Loading App.."
+    IO.puts("Loading App..")
     :ok = Application.load(:release_ping)
 
-    IO.puts "Starting dependencies.."
+    IO.puts("Starting dependencies..")
     Enum.each(@start_apps, &Application.ensure_all_started/1)
 
-    IO.puts "Calling Callback"
+    IO.puts("Calling Callback")
     fun.()
 
-    IO.puts "Success!"
+    IO.puts("Success!")
     :init.stop()
   end
 
   defp run_migrations_for(app) do
-    IO.puts "Running migrations for #{app}"
+    IO.puts("Running migrations for #{app}")
     Ecto.Migrator.run(@repo, migrations_path(app), :up, all: true)
   end
 

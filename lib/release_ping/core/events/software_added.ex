@@ -4,39 +4,39 @@ defmodule ReleasePing.Core.Events.SoftwareAdded do
   @type release_retrieval :: :github_
 
   @type t :: %__MODULE__{
-    uuid: String.t,
-    name: String.t,
-    slug: String.t,
-    type: ReleasePing.Enums.software_type,
-    version_scheme: Regex.t,
-    release_notes_url_template: String.t,
-    display_version_template: String.t,
-    website: String.t,
-    github: String.t,
-    licenses: [String.t],
-    release_retrieval: ReleasePing.Enums.release_retrieval,
-  }
+          uuid: String.t(),
+          name: String.t(),
+          slug: String.t(),
+          type: ReleasePing.Enums.software_type(),
+          version_scheme: Regex.t(),
+          release_notes_url_template: String.t(),
+          display_version_template: String.t(),
+          website: String.t(),
+          github: String.t(),
+          licenses: [String.t()],
+          release_retrieval: ReleasePing.Enums.release_retrieval()
+        }
 
-  defstruct [
-    uuid: nil,
-    name: nil,
-    type: nil,
-    slug: nil,
-    version_scheme: nil,
-    release_notes_url_template: nil,
-    display_version_template: "<%= @major %>.<%= @minor %>.<%= @patch %><%= if @pre_release, do: \"-\#{@pre_release}\" %>",
-    website: nil,
-    github: nil,
-    licenses: [],
-    release_retrieval: nil,
-  ]
+  defstruct uuid: nil,
+            name: nil,
+            type: nil,
+            slug: nil,
+            version_scheme: nil,
+            release_notes_url_template: nil,
+            display_version_template:
+              "<%= @major %>.<%= @minor %>.<%= @patch %><%= if @pre_release, do: \"-\#{@pre_release}\" %>",
+            website: nil,
+            github: nil,
+            licenses: [],
+            release_retrieval: nil
 
   defimpl Commanded.Serialization.JsonDecoder, for: SoftwareAdded do
     def decode(event) do
-      %SoftwareAdded{event |
-        version_scheme: deserialize_version_scheme(event.version_scheme),
-        type: safe_atom_map(event.type),
-        release_retrieval: safe_atom_map(event.release_retrieval),
+      %SoftwareAdded{
+        event
+        | version_scheme: deserialize_version_scheme(event.version_scheme),
+          type: safe_atom_map(event.type),
+          release_retrieval: safe_atom_map(event.release_retrieval)
       }
     end
 

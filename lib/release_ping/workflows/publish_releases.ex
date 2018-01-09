@@ -16,7 +16,7 @@ defmodule ReleasePing.Workflows.PublishReleases do
 
     found_event.payloads
     |> GithubReleases.merge_tags_and_releases(software.version_scheme)
-    |> Enum.map(fn(r) ->
+    |> Enum.map(fn r ->
       %PublishRelease{
         uuid: UUID.uuid4(),
         software_uuid: found_event.software_uuid,
@@ -25,7 +25,7 @@ defmodule ReleasePing.Workflows.PublishReleases do
         github_cursor: r.github_cursor,
         published_at: r.published_at,
         seen_at: found_event.seen_at,
-        pre_release: r.pre_release,
+        pre_release: r.pre_release
       }
     end)
   end

@@ -5,6 +5,7 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     ChangeGithubToken,
     PollGithubReleases
   }
+
   alias ReleasePing.Incoming.Events.{
     CursorAdjusted,
     GithubApiCalled,
@@ -16,24 +17,22 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   alias ReleasePing.Github.{ApiV4, ReleaseRequest}
 
   @type t :: %__MODULE__{
-    uuid: String.t,
-    token: String.t,
-    base_url: String.t,
-    last_cursors: map,
-    rate_limit_total: non_neg_integer,
-    rate_limit_remaining: non_neg_integer,
-    rate_limit_reset: NaiveDateTime.t,
-  }
+          uuid: String.t(),
+          token: String.t(),
+          base_url: String.t(),
+          last_cursors: map,
+          rate_limit_total: non_neg_integer,
+          rate_limit_remaining: non_neg_integer,
+          rate_limit_reset: NaiveDateTime.t()
+        }
 
-  defstruct [
-    uuid: nil,
-    token: nil,
-    base_url: nil,
-    last_cursors: %{},
-    rate_limit_total: nil,
-    rate_limit_remaining: nil,
-    rate_limit_reset: nil,
-  ]
+  defstruct uuid: nil,
+            token: nil,
+            base_url: nil,
+            last_cursors: %{},
+            rate_limit_total: nil,
+            rate_limit_remaining: nil,
+            rate_limit_reset: nil
 
   def execute(%__MODULE__{uuid: nil}, %ConfigureGithubEndpoint{} = configure) do
     res = ApiV4.rate_limit(configure.base_url, configure.token)
@@ -47,30 +46,29 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       base_url: configure.base_url,
       rate_limit_total: rate_limit["limit"],
       rate_limit_remaining: rate_limit["remaining"],
-      rate_limit_reset: rate_limit["reset"] |> DateTime.from_unix!() |> DateTime.to_iso8601(),
+      rate_limit_reset: rate_limit["reset"] |> DateTime.from_unix!() |> DateTime.to_iso8601()
     }
   end
-  def execute(%__MODULE__{}, %ConfigureGithubEndpoint{}), do: {:error, :github_endpoint_already_exists}
+
+  def execute(%__MODULE__{}, %ConfigureGithubEndpoint{}),
+    do: {:error, :github_endpoint_already_exists}
 
   def execute(%__MODULE__{}, %PollGithubReleases{software_uuid: nil}) do
     {:error, :software_uuid_missing}
   end
+
   def execute(%__MODULE__{} = aggregate, %PollGithubReleases{} = poll) do
     aggregate
-      |> fetch_releases(
-        poll,
-        last_cursors(aggregate, poll.repo_owner, poll.repo_name),
-        []
-      )
-      |> Enum.reverse()
-      |> build_github_release_events(poll)
+    |> fetch_releases(poll, last_cursors(aggregate, poll.repo_owner, poll.repo_name), [])
+    |> Enum.reverse()
+    |> build_github_release_events(poll)
   end
 
   def execute(%__MODULE__{} = aggregate, %ChangeGithubToken{uuid: uuid, token: token}) do
     %GithubTokenChanged{
       uuid: uuid,
       github_uuid: aggregate.uuid,
-      token: token,
+      token: token
     }
   end
 
@@ -83,44 +81,49 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       repo_name: adjust.repo_name,
       type: adjust.type,
       cursor: adjust.cursor
-  }
+    }
   end
 
   def apply(%__MODULE__{} = github, %GithubEndpointConfigured{} = configured) do
-    %__MODULE__{github |
-      uuid: configured.uuid,
-      token: configured.token,
-      base_url: configured.base_url,
-      rate_limit_total: configured.rate_limit_total,
-      rate_limit_remaining: configured.rate_limit_remaining,
-      rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset),
+    %__MODULE__{
+      github
+      | uuid: configured.uuid,
+        token: configured.token,
+        base_url: configured.base_url,
+        rate_limit_total: configured.rate_limit_total,
+        rate_limit_remaining: configured.rate_limit_remaining,
+        rate_limit_reset: NaiveDateTime.from_iso8601!(configured.rate_limit_reset)
     }
   end
 
   def apply(%__MODULE__{} = github, %GithubApiCalled{} = api_called) do
-    %__MODULE__{github |
-      rate_limit_total: api_called.rate_limit_total,
-      rate_limit_remaining: api_called.rate_limit_remaining,
-      rate_limit_reset: NaiveDateTime.from_iso8601!(api_called.rate_limit_reset),
+    %__MODULE__{
+      github
+      | rate_limit_total: api_called.rate_limit_total,
+        rate_limit_remaining: api_called.rate_limit_remaining,
+        rate_limit_reset: NaiveDateTime.from_iso8601!(api_called.rate_limit_reset)
     }
   end
 
   def apply(%__MODULE__{} = github, %NewGithubReleasesFound{} = new_releases) do
-    updated_last_cursors = Map.merge(
-      last_cursors(github, new_releases.repo_owner, new_releases.repo_name),
-      %{
-        tags: new_releases.last_cursor_tags,
-        releases: new_releases.last_cursor_releases,
-      },
-      &update_when_present/3
-    )
-
-    %__MODULE__{github |
-      last_cursors: Map.put(
-        github.last_cursors,
-        {new_releases.repo_owner, new_releases.repo_name},
-        updated_last_cursors
+    updated_last_cursors =
+      Map.merge(
+        last_cursors(github, new_releases.repo_owner, new_releases.repo_name),
+        %{
+          tags: new_releases.last_cursor_tags,
+          releases: new_releases.last_cursor_releases
+        },
+        &update_when_present/3
       )
+
+    %__MODULE__{
+      github
+      | last_cursors:
+          Map.put(
+            github.last_cursors,
+            {new_releases.repo_owner, new_releases.repo_name},
+            updated_last_cursors
+          )
     }
   end
 
@@ -129,13 +132,17 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
   end
 
   def apply(%__MODULE__{} = github, %CursorAdjusted{} = adjusted) do
-    existing_last_cursors = Map.get(github.last_cursors, {adjusted.repo_owner, adjusted.repo_name})
-    %__MODULE__{github |
-      last_cursors: Map.put(
-        github.last_cursors,
-        {adjusted.repo_owner, adjusted.repo_name},
-        Map.put(existing_last_cursors, adjusted.type, adjusted.cursor)
-      )
+    existing_last_cursors =
+      Map.get(github.last_cursors, {adjusted.repo_owner, adjusted.repo_name})
+
+    %__MODULE__{
+      github
+      | last_cursors:
+          Map.put(
+            github.last_cursors,
+            {adjusted.repo_owner, adjusted.repo_name},
+            Map.put(existing_last_cursors, adjusted.type, adjusted.cursor)
+          )
     }
   end
 
@@ -143,17 +150,19 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     aggregate.last_cursors |> Map.get({repo_owner, repo_name}, %{tags: nil, releases: nil})
   end
 
-  defp fetch_releases(aggregate, poll_comand, %{tags: last_cursor_tags, releases: last_cursor_releases}, agg) do
-    res = ApiV4.releases(
-      aggregate.base_url,
-      aggregate.token,
-      %ReleaseRequest{
+  defp fetch_releases(
+         aggregate,
+         poll_comand,
+         %{tags: last_cursor_tags, releases: last_cursor_releases},
+         agg
+       ) do
+    res =
+      ApiV4.releases(aggregate.base_url, aggregate.token, %ReleaseRequest{
         repo_owner: poll_comand.repo_owner,
         repo_name: poll_comand.repo_name,
         last_cursor_tags: last_cursor_tags,
-        last_cursor_releases: last_cursor_releases,
-      }
-    )
+        last_cursor_releases: last_cursor_releases
+      })
 
     payload = Poison.decode!(res.body)
 
@@ -165,28 +174,36 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
     batch = [%Tesla.Env{res | body: payload} | agg]
 
     if releases_page_info["hasNextPage"] || tags_page_info["hasNextPage"] do
-      fetch_releases(aggregate, poll_comand, %{tags: tags_next_cursor, releases: releases_next_cursor}, batch)
+      fetch_releases(
+        aggregate,
+        poll_comand,
+        %{tags: tags_next_cursor, releases: releases_next_cursor},
+        batch
+      )
     else
       batch
     end
   end
 
   defp build_github_release_events(api_returns, poll_command) do
-    github_api_called_events = Enum.map(api_returns, fn (ar) ->
-      %GithubApiCalled{
-        uuid: UUID.uuid4(),
-        github_uuid: poll_command.github_uuid,
-        http_url: ar.url,
-        http_method: to_string(ar.method),
-        http_status_code: ar.status,
-        content_length: ar.headers["content-length"] |> String.to_integer(),
-        github_request_id: ar.headers["x-github-request-id"],
-        rate_limit_cost: ar.body["data"]["rateLimit"]["cost"],
-        rate_limit_total: ar.headers["x-ratelimit-limit"] |> String.to_integer(),
-        rate_limit_remaining: ar.headers["x-ratelimit-remaining"] |> String.to_integer(),
-        rate_limit_reset: ar.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!() |> DateTime.to_iso8601(),
-      }
-    end)
+    github_api_called_events =
+      Enum.map(api_returns, fn ar ->
+        %GithubApiCalled{
+          uuid: UUID.uuid4(),
+          github_uuid: poll_command.github_uuid,
+          http_url: ar.url,
+          http_method: to_string(ar.method),
+          http_status_code: ar.status,
+          content_length: ar.headers["content-length"] |> String.to_integer(),
+          github_request_id: ar.headers["x-github-request-id"],
+          rate_limit_cost: ar.body["data"]["rateLimit"]["cost"],
+          rate_limit_total: ar.headers["x-ratelimit-limit"] |> String.to_integer(),
+          rate_limit_remaining: ar.headers["x-ratelimit-remaining"] |> String.to_integer(),
+          rate_limit_reset:
+            ar.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!()
+            |> DateTime.to_iso8601()
+        }
+      end)
 
     initial_event = %NewGithubReleasesFound{
       uuid: UUID.uuid4(),
@@ -200,32 +217,41 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
       payloads: []
     }
 
-    github_release_found_event = if api_returns_empty?(api_returns) do
-      []
-    else
-      api_returns |> Enum.reduce(initial_event, fn(ar, acc) ->
-        acc
-          |> Map.merge(%{
-            last_cursor_releases: ar.body["data"]["repository"]["releases"]["pageInfo"]["endCursor"],
-            last_cursor_tags: ar.body["data"]["repository"]["tags"]["pageInfo"]["endCursor"]},
+    github_release_found_event =
+      if api_returns_empty?(api_returns) do
+        []
+      else
+        api_returns
+        |> Enum.reduce(initial_event, fn ar, acc ->
+          acc
+          |> Map.merge(
+            %{
+              last_cursor_releases:
+                ar.body["data"]["repository"]["releases"]["pageInfo"]["endCursor"],
+              last_cursor_tags: ar.body["data"]["repository"]["tags"]["pageInfo"]["endCursor"]
+            },
             &update_when_present/3
           )
-          |> Map.merge(%{
-            payloads: [ar.body],
-          },
-          fn(_key, old_val, new_val) -> old_val ++ new_val end)
+          |> Map.merge(
+            %{
+              payloads: [ar.body]
+            },
+            fn _key, old_val, new_val -> old_val ++ new_val end
+          )
         end)
         |> List.wrap()
-    end
+      end
 
     github_api_called_events ++ github_release_found_event
   end
 
   defp api_returns_empty?([%{body: body}]) do
     Enum.empty?(
-      body["data"]["repository"]["releases"]["edges"] ++ body["data"]["repository"]["tags"]["edges"]
+      body["data"]["repository"]["releases"]["edges"] ++
+        body["data"]["repository"]["tags"]["edges"]
     )
   end
+
   defp api_returns_empty?(_), do: false
 
   defp update_when_present(_key, old_val, nil), do: old_val

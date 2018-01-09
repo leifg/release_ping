@@ -11,7 +11,8 @@ defmodule ReleasePing.Scheduler do
 
     endpoint = GithubEndpoint.least_used()
 
-    ReleasePing.Core.github_release_pollers() |> Enum.each(fn(grp) ->
+    ReleasePing.Core.github_release_pollers()
+    |> Enum.each(fn grp ->
       [repo_owner, repo_name] = String.split(grp.repository, "/")
 
       ReleasePing.Router.dispatch(%PollGithubReleases{
@@ -19,7 +20,7 @@ defmodule ReleasePing.Scheduler do
         github_uuid: endpoint.uuid,
         software_uuid: grp.software_uuid,
         repo_owner: repo_owner,
-        repo_name: repo_name,
+        repo_name: repo_name
       })
     end)
   end

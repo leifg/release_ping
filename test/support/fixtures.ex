@@ -4,24 +4,24 @@ defmodule ReleasePing.Fixtures do
   defmodule GithubResponses do
     def last_cursor_releases do
       1
-        |> new_releases_json()
-        |> Poison.decode!()
-        |> Access.get("data")
-        |> Access.get("repository")
-        |> Access.get("releases")
-        |> Access.get("pageInfo")
-        |> Access.get("endCursor")
+      |> new_releases_json()
+      |> Poison.decode!()
+      |> Access.get("data")
+      |> Access.get("repository")
+      |> Access.get("releases")
+      |> Access.get("pageInfo")
+      |> Access.get("endCursor")
     end
 
     def last_cursor_tags do
       2
-        |> new_releases_json()
-        |> Poison.decode!()
-        |> Access.get("data")
-        |> Access.get("repository")
-        |> Access.get("tags")
-        |> Access.get("pageInfo")
-        |> Access.get("endCursor")
+      |> new_releases_json()
+      |> Poison.decode!()
+      |> Access.get("data")
+      |> Access.get("repository")
+      |> Access.get("tags")
+      |> Access.get("pageInfo")
+      |> Access.get("endCursor")
     end
 
     def rate_limit_json do
@@ -364,102 +364,126 @@ defmodule ReleasePing.Fixtures do
 
     def rate_limit_headers(conn) do
       conn
-        |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
-        |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
-        |> Plug.Conn.put_resp_header("cache-control", "no-cache")
-        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
-        |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
-        |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
-        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 22:44:52 GMT")
-        |> Plug.Conn.put_resp_header("server", "GitHub.com")
-        |> Plug.Conn.put_resp_header("status", "200 OK")
-        |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
-        |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
-        |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
-        |> Plug.Conn.put_resp_header("x-frame-options", "deny")
-        |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
-        |> Plug.Conn.put_resp_header("x-github-request-id", "CBBB:206F:3DAF8EB:86C9223:59A49CE4")
-        |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
-        |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503960268")
-        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.015669")
-        |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
+      |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
+      |> Plug.Conn.put_resp_header(
+        "access-control-expose-headers",
+        "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval"
+      )
+      |> Plug.Conn.put_resp_header("cache-control", "no-cache")
+      |> Plug.Conn.put_resp_header("content-encoding", "gzip")
+      |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
+      |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
+      |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 22:44:52 GMT")
+      |> Plug.Conn.put_resp_header("server", "GitHub.com")
+      |> Plug.Conn.put_resp_header("status", "200 OK")
+      |> Plug.Conn.put_resp_header(
+        "strict-transport-security",
+        "max-age=31536000; includeSubdomains; preload"
+      )
+      |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
+      |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
+      |> Plug.Conn.put_resp_header("x-frame-options", "deny")
+      |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
+      |> Plug.Conn.put_resp_header("x-github-request-id", "CBBB:206F:3DAF8EB:86C9223:59A49CE4")
+      |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
+      |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
+      |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "5000")
+      |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503960268")
+      |> Plug.Conn.put_resp_header("x-runtime-rack", "0.015669")
+      |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
 
     def new_releases_connection_with_headers(conn, 1) do
       conn
-        |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
-        |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
-        |> Plug.Conn.put_resp_header("cache-control", "no-cache")
-        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
-        |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
-        |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
-        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 06:40:58 GMT")
-        |> Plug.Conn.put_resp_header("server", "GitHub.com")
-        |> Plug.Conn.put_resp_header("status", "200 OK")
-        |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
-        |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
-        |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
-        |> Plug.Conn.put_resp_header("x-frame-options", "deny")
-        |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
-        |> Plug.Conn.put_resp_header("x-github-request-id", "C35A:2071:642FCB9:CAED084:59A3BAFA")
-        |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
-        |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4993")
-        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
-        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.053413")
-        |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
+      |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
+      |> Plug.Conn.put_resp_header(
+        "access-control-expose-headers",
+        "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval"
+      )
+      |> Plug.Conn.put_resp_header("cache-control", "no-cache")
+      |> Plug.Conn.put_resp_header("content-encoding", "gzip")
+      |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
+      |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
+      |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 06:40:58 GMT")
+      |> Plug.Conn.put_resp_header("server", "GitHub.com")
+      |> Plug.Conn.put_resp_header("status", "200 OK")
+      |> Plug.Conn.put_resp_header(
+        "strict-transport-security",
+        "max-age=31536000; includeSubdomains; preload"
+      )
+      |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
+      |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
+      |> Plug.Conn.put_resp_header("x-frame-options", "deny")
+      |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
+      |> Plug.Conn.put_resp_header("x-github-request-id", "C35A:2071:642FCB9:CAED084:59A3BAFA")
+      |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
+      |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
+      |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4993")
+      |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
+      |> Plug.Conn.put_resp_header("x-runtime-rack", "0.053413")
+      |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
 
     def new_releases_connection_with_headers(conn, 2) do
       conn
-        |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
-        |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
-        |> Plug.Conn.put_resp_header("cache-control", "no-cache")
-        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
-        |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
-        |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
-        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 06:40:58 GMT")
-        |> Plug.Conn.put_resp_header("server", "GitHub.com")
-        |> Plug.Conn.put_resp_header("status", "200 OK")
-        |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
-        |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
-        |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
-        |> Plug.Conn.put_resp_header("x-frame-options", "deny")
-        |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
-        |> Plug.Conn.put_resp_header("x-github-request-id", "DE90:2070:4B14F0C:9E475BE:59A3C08E")
-        |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
-        |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4992")
-        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
-        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.055600")
-        |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
+      |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
+      |> Plug.Conn.put_resp_header(
+        "access-control-expose-headers",
+        "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval"
+      )
+      |> Plug.Conn.put_resp_header("cache-control", "no-cache")
+      |> Plug.Conn.put_resp_header("content-encoding", "gzip")
+      |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
+      |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
+      |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 06:40:58 GMT")
+      |> Plug.Conn.put_resp_header("server", "GitHub.com")
+      |> Plug.Conn.put_resp_header("status", "200 OK")
+      |> Plug.Conn.put_resp_header(
+        "strict-transport-security",
+        "max-age=31536000; includeSubdomains; preload"
+      )
+      |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
+      |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
+      |> Plug.Conn.put_resp_header("x-frame-options", "deny")
+      |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
+      |> Plug.Conn.put_resp_header("x-github-request-id", "DE90:2070:4B14F0C:9E475BE:59A3C08E")
+      |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
+      |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
+      |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4992")
+      |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503905273")
+      |> Plug.Conn.put_resp_header("x-runtime-rack", "0.055600")
+      |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
 
     def no_new_releases_connection_with_headers(conn) do
       conn
-        |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
-        |> Plug.Conn.put_resp_header("access-control-expose-headers", "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval")
-        |> Plug.Conn.put_resp_header("cache-control", "no-cache")
-        |> Plug.Conn.put_resp_header("content-encoding", "gzip")
-        |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
-        |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
-        |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 21:06:59 GMT")
-        |> Plug.Conn.put_resp_header("server", "GitHub.com")
-        |> Plug.Conn.put_resp_header("status", "200 OK")
-        |> Plug.Conn.put_resp_header("strict-transport-security", "max-age=31536000; includeSubdomains; preload")
-        |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
-        |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
-        |> Plug.Conn.put_resp_header("x-frame-options", "deny")
-        |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
-        |> Plug.Conn.put_resp_header("x-github-request-id", "C16E:2071:6FF1EE4:E38B049:59A485F3")
-        |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
-        |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
-        |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4999")
-        |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503958019")
-        |> Plug.Conn.put_resp_header("x-runtime-rack", "0.048417")
-        |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
+      |> Plug.Conn.put_resp_header("access-control-allow-origin", "*")
+      |> Plug.Conn.put_resp_header(
+        "access-control-expose-headers",
+        "ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval"
+      )
+      |> Plug.Conn.put_resp_header("cache-control", "no-cache")
+      |> Plug.Conn.put_resp_header("content-encoding", "gzip")
+      |> Plug.Conn.put_resp_header("content-type", "application/json; charset=utf-8")
+      |> Plug.Conn.put_resp_header("content-security-policy", "default-src 'none'")
+      |> Plug.Conn.put_resp_header("date", "Mon, 28 Aug 2017 21:06:59 GMT")
+      |> Plug.Conn.put_resp_header("server", "GitHub.com")
+      |> Plug.Conn.put_resp_header("status", "200 OK")
+      |> Plug.Conn.put_resp_header(
+        "strict-transport-security",
+        "max-age=31536000; includeSubdomains; preload"
+      )
+      |> Plug.Conn.put_resp_header("x-accepted-oauth-scopes", "repo")
+      |> Plug.Conn.put_resp_header("x-content-type-options", "nosniff")
+      |> Plug.Conn.put_resp_header("x-frame-options", "deny")
+      |> Plug.Conn.put_resp_header("x-github-media-type", "github.v4; format=json")
+      |> Plug.Conn.put_resp_header("x-github-request-id", "C16E:2071:6FF1EE4:E38B049:59A485F3")
+      |> Plug.Conn.put_resp_header("x-oauth-scopes", "")
+      |> Plug.Conn.put_resp_header("x-ratelimit-limit", "5000")
+      |> Plug.Conn.put_resp_header("x-ratelimit-remaining", "4999")
+      |> Plug.Conn.put_resp_header("x-ratelimit-reset", "1503958019")
+      |> Plug.Conn.put_resp_header("x-runtime-rack", "0.048417")
+      |> Plug.Conn.put_resp_header("x-xss-protection", "1; mode=block")
     end
   end
 end

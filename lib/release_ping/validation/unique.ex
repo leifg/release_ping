@@ -12,24 +12,25 @@ defmodule ReleasePing.Validation.Unique do
   def init(state), do: {:ok, state}
 
   def handle_call({:claim, context, owner, value}, _from, assignments) do
-    {reply, state} = case Map.get(assignments, context) do
-      nil ->
-        values = Map.new([{value, owner}])
-        {:ok, Map.put(assignments, context, values)}
+    {reply, state} =
+      case Map.get(assignments, context) do
+        nil ->
+          values = Map.new([{value, owner}])
+          {:ok, Map.put(assignments, context, values)}
 
-      values ->
-        case Map.get(values, value) do
-          ^owner ->
-            {:ok, assignments}
+        values ->
+          case Map.get(values, value) do
+            ^owner ->
+              {:ok, assignments}
 
-          nil ->
-            values = Map.put(values, value, owner)
-            {:ok, Map.put(assignments, context, values)}
+            nil ->
+              values = Map.put(values, value, owner)
+              {:ok, Map.put(assignments, context, values)}
 
-          _ ->
-            {{:error, :already_taken}, assignments}
-        end
-    end
+            _ ->
+              {{:error, :already_taken}, assignments}
+          end
+      end
 
     {:reply, reply, state}
   end

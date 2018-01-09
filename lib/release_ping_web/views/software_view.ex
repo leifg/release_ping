@@ -17,7 +17,7 @@ defmodule ReleasePingWeb.SoftwareView do
       website: software.website,
       licenses: software.licenses,
       latest_version_stable: version_fields(software.latest_version_stable),
-      latest_version_unstable: version_fields(software.latest_version_unstable),
+      latest_version_unstable: version_fields(software.latest_version_unstable)
     }
   end
 
@@ -26,7 +26,7 @@ defmodule ReleasePingWeb.SoftwareView do
       id: version.id,
       name: version.name,
       release_notes_url: version.release_notes_url,
-      published_at: version.published_at,
+      published_at: version.published_at
     }
   end
 end

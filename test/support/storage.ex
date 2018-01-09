@@ -30,16 +30,16 @@ defmodule ReleasePing.Storage do
   end
 
   defp truncate_readstore_tables do
-"""
-TRUNCATE TABLE
-  software
-  ,releases
-  ,github_release_pollers
-  ,github_endpoints
-  ,projection_versions
-  ,api_software
-  ,active_subscriptions
-RESTART IDENTITY;
-"""
+    """
+    TRUNCATE TABLE
+      software
+      ,releases
+      ,github_release_pollers
+      ,github_endpoints
+      ,projection_versions
+      ,api_software
+      ,active_subscriptions
+    RESTART IDENTITY;
+    """
   end
 end

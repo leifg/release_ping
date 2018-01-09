@@ -1,49 +1,53 @@
 defmodule ReleasePing.Outgoing.Aggregates.Subscription do
   alias ReleasePing.Outgoing.Aggregates.Subscription
   alias ReleasePing.Outgoing.Commands.{AddTrustedSubscription, NotifySubscriber}
-  alias ReleasePing.Outgoing.Events.{NotificationFailed, NotificationSucceeded, SubscriptionActivated}
+
+  alias ReleasePing.Outgoing.Events.{
+    NotificationFailed,
+    NotificationSucceeded,
+    SubscriptionActivated
+  }
+
   alias ReleasePing.Outgoing.Utils.WebhookClient
 
   @type t :: %__MODULE__{
-    uuid: String.t,
-    name: String.t,
-    callback_url: String.t,
-    secret: String.t,
-    topics: [String.t],
-    priority: non_neg_integer,
-  }
+          uuid: String.t(),
+          name: String.t(),
+          callback_url: String.t(),
+          secret: String.t(),
+          topics: [String.t()],
+          priority: non_neg_integer
+        }
 
   @type notification_payload :: %{
-    uuid: String.t,
-    software: %{
-      uuid: String.to_existing_atom,
-      type: ReleasePing.Core.Aggregates.Software.type,
-      slug: String.t,
-      name: String.t,
-    },
-    version_string: String.t,
-    published_at: String.t,
-    release_notes_url: String.t,
-    version_info: %{
-      major: non_neg_integer,
-      minor: non_neg_integer,
-      patch: non_neg_integer,
-      pre_release: String.t,
-    }
-  }
+          uuid: String.t(),
+          software: %{
+            uuid: String.to_existing_atom(),
+            type: ReleasePing.Core.Aggregates.Software.type(),
+            slug: String.t(),
+            name: String.t()
+          },
+          version_string: String.t(),
+          published_at: String.t(),
+          release_notes_url: String.t(),
+          version_info: %{
+            major: non_neg_integer,
+            minor: non_neg_integer,
+            patch: non_neg_integer,
+            pre_release: String.t()
+          }
+        }
 
   @type notification_http_response :: %{
-    status_code: non_neg_integer,
-  }
+          status_code: non_neg_integer
+        }
 
-  defstruct [
-    uuid: nil,
-    name: nil,
-    callback_url: nil,
-    secret: nil,
-    topics: [],
-    priority: 10,
-  ]
+  defstruct uuid: nil,
+            name: nil,
+            callback_url: nil,
+            secret: nil,
+            topics: [],
+            priority: 10
 
   @doc """
   Creates subscription
@@ -55,7 +59,7 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
       callback_url: add.callback_url,
       secret: add.secret,
       topics: add.topics,
-      priority: add.priority,
+      priority: add.priority
     }
   end
 
@@ -65,10 +69,12 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
   def execute(%Subscription{} = subscription, %NotifySubscriber{} = notify) do
     message = Poison.encode!(notify.payload)
     signature = message_signature(message, subscription.secret)
-    status_code = case WebhookClient.notify(subscription.callback_url, message, signature, notify) do
-      {:ok, %{status: status}} -> status
-      {:error, _} -> -1
-    end
+
+    status_code =
+      case WebhookClient.notify(subscription.callback_url, message, signature, notify) do
+        {:ok, %{status: status}} -> status
+        {:error, _} -> -1
+      end
 
     cond do
       status_code == -1 -> notification_failed(notify, message, signature, status_code)
@@ -80,13 +86,14 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
   # state mutators
 
   def apply(%Subscription{} = subscription, %SubscriptionActivated{} = added) do
-    %Subscription{subscription |
-      uuid: added.uuid,
-      name: added.name,
-      callback_url: added.callback_url,
-      secret: added.secret,
-      topics: added.topics,
-      priority: added.priority,
+    %Subscription{
+      subscription
+      | uuid: added.uuid,
+        name: added.name,
+        callback_url: added.callback_url,
+        secret: added.secret,
+        topics: added.topics,
+        priority: added.priority
     }
   end
 
@@ -109,8 +116,8 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
       message: message,
       signature: signature,
       http_response: %{
-        status_code: status_code,
-      },
+        status_code: status_code
+      }
     }
   end
 
@@ -120,8 +127,8 @@ defmodule ReleasePing.Outgoing.Aggregates.Subscription do
       message: message,
       signature: signature,
       http_response: %{
-        status_code: status_code,
-      },
+        status_code: status_code
+      }
     }
   end
 end
