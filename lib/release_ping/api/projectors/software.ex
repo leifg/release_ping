@@ -32,6 +32,7 @@ defmodule ReleasePing.Api.Projectors.Software do
     "MIT" => "MIT License",
     "PHP-3.0" => "PHP License v3.0",
     "PHP-3.01" => "PHP License v3.01",
+    "Python-2.0" => "Python License 2.0",
     "Ruby" => "Ruby License"
   }
 
