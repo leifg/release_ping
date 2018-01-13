@@ -5,6 +5,7 @@ defmodule ReleasePing.Router do
 
   use Commanded.Commands.Router
 
+  alias ReleasePing.NullAggregateLifespan
   alias ReleasePing.Core.Aggregates.Software
 
   alias ReleasePing.Core.Commands.{
@@ -57,9 +58,10 @@ defmodule ReleasePing.Router do
   dispatch(
     [AdjustCursor, PollGithubReleases, ChangeGithubToken],
     to: GithubEndpoint,
+    lifespan: NullAggregateLifespan,
     identity: :github_uuid
   )
 
-  dispatch([AddTrustedSubscription], to: Subscription, identity: :uuid)
-  dispatch([NotifySubscriber], to: Subscription, identity: :subscription_uuid)
+  dispatch([AddTrustedSubscription], to: Subscription, lifespan: NullAggregateLifespan, identity: :uuid)
+  dispatch([NotifySubscriber], to: Subscription, lifespan: NullAggregateLifespan, identity: :subscription_uuid)
 end
