@@ -1,6 +1,6 @@
-version: '2'
+version: '3.4'
 services:
-  rp-eventstore:
+  postgres:
     image: postgres:10-alpine
     ports:
       - 5432:5432
@@ -9,11 +9,19 @@ services:
       POSTGRES_PASSWORD: release_ping
   restore-writestore:
     image: leifg/postgres-s3-backup
-    command: restore --postgres-host rp-eventstore --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db eventstore --aws-s3-bucket release-ping-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    command: restore --skip-cleanup --overwrite --postgres-host postgres --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db release_ping_eventstore --aws-s3-bucket leifio-database-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - type: bind
+        source: ./tmp
+        target: /tmp
     depends_on:
-      - rp-eventstore
+      - postgres
   restore-readstore:
     image: leifg/postgres-s3-backup
-    command: restore --postgres-host rp-eventstore --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db release_ping_readstore --aws-s3-bucket release-ping-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    command: restore --skip-cleanup --overwrite --postgres-host postgres --postgres-port 5432 --postgres-user release_ping --postgres-password release_ping --postgres-db release_ping_readstore --aws-s3-bucket leifio-database-backups --aws-access-key-id ${AWS_ACCESS_KEY_ID} --aws-secret-access-key ${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - type: bind
+        source: ./tmp
+        target: /tmp
     depends_on:
-      - rp-eventstore
+      - postgres

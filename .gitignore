@@ -7,5 +7,7 @@
 # Generated on crash by the VM
 erl_crash.dump
 
+tmp/*
+!tmp/.keep
 .elixir_ls
 .vscode
