@@ -62,6 +62,17 @@ defmodule ReleasePing.Router do
     identity: :github_uuid
   )
 
-  dispatch([AddTrustedSubscription], to: Subscription, lifespan: NullAggregateLifespan, identity: :uuid)
-  dispatch([NotifySubscriber], to: Subscription, lifespan: NullAggregateLifespan, identity: :subscription_uuid)
+  dispatch(
+    [AddTrustedSubscription],
+    to: Subscription,
+    lifespan: NullAggregateLifespan,
+    identity: :uuid
+  )
+
+  dispatch(
+    [NotifySubscriber],
+    to: Subscription,
+    lifespan: NullAggregateLifespan,
+    identity: :subscription_uuid
+  )
 end

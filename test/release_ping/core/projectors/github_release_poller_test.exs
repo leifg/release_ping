@@ -75,9 +75,10 @@ defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
 
     GithubReleasePoller.handle(event, %{stream_version: 1, event_number: 1})
 
-    {:ok, %{
-      github_release_poller:
-        Repo.get_by(ReleasePing.Core.GithubReleasePoller, software_uuid: software_uuid)
-    }}
+    {:ok,
+     %{
+       github_release_poller:
+         Repo.get_by(ReleasePing.Core.GithubReleasePoller, software_uuid: software_uuid)
+     }}
   end
 end
