@@ -19,7 +19,7 @@ jobs:
             - root/project
   lint:
     docker:
-      - image: leifg/elixir:edge
+      - image: leifg/elixir:1.6
         environment:
           MIX_ENV: test
     steps:
