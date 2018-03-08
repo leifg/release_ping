@@ -37,14 +37,24 @@ defmodule ReleasePing.Api.Projectors.Software do
   }
 
   project %SoftwareAdded{} = added, %{stream_version: stream_version} do
-    Ecto.Multi.insert(multi, :software, %Software{
-      id: added.uuid,
-      stream_version: stream_version,
-      name: added.name,
-      slug: added.slug,
-      website: added.website,
-      licenses: Enum.map(added.licenses, &map_license/1)
-    })
+    changeset =
+      case Repo.get_by(Software, slug: added.slug) do
+        nil ->
+          %Software{
+            id: added.uuid,
+            stream_version: stream_version,
+            name: added.name,
+            slug: added.slug,
+            website: added.website,
+            licenses: Enum.map(added.licenses, &map_license/1)
+          }
+
+        software ->
+          software
+      end
+      |> Ecto.Changeset.change()
+
+    Ecto.Multi.insert_or_update(multi, :software, changeset)
   end
 
   project %ReleasePublished{} = published, _metadata do
@@ -75,8 +85,9 @@ defmodule ReleasePing.Api.Projectors.Software do
     update_software(multi, corrected)
   end
 
-  defp update_software(multi, %ReleasePublished{} = published) do
-    existing_software = Repo.get(Software, published.software_uuid)
+  def update_release(multi, nil, _), do: multi
+
+  def update_release(multi, existing_software, %ReleasePublished{} = published) do
     existing_stable = existing_software.latest_version_stable
     existing_unstable = existing_software.latest_version_unstable
 
@@ -119,81 +130,106 @@ defmodule ReleasePing.Api.Projectors.Software do
     Ecto.Multi.update(multi, :api_software, changeset)
   end
 
+  defp update_software(multi, %ReleasePublished{} = published) do
+    existing_software = Repo.get(Software, published.software_uuid)
+    update_release(multi, existing_software, published)
+  end
+
   defp update_software(multi, %LicensesChanged{} = changed) do
-    existing_software = Repo.get(Software, changed.software_uuid)
+    case Repo.get(Software, changed.software_uuid) do
+      nil ->
+        multi
 
-    changeset =
-      existing_software
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_embed(:licenses, Enum.map(changed.licenses, &map_license/1))
+      existing_software ->
+        changeset =
+          existing_software
+          |> Ecto.Changeset.change()
+          |> Ecto.Changeset.put_embed(:licenses, Enum.map(changed.licenses, &map_license/1))
 
-    Ecto.Multi.update(multi, :api_software, changeset)
+        Ecto.Multi.update(multi, :api_software, changeset)
+    end
   end
 
   defp update_software(multi, %WebsiteCorrected{} = corrected) do
-    existing_software = Repo.get(Software, corrected.software_uuid)
+    case Repo.get(Software, corrected.software_uuid) do
+      nil ->
+        multi
 
-    changeset =
-      existing_software
-      |> Ecto.Changeset.change(%{website: corrected.website})
+      existing_software ->
+        changeset =
+          existing_software
+          |> Ecto.Changeset.change(%{website: corrected.website})
 
-    Ecto.Multi.update(multi, :api_software, changeset)
+        Ecto.Multi.update(multi, :api_software, changeset)
+    end
   end
 
   defp update_software(multi, %NameCorrected{} = corrected) do
-    existing_software = Repo.get(Software, corrected.software_uuid)
+    case Repo.get(Software, corrected.software_uuid) do
+      nil ->
+        multi
 
-    changeset =
-      existing_software
-      |> Ecto.Changeset.change(%{name: corrected.name})
+      existing_software ->
+        changeset =
+          existing_software
+          |> Ecto.Changeset.change(%{name: corrected.name})
 
-    Ecto.Multi.update(multi, :api_software, changeset)
+        Ecto.Multi.update(multi, :api_software, changeset)
+    end
   end
 
   defp update_software(multi, %SlugCorrected{} = corrected) do
-    existing_software = Repo.get(Software, corrected.software_uuid)
+    case Repo.get(Software, corrected.software_uuid) do
+      nil ->
+        multi
 
-    changeset =
-      existing_software
-      |> Ecto.Changeset.change(%{slug: corrected.slug})
+      existing_software ->
+        changeset =
+          existing_software
+          |> Ecto.Changeset.change(%{slug: corrected.slug})
 
-    Ecto.Multi.update(multi, :api_software, changeset)
+        Ecto.Multi.update(multi, :api_software, changeset)
+    end
   end
 
   defp update_software(multi, %ReleaseNotesUrlTemplateCorrected{} = corrected) do
-    existing_software = Repo.get(Software, corrected.software_uuid)
+    case Repo.get(Software, corrected.software_uuid) do
+      nil ->
+        multi
 
-    new_stable_rnu =
-      EEx.eval_string(
-        corrected.release_notes_url_template,
-        assigns: Map.from_struct(existing_software.latest_version_stable)
-      )
+      existing_software ->
+        new_stable_rnu =
+          EEx.eval_string(
+            corrected.release_notes_url_template,
+            assigns: Map.from_struct(existing_software.latest_version_stable)
+          )
 
-    new_unstable_rnu =
-      EEx.eval_string(
-        corrected.release_notes_url_template,
-        assigns: Map.from_struct(existing_software.latest_version_unstable)
-      )
+        new_unstable_rnu =
+          EEx.eval_string(
+            corrected.release_notes_url_template,
+            assigns: Map.from_struct(existing_software.latest_version_unstable)
+          )
 
-    latest_changeset_stable =
-      Ecto.Changeset.change(
-        existing_software.latest_version_stable,
-        release_notes_url: new_stable_rnu
-      )
+        latest_changeset_stable =
+          Ecto.Changeset.change(
+            existing_software.latest_version_stable,
+            release_notes_url: new_stable_rnu
+          )
 
-    latest_changeset_unstable =
-      Ecto.Changeset.change(
-        existing_software.latest_version_unstable,
-        release_notes_url: new_unstable_rnu
-      )
+        latest_changeset_unstable =
+          Ecto.Changeset.change(
+            existing_software.latest_version_unstable,
+            release_notes_url: new_unstable_rnu
+          )
 
-    changeset =
-      existing_software
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
-      |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
+        changeset =
+          existing_software
+          |> Ecto.Changeset.change()
+          |> Ecto.Changeset.put_embed(:latest_version_stable, latest_changeset_stable)
+          |> Ecto.Changeset.put_embed(:latest_version_unstable, latest_changeset_unstable)
 
-    Ecto.Multi.update(multi, :api_software, changeset)
+        Ecto.Multi.update(multi, :api_software, changeset)
+    end
   end
 
   defp update_software(multi, %ReleaseNotesUrlAdjusted{} = adjusted) do

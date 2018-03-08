@@ -16,19 +16,29 @@ defmodule ReleasePing.Core.Projectors.Software do
   alias ReleasePing.Repo
 
   project %SoftwareAdded{} = added, %{stream_version: stream_version} do
-    Ecto.Multi.insert(multi, :software, %Software{
-      uuid: added.uuid,
-      stream_version: stream_version,
-      name: added.name,
-      type: added.type,
-      slug: added.slug,
-      version_scheme: serialize_regex(added.version_scheme),
-      release_notes_url_template: added.release_notes_url_template,
-      website: added.website,
-      github: added.github,
-      licenses: added.licenses,
-      release_retrieval: added.release_retrieval
-    })
+    changeset =
+      case Repo.get_by(Software, github: added.github) do
+        nil ->
+          %Software{
+            uuid: added.uuid,
+            stream_version: stream_version,
+            name: added.name,
+            type: added.type,
+            slug: added.slug,
+            version_scheme: serialize_regex(added.version_scheme),
+            release_notes_url_template: added.release_notes_url_template,
+            website: added.website,
+            github: added.github,
+            licenses: added.licenses,
+            release_retrieval: added.release_retrieval
+          }
+
+        software ->
+          software
+      end
+      |> Ecto.Changeset.change()
+
+    Ecto.Multi.insert_or_update(multi, :software, changeset)
   end
 
   project %LicensesChanged{} = changed, _metadata do
