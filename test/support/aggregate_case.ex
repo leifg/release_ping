@@ -83,7 +83,8 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp serialize_deserialize(event) do
-        event |> @serializer.serialize()
+        event
+        |> @serializer.serialize()
         |> @serializer.deserialize(type: TypeProvider.to_string(event))
       end
     end

@@ -44,7 +44,8 @@ defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
         }
       ]
 
-      events |> Enum.with_index()
+      events
+      |> Enum.with_index()
       |> Enum.each(fn {event, index} ->
         GithubReleasePoller.handle(event, %{stream_version: 1, event_number: 2 + index})
       end)

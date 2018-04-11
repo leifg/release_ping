@@ -200,7 +200,9 @@ defmodule ReleasePing.Incoming.Aggregates.GithubEndpoint do
           rate_limit_total: ar.headers["x-ratelimit-limit"] |> String.to_integer(),
           rate_limit_remaining: ar.headers["x-ratelimit-remaining"] |> String.to_integer(),
           rate_limit_reset:
-            ar.headers["x-ratelimit-reset"] |> String.to_integer() |> DateTime.from_unix!()
+            ar.headers["x-ratelimit-reset"]
+            |> String.to_integer()
+            |> DateTime.from_unix!()
             |> DateTime.to_iso8601()
         }
       end)
