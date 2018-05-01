@@ -5,7 +5,7 @@ config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "release_ping",
   password: "release_ping",
-  database: "eventstore_dev",
+  database: "release_ping_eventstore",
   hostname: "localhost",
   pool: DBConnection.Poolboy,
   pool_size: 10
@@ -14,7 +14,7 @@ config :release_ping, ReleasePing.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "release_ping",
   password: "release_ping",
-  database: "release_ping_readstore_dev",
+  database: "release_ping_readstore",
   hostname: "localhost",
   pool_size: 10
 
