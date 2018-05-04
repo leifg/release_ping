@@ -1,5 +1,5 @@
 defmodule ReleasePing.NullAggregateLifespan do
   @behaviour Commanded.Aggregates.AggregateLifespan
 
-  def after_command(_event), do: 0
+  def after_event(_event), do: 0
 end

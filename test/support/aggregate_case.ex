@@ -9,14 +9,14 @@ defmodule ReleasePing.AggregateCase do
 
   using aggregate: aggregate do
     quote bind_quoted: [aggregate: aggregate] do
-      @serializer EventStore.configured_serializer()
-      @aggregate aggregate
+      @aggregate_module aggregate
+      @serializer EventStore.Config.serializer()
 
       import ReleasePing.Factory
 
       # assert that the expected events are returned when the given commands have been executed
       defp assert_events(commands, expected_events) do
-        assert_events(%@aggregate{}, commands, expected_events)
+        assert_events(%@aggregate_module{}, commands, expected_events)
       end
 
       defp assert_events(aggregate, commands, assertion_fun) when is_function(assertion_fun) do
@@ -35,7 +35,7 @@ defmodule ReleasePing.AggregateCase do
       end
 
       defp assert_error(commands, expected_error) do
-        assert_error(%@aggregate{}, commands, expected_error)
+        assert_error(%@aggregate_module{}, commands, expected_error)
       end
 
       defp assert_error(aggregate, commands, expected_error) do
@@ -47,14 +47,14 @@ defmodule ReleasePing.AggregateCase do
       end
 
       # execute one or more commands against an aggregate
-      defp execute(commands, aggregate \\ %@aggregate{})
+      defp execute(commands, aggregate \\ %@aggregate_module{})
 
       defp execute(commands, aggregate) do
         commands
         |> List.wrap()
         |> Enum.reduce({aggregate, [], nil}, fn
           command, {aggregate, _events, nil} ->
-            case @aggregate.execute(aggregate, command) do
+            case @aggregate_module.execute(aggregate, command) do
               {:error, reason} = error -> {aggregate, nil, error}
               events -> {evolve(aggregate, events), serialize_deserialize(events), nil}
             end
@@ -66,14 +66,14 @@ defmodule ReleasePing.AggregateCase do
 
       # apply the given events to the aggregate state
       defp evolve(events) do
-        evolve(%@aggregate{}, events)
+        evolve(%@aggregate_module{}, events)
       end
 
       defp evolve(aggregate, events) do
         events
         |> List.wrap()
         |> serialize_deserialize()
-        |> Enum.reduce(aggregate, &@aggregate.apply(&2, &1))
+        |> Enum.reduce(aggregate, &@aggregate_module.apply(&2, &1))
       end
 
       defp serialize_deserialize(nil), do: nil

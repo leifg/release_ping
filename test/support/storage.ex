@@ -14,9 +14,11 @@ defmodule ReleasePing.Storage do
   end
 
   defp reset_eventstore do
-    eventstore_config = Application.get_env(:eventstore, EventStore.Storage)
-
-    {:ok, conn} = Postgrex.start_link(eventstore_config)
+    {:ok, conn} =
+      EventStore.configuration()
+      |> EventStore.Config.parse()
+      |> EventStore.Config.default_postgrex_opts()
+      |> Postgrex.start_link()
 
     EventStore.Storage.Initializer.reset!(conn)
   end
