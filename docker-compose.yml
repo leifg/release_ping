@@ -25,3 +25,12 @@ services:
         target: /tmp
     depends_on:
       - postgres
+  migrate-eventstore:
+    image: leifg/eventstore-toolkit:0.14.0
+    command: migrate
+    environment:
+      POSTGRES_USER: release_ping
+      POSTGRES_PASSWORD: release_ping
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: release_ping_eventstore
