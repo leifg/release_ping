@@ -20,9 +20,6 @@ else
   echo "Push to Docker Hub"
   ${base_dir}/steps/push_to_docker_hub.sh ${VERSION}
 
-  echo "Run Migrations"
-  ${base_dir}/steps/migrate.sh ${VERSION} ${CIRCLE_BUILD_NUM}
-
   echo "Tag latest (triggers deployment)"
   ${base_dir}/steps/tag_latest.sh ${VERSION}
 fi
