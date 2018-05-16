@@ -2,6 +2,7 @@ defmodule ReleasePing.Core.Projectors.Software do
   use Commanded.Projections.Ecto, name: "Core.Projectors.Software"
 
   alias ReleasePing.Core.Events.{
+    GithubRepositoryMoved,
     LicensesChanged,
     NameCorrected,
     ReleaseNotesUrlTemplateCorrected,
@@ -77,6 +78,10 @@ defmodule ReleasePing.Core.Projectors.Software do
 
   project %SlugCorrected{} = corrected, _metadata do
     update_software(multi, corrected.software_uuid, :slug, corrected.slug)
+  end
+
+  project %GithubRepositoryMoved{} = moved, _metadata do
+    update_software(multi, moved.software_uuid, :github, moved.github)
   end
 
   defp update_software(multi, software_uuid, field_name, value) do

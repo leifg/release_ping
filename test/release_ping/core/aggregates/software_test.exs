@@ -9,10 +9,12 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
     CorrectReleaseNotesUrlTemplate,
     CorrectSoftwareType,
     CorrectSlug,
-    CorrectWebsite
+    CorrectWebsite,
+    MoveGithubRepository
   }
 
   alias ReleasePing.Core.Events.{
+    GithubRepositoryMoved,
     LicensesChanged,
     NameCorrected,
     ReleaseNotesUrlAdjusted,
@@ -514,6 +516,46 @@ defmodule ReleasePing.Core.Aggregates.SoftwareTest do
         software,
         command,
         {:error, {:inconsistency_error, "Version 'DoesntExist' does not exist"}}
+      )
+    end
+  end
+
+  describe "move github repository" do
+    setup [
+      :add_software
+    ]
+
+    test "succeeds when valid", %{software: software} do
+      uuid = UUID.uuid4()
+      new_github_repo = "elixir/new-elixir"
+
+      command = %MoveGithubRepository{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        github: new_github_repo
+      }
+
+      event = %GithubRepositoryMoved{
+        uuid: uuid,
+        software_uuid: software.uuid,
+        github: new_github_repo
+      }
+
+      assert_events(software, command, [event])
+    end
+
+    test "returns no events when name didn't change", %{software: software} do
+      uuid = UUID.uuid4()
+      new_github_repo = software.github
+
+      assert_events(
+        software,
+        %MoveGithubRepository{
+          uuid: uuid,
+          software_uuid: software.uuid,
+          github: new_github_repo
+        },
+        []
       )
     end
   end

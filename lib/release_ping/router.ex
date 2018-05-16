@@ -18,6 +18,7 @@ defmodule ReleasePing.Router do
     CorrectSlug,
     CorrectSoftwareType,
     CorrectWebsite,
+    MoveGithubRepository,
     PublishRelease
   }
 
@@ -47,6 +48,7 @@ defmodule ReleasePing.Router do
       CorrectSlug,
       CorrectSoftwareType,
       CorrectWebsite,
+      MoveGithubRepository,
       PublishRelease
     ],
     to: Software,

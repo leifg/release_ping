@@ -1,7 +1,7 @@
 defmodule ReleasePing.Core.Projectors.GithubReleasePoller do
   use Commanded.Projections.Ecto, name: "Core.Projectors.GithubReleasePoller"
 
-  alias ReleasePing.Core.Events.{ReleasePublished, SoftwareAdded}
+  alias ReleasePing.Core.Events.{GithubRepositoryMoved, ReleasePublished, SoftwareAdded}
   alias ReleasePing.Core.GithubReleasePoller
 
   project %SoftwareAdded{release_retrieval: :github_release_poller} = added, %{
@@ -23,6 +23,18 @@ defmodule ReleasePing.Core.Projectors.GithubReleasePoller do
       )
 
     update_cursor(multi, existing, published.github_cursor)
+  end
+
+  project %GithubRepositoryMoved{} = moved, %{} do
+    existing =
+      ReleasePing.Repo.get_by(
+        ReleasePing.Core.GithubReleasePoller,
+        software_uuid: moved.software_uuid
+      )
+
+    changeset = Ecto.Changeset.change(existing, %{repository: moved.github})
+
+    Ecto.Multi.update(multi, :github_release_pollers, changeset)
   end
 
   defp update_cursor(multi, _existing, nil), do: multi

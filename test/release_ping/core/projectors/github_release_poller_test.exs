@@ -1,6 +1,6 @@
 defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
   alias ReleasePing.Core.Projectors.GithubReleasePoller
-  alias ReleasePing.Core.Events.{ReleasePublished, SoftwareAdded}
+  alias ReleasePing.Core.Events.{GithubRepositoryMoved, ReleasePublished, SoftwareAdded}
   alias ReleasePing.Repo
 
   use ReleasePing.DataCase
@@ -58,6 +58,36 @@ defmodule ReleasePing.Incoming.Projectors.GithubReleasePollerTest do
 
       assert github_release_poller.last_cursor_releases == "Y3Vyc29yOnYyOpHOAHhy8Q=="
       assert github_release_poller.last_cursor_tags == "MTAy"
+    end
+  end
+
+  describe "GithubReleasePoller Read Model GithubRepositoryMoved" do
+    setup [:add_software]
+
+    test "correctly updates entry in the read model", %{
+      github_release_poller: github_release_poller
+    } do
+      events = [
+        %GithubRepositoryMoved{
+          uuid: UUID.uuid4(),
+          software_uuid: github_release_poller.software_uuid,
+          github: "erlang/otp-new"
+        }
+      ]
+
+      events
+      |> Enum.with_index()
+      |> Enum.each(fn {event, index} ->
+        GithubReleasePoller.handle(event, %{stream_version: 1, event_number: 2 + index})
+      end)
+
+      github_release_poller =
+        Repo.get_by(
+          ReleasePing.Core.GithubReleasePoller,
+          software_uuid: github_release_poller.software_uuid
+        )
+
+      assert github_release_poller.repository == "erlang/otp-new"
     end
   end
 
