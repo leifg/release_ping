@@ -11,17 +11,19 @@ defmodule ReleasePing.Core.Aggregates.Software do
     CorrectSlug,
     CorrectSoftwareType,
     CorrectWebsite,
+    MoveGithubRepository,
     PublishRelease
   }
 
   alias ReleasePing.Core.Events.{
-    SoftwareAdded,
+    GithubRepositoryMoved,
     LicensesChanged,
     NameCorrected,
     ReleasePublished,
     ReleaseNotesUrlAdjusted,
     ReleaseNotesUrlTemplateCorrected,
     SlugCorrected,
+    SoftwareAdded,
     SoftwareTypeCorrected,
     VersionSchemeChanged,
     WebsiteCorrected
@@ -263,6 +265,21 @@ defmodule ReleasePing.Core.Aggregates.Software do
     end
   end
 
+  @doc """
+  Move GithubRepository
+  """
+  def execute(%Software{} = software, %MoveGithubRepository{} = move) do
+    if software.github == move.github do
+      nil
+    else
+      %GithubRepositoryMoved{
+        uuid: move.uuid,
+        software_uuid: software.uuid,
+        github: move.github
+      }
+    end
+  end
+
   # state mutators
 
   def apply(%Software{} = software, %SoftwareAdded{} = added) do
@@ -319,6 +336,10 @@ defmodule ReleasePing.Core.Aggregates.Software do
 
   def apply(%Software{} = software, %ReleaseNotesUrlAdjusted{}) do
     software
+  end
+
+  def apply(%Software{} = software, %GithubRepositoryMoved{} = moved) do
+    %Software{software | github: moved.github}
   end
 
   defp validate_version_scheme(nil), do: {:ok, nil}
