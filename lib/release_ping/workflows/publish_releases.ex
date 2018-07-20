@@ -12,8 +12,16 @@ defmodule ReleasePing.Workflows.PublishReleases do
   def interested?(%NewGithubReleasesFound{github_uuid: github_uuid}), do: {:start, github_uuid}
 
   def handle(%__MODULE__{}, %NewGithubReleasesFound{} = found_event) do
-    software = ReleasePing.Core.software_by_uuid(found_event.software_uuid)
+    found_event.software_uuid
+    |> ReleasePing.Core.software_by_uuid()
+    |> publish_release(found_event)
+  end
 
+  def apply(%__MODULE__{} = state, _), do: state
+
+  defp publish_release(nil, _found_event), do: nil
+
+  defp publish_release(software, found_event) do
     found_event.payloads
     |> GithubReleases.merge_tags_and_releases(software.version_scheme)
     |> Enum.map(fn r ->
@@ -29,6 +37,4 @@ defmodule ReleasePing.Workflows.PublishReleases do
       }
     end)
   end
-
-  def apply(%__MODULE__{} = state, _), do: state
 end

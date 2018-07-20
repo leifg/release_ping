@@ -4,7 +4,6 @@ defmodule ReleasePing.Api.Projectors.Software do
   alias ReleasePing.Repo
 
   alias ReleasePing.Core.Events.{
-    GithubRepositoryMoved,
     LicensesChanged,
     NameCorrected,
     SoftwareAdded,
